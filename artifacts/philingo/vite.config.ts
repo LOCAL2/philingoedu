@@ -13,6 +13,18 @@ const basePath = process.env.BASE_PATH ?? '/';
 export default defineConfig({
   base: basePath,
   plugins: [
+    // Redirect /admin → /admin/ in dev
+    {
+      name: 'admin-redirect',
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url === '/admin') {
+            req.url = '/admin/';
+          }
+          next();
+        });
+      },
+    },
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
@@ -54,6 +66,18 @@ export default defineConfig({
     allowedHosts: true,
     fs: {
       strict: true,
+    },
+    proxy: {
+      // Proxy /admin/* to admin dev server on port 3001
+      '/admin/': {
+        target: 'http://localhost:3001',
+        changeOrigin: true,
+      },
+      // Proxy /api to api-server on port 8080
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true,
+      },
     },
   },
   preview: {

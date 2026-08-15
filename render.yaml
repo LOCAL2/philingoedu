@@ -1,0 +1,29 @@
+services:
+  - type: web
+    name: philingoedu
+    runtime: node
+    region: singapore
+    plan: free
+    buildCommand: "npm install -g pnpm && pnpm install && pnpm run build:prod"
+    startCommand: "node --enable-source-maps artifacts/api-server/dist/index.mjs"
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        sync: false        # ใส่ใน Render dashboard
+      - key: JWT_SECRET
+        sync: false        # ใส่ใน Render dashboard
+      - key: PORT
+        value: 10000       # Render ใช้ port 10000
+      - key: SITE_URL
+        sync: false        # เช่น https://philingoedu.com
+      - key: PUBLIC_URL
+        sync: false        # เช่น https://philingoedu.com
+      - key: ALLOWED_ORIGINS
+        sync: false        # เช่น https://philingoedu.com
+      - key: RESEND_API_KEY
+        sync: false        # optional
+      - key: RESEND_FROM
+        sync: false        # optional
+      - key: ADMIN_EMAIL
+        value: admin@philingo.com

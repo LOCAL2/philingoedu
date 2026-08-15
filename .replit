@@ -1,0 +1,32 @@
+modules = ["nodejs-24", "python-base-3.13", "postgresql-16"]
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[nix]
+channel = "stable-25_05"
+
+[userenv]
+
+[userenv.shared]
+ADMIN_EMAIL = "info@thaistudyabroad.com"
+JWT_SECRET = "7dd92c2bab07ec97041c8074553cd49c9782ff025d5907e2206e491ed59be68e4240c67430b56db8f21925b138cdb461"
+
+[objectStorage]
+defaultBucketID = "replit-objstore-e315b0e9-5776-4393-b2a8-aa255d552c7c"

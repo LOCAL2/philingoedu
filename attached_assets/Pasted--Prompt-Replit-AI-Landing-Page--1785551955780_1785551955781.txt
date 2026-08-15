@@ -1,0 +1,371 @@
+ใช้ Prompt นี้ส่งให้ Replit AI ได้เลยครับ เป็นคำสั่งละเอียดสำหรับสร้าง **Landing Page งานสัมมนา** ที่เน้น Conversion และ SEO
+
+---
+
+# 🚀 Create a High-Converting Landing Page for "Philingo Cebu Online Education Fair 2026"
+
+Build a modern, mobile-first landing page designed to maximize student registrations for the **Philingo Cebu Online Education Fair 2026**.
+
+## General Requirements
+
+* Fully responsive (Desktop / Tablet / Mobile)
+* Fast loading (Core Web Vitals optimized)
+* SEO optimized
+* AI Search friendly (Google AI, ChatGPT, Gemini, Perplexity)
+* Accessible (WCAG)
+* Clean modern UI
+* Blue / Yellow / White branding matching Philingo
+* Smooth animations (not excessive)
+
+---
+
+# Hero Section
+
+Use the uploaded Seminar Banner as the Hero image.
+
+Headline:
+
+# 🇵🇭 PHILINGO CEBU ONLINE EDUCATION FAIR 2026
+
+Subheadline:
+
+Meet leading English language schools from Cebu online and receive exclusive promotions.
+
+Buttons:
+
+✅ Register Free
+
+✅ View Schedule
+
+---
+
+# Countdown Timer
+
+Create a real-time countdown.
+
+Countdown to:
+
+**29 August 2026**
+
+**10:00 AM (Thailand GMT+7)**
+
+Display:
+
+Days
+
+Hours
+
+Minutes
+
+Seconds
+
+Automatically stop at event time.
+
+---
+
+# Event Information
+
+Display beautifully:
+
+📅 Dates
+
+29 August 2026
+
+30 August 2026
+
+5 September 2026
+
+6 September 2026
+
+12 September 2026
+
+13 September 2026
+
+⏰ Time
+
+10:00–11:00 AM (Thailand)
+
+💻 Platform
+
+Google Meet
+
+Participation is FREE.
+
+---
+
+# Why Attend
+
+Create modern icon cards.
+
+Meet Cebu schools
+
+Compare courses
+
+Exclusive promotions
+
+Scholarships
+
+Live Q&A
+
+Accommodation information
+
+Visa advice
+
+Free consultation
+
+---
+
+# Participating Schools
+
+Create a dynamic grid.
+
+Each card includes:
+
+School Logo
+
+School Name
+
+Location
+
+Short description
+
+Learn More button
+
+Data should come from the Admin Panel.
+
+---
+
+# Registration Form
+
+Fields:
+
+First Name
+
+Last Name
+
+Nickname
+
+Email
+
+Phone Number
+
+LINE ID
+
+Age
+
+Current Education
+
+Current English Level
+
+Preferred School
+
+Preferred Program
+
+Preferred Event Date
+
+Questions for Schools
+
+Consent Checkbox
+
+Register Button
+
+Save registrations to the database.
+
+Send confirmation email automatically.
+
+---
+
+# Google Meet Section
+
+Display:
+
+Google Meet icon
+
+Meeting Date
+
+Meeting Time
+
+Meeting link (hidden until approved)
+
+Display:
+
+"Meeting link will be emailed after registration."
+
+Admin Panel must allow editing the Meet link.
+
+---
+
+# Event Schedule
+
+Beautiful timeline.
+
+Each school:
+
+Logo
+
+Presentation Time
+
+Presenter
+
+Topic
+
+Duration
+
+---
+
+# FAQ
+
+Create expandable accordion.
+
+Examples:
+
+How do I join?
+
+Is it free?
+
+Can parents join?
+
+Will there be promotions?
+
+Can I ask questions?
+
+---
+
+# Testimonials
+
+Student reviews.
+
+Video section.
+
+Success stories.
+
+---
+
+# Organizer
+
+Display:
+
+Philingo
+
+Thai Study Abroad Consultant Co., Ltd.
+
+20+ Years Experience
+
+LINE
+
+Phone
+
+Email
+
+Website
+
+Load all contact details dynamically from the Admin Panel.
+
+---
+
+# Sticky Mobile CTA
+
+On mobile always show:
+
+📱 Register Free
+
+Fixed at the bottom.
+
+---
+
+# Floating Buttons
+
+LINE
+
+Messenger
+
+WhatsApp
+
+Phone
+
+Back to Top
+
+Load all contact links from the Admin Panel.
+
+---
+
+# SEO
+
+Generate automatically:
+
+Meta Title
+
+Meta Description
+
+Open Graph
+
+Twitter Card
+
+JSON-LD Event Schema
+
+Breadcrumb Schema
+
+Organization Schema
+
+FAQ Schema
+
+Use semantic HTML.
+
+---
+
+# AI Search Optimization
+
+Structure the content so AI search engines can easily understand it.
+
+Include:
+
+* Clear headings (H1–H3)
+* Structured FAQ
+* Event Schema
+* Organization Schema
+* Internal linking
+* Alt text for images
+* Descriptive URLs
+
+---
+
+# Performance
+
+* Lazy-load images
+* Optimize WebP images
+* Preload Hero Banner
+* Minify assets
+* No layout shifts
+
+---
+
+# Admin Panel Requirements
+
+The following must be editable from the Admin Panel without touching code:
+
+* Hero Banner
+* Event Title
+* Event Dates
+* Countdown Date & Time
+* Google Meet Link
+* Schedule
+* Participating Schools
+* Registration Questions
+* Contact Information
+* SEO Settings
+
+---
+
+# Final Verification
+
+Before deployment:
+
+* Test on Desktop, Tablet, iPhone, and Android.
+* Verify the countdown works.
+* Verify the registration form saves data correctly.
+* Verify confirmation email is sent.
+* Verify Google Meet information displays correctly.
+* Verify all content is responsive.
+* Ensure the page is production-ready.
+
+**Do not consider the task complete until the landing page is fully functional, mobile-friendly, SEO optimized, AI search friendly, and all editable content is managed through the Admin Panel.**

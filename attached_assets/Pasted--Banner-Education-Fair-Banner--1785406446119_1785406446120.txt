@@ -1,0 +1,109 @@
+ใช้คำสั่งนี้จะตรงประเด็นกว่า เพราะระบุชัดว่าเป็น **Banner กิจกรรมงานสัมมนา (Education Fair Banner)**
+
+---
+
+# URGENT: Seminar Event Banner Not Updating on Production Website
+
+The **Seminar Event Banner (Philingo Cebu Online Education Fair 2026)** displays correctly in the Replit development/preview environment, but the **public production website still shows the old banner**.
+
+Please investigate and fix this issue immediately.
+
+## Expected Result
+
+The **Seminar Event Banner** on the homepage must be exactly the same in:
+
+* Development
+* Preview
+* Production (Public Website)
+
+The production site must display the **latest Seminar Event Banner** that was uploaded.
+
+---
+
+## Please Check the Following
+
+### 1. Verify the Seminar Event Banner Source
+
+Identify where the homepage seminar banner is loaded from.
+
+Check whether it comes from:
+
+* Database
+* CMS
+* Static Image
+* Assets Folder
+* Public Folder
+* API
+* CDN
+
+Ensure Production is using the same source as Development.
+
+---
+
+### 2. Search the Project
+
+Search for:
+
+* Seminar Banner
+* Event Banner
+* Education Fair Banner
+* Hero Banner
+* Homepage Banner
+* Carousel
+* Slider
+
+Remove any old or duplicate banner components.
+
+---
+
+### 3. Verify Production Assets
+
+Check that the latest **Philingo Cebu Online Education Fair 2026** banner image has been deployed.
+
+If the filename is unchanged, rename it (for example `education-fair-banner-v2.webp`) and update all references to avoid cached versions.
+
+---
+
+### 4. Clear Cache
+
+Clear:
+
+* Browser Cache
+* CDN Cache
+* Build Cache
+* Service Worker Cache (if enabled)
+
+Production must load the latest banner.
+
+---
+
+### 5. Verify Database / API
+
+If the banner is stored in the database, confirm the Production database contains the latest Seminar Event Banner and not an older image.
+
+---
+
+### 6. Rebuild & Redeploy
+
+Perform a fresh production build and redeploy.
+
+Do not reuse cached assets.
+
+---
+
+### 7. Final Verification
+
+After deployment, verify that the **Seminar Event Banner** displayed on the public website is identical to the one shown in the development preview.
+
+---
+
+## Deliverables
+
+Please provide:
+
+* The root cause of the issue.
+* The files/components updated.
+* Confirmation that the latest **Philingo Cebu Online Education Fair 2026** banner is now visible on the production website.
+* Screenshots comparing Development and Production after the fix.
+
+**Do not close this task until the public website displays the latest Seminar Event Banner correctly.**

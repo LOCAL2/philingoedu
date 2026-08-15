@@ -1,0 +1,48 @@
+[TASK INSTRUCTION]
+Please extend the Philingo system to support dedicated "Course Landing Pages" with Dynamic Routing and full SEO/AI-Friendly capabilities.
+
+----------------------------------------------------------------------
+1. URL STRUCTURE & ROUTING (Dynamic Routing)
+----------------------------------------------------------------------
+- Create dynamic routes for Course Landing Pages:
+  Format: /schools/[school-slug]/courses/[course-slug]
+  Example: /schools/ev-academy/courses/intensive-esl
+
+----------------------------------------------------------------------
+2. DATABASE UPDATES (Table: school_courses)
+----------------------------------------------------------------------
+Add the following columns to `school_courses`:
+- slug: VARCHAR(255) UNIQUE NOT NULL -- e.g. "intensive-esl-ev-academy"
+- meta_title: VARCHAR(255) NULL -- SEO Title
+- meta_description: TEXT NULL -- SEO Description
+- hero_banner_url: TEXT NULL -- Banner image for the course landing page
+- curriculum_details: JSONB NULL -- Daily schedule / subjects list
+
+----------------------------------------------------------------------
+3. UI / UX FLOW & BEHAVIOR
+----------------------------------------------------------------------
+A. School Detail Page ("หลักสูตรที่เปิดสอน" Section):
+- Each course card supports both Collapsed/Expanded preview AND a button:
+  "[ อ่านรายละเอียดคอร์สฉบับเต็ม / หน้า Landing Page → ]"
+- Clicking this button navigates the user to the dedicated Course Landing Page.
+
+B. Course Landing Page Layout (/schools/[school-slug]/courses/[course-slug]):
+- Hero Section:
+  * Course Title (TH & EN), School Name (with link back to school)
+  * Badge: Duration (e.g. 4-24 สัปดาห์) & Starting Price (฿/สัปดาห์)
+  * CTA Button: "สอบถามและสำรองที่นั่งผ่าน LINE"
+- Main Content Section (SEO & AI Article):
+  * Rich Text Thai Article (H2/H3 Tags): Overview, Suitable Candidates, Learning Outcomes.
+  * Curriculum & Daily Schedule Breakdown.
+- Related Accommodation & Facilities Component (Imported images).
+- Sticky Mobile CTA Bar: Always displays price + LINE CTA button at the bottom of mobile screens.
+- Schema.org (JSON-LD Course Markup) injected into <head> for Google SEO.
+
+----------------------------------------------------------------------
+4. API ENDPOINTS
+----------------------------------------------------------------------
+1. GET /api/courses/:schoolSlug/:courseSlug
+   - Fetch complete course details, AI Thai SEO article, school info, and related images for the Landing Page.
+
+2. PATCH /api/admin/courses/:courseId/landing-page
+   - Admin API to update slug, meta_title, meta_description, hero_banner_url, and article content.

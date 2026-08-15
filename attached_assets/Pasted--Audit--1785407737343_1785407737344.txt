@@ -1,0 +1,183 @@
+ใช้คำสั่งนี้แทนครับ อันนี้ไม่ใช่ให้มัน "แก้" แต่ให้มัน **ตรวจสอบ (Audit)** ทั้งระบบและหาหลักฐานก่อน
+
+---
+
+# FULL SYSTEM AUDIT - DO NOT FIX ANYTHING YET
+
+Stop making assumptions.
+
+Do NOT modify any code.
+
+I want you to perform a complete audit of the project and identify exactly why the Production website is not showing the latest data from the Admin Panel.
+
+## Problems to Investigate
+
+### 1. Seminar Event Banner
+
+The latest **Philingo Cebu Online Education Fair 2026** banner is visible in the Admin Panel (or Development), but the Production website still shows the old banner.
+
+---
+
+### 2. Contact Information
+
+The Admin Panel contains:
+
+**Email**
+
+* [philingoedu@gmail.com](mailto:philingoedu@gmail.com)
+
+**LINE ID**
+
+* @philingo
+
+But the public website still shows old values.
+
+---
+
+# Your Task
+
+Trace the data flow from the Admin Panel to the Production website.
+
+Do not guess.
+
+Verify every step.
+
+---
+
+## Check 1 - Admin Panel
+
+* Is the Save button actually writing to the database?
+* Which database table is updated?
+* Show the saved values.
+* Show the database record.
+
+---
+
+## Check 2 - Database
+
+Verify that Production is connected to the correct database.
+
+Print:
+
+* Database Name
+* Environment
+* Table Name
+* Banner Record
+* Contact Settings Record
+
+---
+
+## Check 3 - API
+
+Identify every API endpoint used by:
+
+* Homepage Banner
+* Contact Information
+
+Print the JSON response.
+
+Confirm whether the API returns:
+
+* old data
+* new data
+
+---
+
+## Check 4 - Frontend
+
+Identify the exact component rendering:
+
+* Hero Banner
+* Event Banner
+* Email
+* LINE ID
+
+Show the file path.
+
+Show where the data comes from.
+
+---
+
+## Check 5 - Search Entire Project
+
+Search for:
+
+* [philingoedu@gmail.com](mailto:philingoedu@gmail.com)
+* @philingo
+* @thaistudyabroad
+* old email
+* banner image filename
+
+Report every file containing these values.
+
+---
+
+## Check 6 - Hardcoded Data
+
+Determine whether any of the following are hardcoded:
+
+* Banner Image
+* Email
+* LINE ID
+* Phone Number
+
+List every file.
+
+---
+
+## Check 7 - Multiple Data Sources
+
+Determine whether there are multiple:
+
+* Settings Tables
+* Banner Tables
+* APIs
+* Config Files
+* JSON Files
+
+If duplicates exist, explain which one Production is using.
+
+---
+
+## Check 8 - Production Build
+
+Verify that Production is running the latest deployment.
+
+Print:
+
+* Build Version
+* Build Time
+* Commit Hash (if available)
+
+---
+
+## Check 9 - Cache
+
+Check whether the following are serving stale content:
+
+* Browser Cache
+* CDN Cache
+* Service Worker
+* Static Assets
+
+Explain which cache is active.
+
+---
+
+# Final Report Required
+
+Do NOT fix anything.
+
+Provide a report with:
+
+1. Root Cause
+2. Evidence
+3. File Paths
+4. API Responses
+5. Database Records
+6. Which component is displaying the old data
+7. Why the Admin Panel updates are not reaching the Production website
+
+Only after identifying the exact root cause should you propose a fix.
+
+**Do not say "fixed" unless you have proven where the problem is.**

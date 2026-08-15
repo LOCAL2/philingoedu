@@ -1,0 +1,16 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "zTo2vcrkSH6ESMqMSGeSC"
+uri = "file://philingo_backup_20260806_030107.sql"
+type = "unspecified"
+title = "philingo_backup_20260806_030107.sql"
+description = "PostgreSQL full dump — ทุกตาราง ทุกข้อมูล (dev database)"
+
+[[outputs]]
+id = "XLhUvrK7QDbIbgwSrwjMe"
+uri = "file://philingo_db_export_20260806.sql"
+type = "unspecified"
+title = "Philingo DB Export — 2026-08-06"
+description = "PostgreSQL full dump · 19 tables · schema + data · 569 KB"

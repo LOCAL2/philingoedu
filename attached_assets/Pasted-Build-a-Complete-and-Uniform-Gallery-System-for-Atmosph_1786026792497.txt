@@ -1,0 +1,31 @@
+Build a Complete and Uniform Gallery System for "บรรยากาศ" (Atmosphere)
+
+Please develop a dynamic gallery page and components to display uploaded "Atmosphere" images. The primary objective is to fix the current issue of images with different dimensions creating a messy, disorganized layout. All images must display at a uniform size, neatly filling their containers without any distortion (stretching or squishing).
+
+Detailed Specifications:
+
+1. Data & Backend Integration:
+
+API Endpoint: Assume an API endpoint exists (e.g., GET /api/gallery) that returns an array of gallery item objects, each containing an imageUrl (the dynamic URL from cloud storage/database) and an optional caption.
+
+Cache Management (Crucial for Admin Sync): The frontend query (e.g., using React Query, SWR, or Fetch) that loads this data must have staleTime: 0 or include cache invalidation logic (e.g., mutate, revalidatePath on successful upload from Admin). This ensures that newly uploaded images are displayed immediately upon page focus without a hard refresh.
+
+2. Frontend Layout (Gallery Page):
+
+Responsive Grid: Implement a CSS Grid layout that adapts to screen sizes (e.g., 1 column on mobile, 2 on tablet, 3-4 columns on desktop). Use a consistent gap between grid items.
+
+Uniform Gallery Items: Wrap each individual gallery image (and its optional caption) in a clean, uniform container component.
+
+3. CRITICAL: Uniform Image Styling (CSS/Tailwind Rules):
+
+Fixed Aspect Ratio Container: Every individual gallery item container MUST define a uniform size using a fixed aspect ratio. For this project, please use a 4:3 horizontal rectangle aspect ratio (e.g., aspect-ratio: 4/3;).
+
+Distortion-Free Filling: Inside this aspect ratio container, the <img> tag MUST apply object-fit: cover;, width: 100%;, and height: 100%;. This is the essential rule that forces dynamic images to fill the uniform container completely and neatly, automatically cropping overflow instead of distorting the image.
+
+Container Aesthetics: Ensure the image container has overflow: hidden;, border-radius: 8px;, and a subtle box-shadow for a clean, modern aesthetic.
+
+4. Modern Features (Optional but Recommended):
+
+Include smooth hover effects.
+
+Add lightbox functionality for full-size viewing of individual images (e.g., using a library or a custom modal).

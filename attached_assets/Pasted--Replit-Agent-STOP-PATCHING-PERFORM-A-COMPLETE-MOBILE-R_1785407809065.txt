@@ -1,0 +1,255 @@
+ส่งข้อความนี้ให้ Replit Agent ได้เลย
+
+---
+
+# 🚨 STOP PATCHING. PERFORM A COMPLETE MOBILE RESPONSIVE AUDIT.
+
+You have attempted to fix the mobile issues several times, but **the problems still exist**.
+
+Do **NOT** make another quick CSS fix.
+
+I want a **full audit** of the entire application and I want you to **prove** every issue is fixed before completing the task.
+
+## Current Issues
+
+On the **mobile version**, the School Detail pages are still broken.
+
+Problems include:
+
+* Not all accommodation information is displayed.
+* Room details are incomplete.
+* Facilities are missing.
+* Gallery images cannot all be viewed.
+* Some buttons cannot be clicked.
+* Some sections are cut off.
+* Desktop shows more information than Mobile.
+* Mobile does NOT match Desktop.
+
+**The mobile website must display exactly the same content as the desktop version. Only the layout should change.**
+
+---
+
+# REQUIRED TASKS
+
+## 1. Audit Every School Detail Page
+
+Check every school page one by one.
+
+Compare Desktop and Mobile.
+
+For each school, verify that Mobile displays:
+
+* School Information
+* Courses
+* Course Prices
+* Accommodation
+* Room Types
+* Room Prices
+* Facilities
+* Gallery
+* Videos
+* FAQs
+* Downloads
+* Maps
+* Buttons
+* Contact Information
+
+Nothing should be missing.
+
+---
+
+## 2. Compare Data Counts
+
+For every school, compare:
+
+Desktop vs Mobile
+
+Example:
+
+Accommodation
+
+Desktop: 12 rooms
+
+Mobile: 12 rooms
+
+Facilities
+
+Desktop: 28
+
+Mobile: 28
+
+Gallery
+
+Desktop: 65 photos
+
+Mobile: 65 photos
+
+Every number must match.
+
+---
+
+## 3. Search the Entire Project
+
+Search for every occurrence of:
+
+```
+hidden
+md:hidden
+lg:hidden
+overflow-hidden
+overflow-x-hidden
+overflow-y-hidden
+line-clamp
+truncate
+display:none
+max-height
+height:
+slice(
+take(
+limit(
+first(
+```
+
+Explain why each exists.
+
+Remove anything that causes Mobile to hide content.
+
+---
+
+## 4. Inspect Components
+
+Audit every component used on School Detail pages.
+
+Especially:
+
+Accommodation
+
+Facilities
+
+Gallery
+
+Course List
+
+Price Tables
+
+Tabs
+
+Accordions
+
+Cards
+
+Image Carousel
+
+Verify Mobile renders ALL database records.
+
+---
+
+## 5. Verify Database
+
+Check that the API returns ALL records.
+
+If the API returns complete data but Mobile does not display it,
+
+identify the exact component responsible.
+
+---
+
+## 6. Responsive Testing
+
+Test on:
+
+320px
+
+360px
+
+375px
+
+390px
+
+414px
+
+430px
+
+768px
+
+1024px
+
+1280px
+
+Use browser responsive mode.
+
+Take screenshots before and after.
+
+---
+
+## 7. Browser Console
+
+Check for:
+
+JavaScript errors
+
+React errors
+
+Hydration errors
+
+Network errors
+
+Image loading failures
+
+Fix every issue.
+
+---
+
+## 8. Image Gallery
+
+Every image must:
+
+Open correctly
+
+Support swipe
+
+Support fullscreen
+
+Display all photos
+
+No hidden images
+
+---
+
+## 9. Accordions & Tabs
+
+Verify every accordion opens.
+
+Verify every tab loads all content.
+
+No fixed heights.
+
+No clipped content.
+
+---
+
+## 10. Final Verification
+
+For EVERY school page provide:
+
+* Desktop Screenshot
+* Mobile Screenshot
+* Number of rooms
+* Number of facilities
+* Number of gallery images
+
+Desktop and Mobile MUST be identical.
+
+---
+
+# DO NOT COMPLETE THIS TASK UNTIL
+
+* Every School Detail page has been tested.
+* Mobile displays 100% of the same content as Desktop.
+* No hidden sections remain.
+* No JavaScript errors remain.
+* All buttons work.
+* All images open correctly.
+* A full audit report with screenshots has been provided.
+
+**If any page still shows less information on Mobile than Desktop, the task is NOT complete.**

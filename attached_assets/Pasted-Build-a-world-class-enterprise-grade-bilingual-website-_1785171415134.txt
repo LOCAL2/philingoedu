@@ -1,0 +1,569 @@
+Build a world-class, enterprise-grade bilingual website for:
+
+PHILINGO
+Powered by Thai Study Abroad Consultant Co., Ltd.
+
+IMPORTANT:
+Do not ask me any questions.
+Make all design, UX, layout, and marketing decisions yourself using industry best practices.
+Generate the complete website with production-quality structure.
+
+========================
+LANGUAGE
+========================
+
+Default Language:
+🇹🇭 ภาษาไทย
+
+Secondary Language:
+🇬🇧 English
+
+Add a TH | EN switcher in the header.
+
+All content must exist in both languages.
+
+========================
+THEME
+========================
+
+Modern
+
+Premium
+
+Corporate
+
+Education
+
+International
+
+Minimal
+
+Friendly
+
+Luxury
+
+Inspired by
+
+Apple
+
+Stripe
+
+Canva
+
+Airbnb
+
+Notion
+
+Duolingo
+
+========================
+COLOR
+========================
+
+Primary
+Royal Blue
+
+Secondary
+Golden Yellow
+
+Accent
+Light Blue
+
+Background
+White
+
+Soft Gray
+
+========================
+HEADER
+========================
+
+Sticky Header
+
+Horizontal Navigation
+
+Left
+
+Company Logo
+
+Center
+
+หน้าแรก
+
+เกี่ยวกับเรา
+
+เรียนที่ฟิลิปปินส์
+
+หลักสูตร
+
+โรงเรียน
+
+โปรโมชั่น
+
+งานสัมมนา
+
+รีวิวนักเรียน
+
+บทความ
+
+FAQ
+
+ติดต่อเรา
+
+Right
+
+TH | EN
+
+สมัครเรียน
+
+ลงทะเบียนฟรี
+
+========================
+HOME
+========================
+
+Large Hero Slider
+
+Video Background Option
+
+Beautiful Headline
+
+Call To Action
+
+Statistics
+
+20+ Years Experience
+
+Partner Schools
+
+Student Reviews
+
+Latest Promotion
+
+Upcoming Seminar
+
+Latest Blog
+
+Gallery
+
+Featured Schools
+
+========================
+ABOUT
+========================
+
+Company Story
+
+Mission
+
+Vision
+
+Why Choose Us
+
+20 Years Timeline
+
+========================
+PROGRAMS
+========================
+
+General English
+
+IELTS
+
+TOEIC
+
+Business English
+
+Junior Camp
+
+Family Program
+
+Online English
+
+University Pathway
+
+Each program includes
+
+Description
+
+Duration
+
+Suitable For
+
+Tuition
+
+Accommodation
+
+Gallery
+
+Apply Button
+
+========================
+SCHOOLS
+========================
+
+Search Schools
+
+Filter Schools
+
+Compare Schools
+
+School Cards
+
+Location
+
+Photos
+
+Facilities
+
+Accommodation
+
+Programs
+
+Price
+
+Gallery
+
+========================
+PROMOTIONS
+========================
+
+Promotion Cards
+
+Countdown
+
+Register Now
+
+Limited Seats
+
+Special Gifts
+
+========================
+SEMINAR
+========================
+
+Create a professional seminar page.
+
+Include
+
+Hero Banner
+
+Countdown
+
+Agenda
+
+Guest Speakers
+
+Event Schedule
+
+Google Map
+
+Zoom Option
+
+Promotion
+
+Lucky Draw
+
+Gallery
+
+Remaining Seats
+
+Register Now
+
+========================
+ONLINE REGISTRATION
+========================
+
+Registration Form
+
+Full Name
+
+Nickname
+
+Phone
+
+LINE ID
+
+Email
+
+Province
+
+Age
+
+Education
+
+Interested Program
+
+Interested School
+
+Budget
+
+Preferred Start Date
+
+Questions
+
+Consent Checkbox
+
+Submit
+
+Thank You Page
+
+========================
+CONTACT
+========================
+
+Company Information
+
+Phone
+
+LINE Official
+
+Facebook
+
+Messenger
+
+TikTok
+
+Instagram
+
+YouTube
+
+Google Maps
+
+QR Code
+
+Email
+
+========================
+SOCIAL MEDIA
+========================
+
+Facebook
+
+TikTok
+
+Instagram
+
+YouTube
+
+LINE Official
+
+Messenger
+
+Display Follow Buttons
+
+Create TikTok Section
+
+Embed latest TikTok videos (placeholder if API unavailable)
+
+========================
+BLOG
+========================
+
+Study Abroad
+
+IELTS
+
+TOEIC
+
+Student Stories
+
+Visa Guide
+
+Travel
+
+Promotions
+
+========================
+REVIEWS
+========================
+
+Student Testimonials
+
+Google Reviews Placeholder
+
+Facebook Reviews Placeholder
+
+Video Reviews
+
+========================
+FAQ
+========================
+
+Generate 20+ questions.
+
+========================
+FOOTER
+========================
+
+Company Information
+
+Quick Links
+
+Contact
+
+Social Media
+
+Privacy Policy
+
+Terms
+
+Cookies
+
+========================
+FEATURES
+========================
+
+Responsive
+
+Sticky Header
+
+Mega Menu
+
+Hero Slider
+
+Gallery
+
+Lightbox
+
+Search
+
+Animations
+
+Hover Effects
+
+Back To Top
+
+Lazy Loading
+
+Cookie Consent
+
+Newsletter
+
+Dark Mode
+
+Accessibility
+
+SEO Ready
+
+========================
+FLOATING BUTTONS
+========================
+
+LINE
+
+Messenger
+
+Phone
+
+TikTok
+
+Register
+
+Back To Top
+
+========================
+SEO
+========================
+
+Meta Title
+
+Meta Description
+
+Schema.org
+
+JSON-LD
+
+Open Graph
+
+Twitter Card
+
+Sitemap
+
+Robots
+
+Canonical
+
+========================
+LEAD GENERATION
+========================
+
+Sticky CTA
+
+Register Now
+
+Apply Now
+
+LINE Consultation
+
+Messenger Chat
+
+Newsletter
+
+Free Consultation
+
+========================
+ADMIN DASHBOARD
+========================
+
+Manage Schools
+
+Manage Programs
+
+Manage Seminars
+
+Manage Promotions
+
+Manage Blog
+
+Manage Gallery
+
+Manage Reviews
+
+Manage Leads
+
+Export CSV
+
+Analytics Dashboard
+
+========================
+DESIGN
+========================
+
+Use professional illustrations and modern iconography.
+
+Use premium typography.
+
+Create beautiful cards.
+
+Use rounded corners.
+
+Soft shadows.
+
+Glass effects where appropriate.
+
+Large whitespace.
+
+Smooth animations.
+
+Every page must have strong call-to-action buttons.
+
+========================
+FINAL REQUIREMENTS
+========================
+
+Create a complete production-ready website.
+
+Do not stop midway.
+
+Do not generate placeholders unless absolutely necessary.
+
+Use reusable components.
+
+Keep a consistent design system.
+
+Ensure mobile-first responsiveness.
+
+Optimize for fast loading and SEO.
+
+The final website should be suitable for immediate deployment and should function as the official corporate website, seminar platform, marketing site, and lead generation system for Philingo.

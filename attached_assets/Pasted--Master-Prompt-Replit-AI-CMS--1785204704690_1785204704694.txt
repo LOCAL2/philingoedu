@@ -1,0 +1,914 @@
+ด้านล่างนี้คือ **Master Prompt** สำหรับ **Replit AI** เพื่อ "เพิ่มระบบหลังบ้าน (CMS)" ให้กับเว็บไซต์ **Philingo** ที่สร้างไว้แล้ว โดย **ห้ามเปลี่ยนดีไซน์หน้าเว็บไซต์** และเพิ่มเฉพาะระบบจัดการทั้งหมดให้ครบ
+
+---
+
+```text
+You have already built the PHILINGO bilingual website.
+
+IMPORTANT
+
+DO NOT redesign the frontend.
+
+DO NOT change any existing page layout.
+
+DO NOT recreate the website.
+
+Keep every page exactly as it is.
+
+ONLY build a complete CMS (Admin Dashboard) and connect every section to the backend.
+
+The CMS must be production-ready.
+
+====================================================
+TECHNOLOGY
+====================================================
+
+Frontend
+React + TypeScript + TailwindCSS
+
+Backend
+Node.js + Express
+
+Database
+Supabase PostgreSQL
+
+Authentication
+Supabase Auth
+
+Storage
+Supabase Storage
+
+Email
+SMTP + Resend
+
+Deployment
+Replit Deployments
+
+====================================================
+ADMIN LOGIN
+====================================================
+
+Secure Login
+
+Logout
+
+Forgot Password
+
+Reset Password
+
+Change Password
+
+Two Factor Authentication (optional)
+
+Role Permissions
+
+• Super Admin
+• Administrator
+• Marketing
+• Sales
+• Editor
+
+====================================================
+ADMIN DASHBOARD
+====================================================
+
+Dashboard Overview
+
+Show
+
+Website Visitors
+
+Active Users
+
+New Leads
+
+Quotation Requests
+
+Seminar Registrations
+
+Contact Messages
+
+Upcoming Events
+
+Schools
+
+Courses
+
+Countries
+
+Blog Posts
+
+Promotions
+
+Recent Activities
+
+Google Analytics Summary
+
+Charts
+
+====================================================
+HOME PAGE MANAGEMENT
+====================================================
+
+Everything editable.
+
+Hero Banner
+
+Hero Images
+
+Hero Video
+
+Headline
+
+Subheadline
+
+CTA Buttons
+
+Statistics
+
+Why Choose Philingo
+
+Featured Countries
+
+Featured Schools
+
+Student Reviews
+
+Partners
+
+Gallery
+
+Footer
+
+Announcement Bar
+
+Popup Banner
+
+====================================================
+COUNTRY MANAGEMENT
+====================================================
+
+Unlimited Countries
+
+Current
+
+Philippines
+
+Future
+
+Japan
+
+Australia
+
+Canada
+
+New Zealand
+
+United Kingdom
+
+Ireland
+
+USA
+
+Malaysia
+
+China
+
+Each Country
+
+Cover Image
+
+Description
+
+Programs
+
+Benefits
+
+Visa Information
+
+Cost of Living
+
+Gallery
+
+SEO
+
+Status
+
+====================================================
+SCHOOL MANAGEMENT
+====================================================
+
+Unlimited Schools
+
+Each School
+
+Logo
+
+School Name
+
+Country
+
+City
+
+Google Map
+
+Website
+
+Photos
+
+Videos
+
+Description
+
+Highlights
+
+Facilities
+
+Courses
+
+Course Fees
+
+Accommodation
+
+Nationality Mix
+
+Student Capacity
+
+Start Dates
+
+Promotions
+
+Gallery
+
+SEO
+
+Status
+
+CRUD
+
+Create
+
+Edit
+
+Delete
+
+Archive
+
+Duplicate
+
+====================================================
+COURSE MANAGEMENT
+====================================================
+
+Unlimited Courses
+
+General English
+
+Intensive English
+
+Business English
+
+IELTS
+
+TOEIC
+
+TOEFL
+
+Cambridge
+
+Family Program
+
+Junior Camp
+
+Online Course
+
+Each Course
+
+Description
+
+Duration
+
+Schedule
+
+Price
+
+Images
+
+Status
+
+====================================================
+SEMINAR MANAGEMENT
+====================================================
+
+Unlimited Seminars
+
+Create
+
+Edit
+
+Delete
+
+Duplicate
+
+Archive
+
+Each Seminar
+
+Banner
+
+Cover
+
+Title
+
+Subtitle
+
+Description
+
+Date
+
+Time
+
+Timezone
+
+Venue
+
+Google Meet
+
+Zoom
+
+Maximum Seats
+
+Remaining Seats
+
+Registration Deadline
+
+Countdown
+
+Speakers
+
+Agenda
+
+Partner Schools
+
+Promotions
+
+Gallery
+
+Status
+
+====================================================
+EVENT CALENDAR
+====================================================
+
+Monthly Calendar
+
+Weekly Calendar
+
+Upcoming Events
+
+Registration Deadline
+
+Export Calendar
+
+====================================================
+PROMOTION MANAGEMENT
+====================================================
+
+Unlimited Promotions
+
+Flash Sale
+
+Scholarship
+
+Discount
+
+Free Application Fee
+
+Airport Pickup
+
+Accommodation
+
+eSIM
+
+Insurance
+
+Coupon
+
+Countdown
+
+Banner
+
+Popup
+
+Status
+
+====================================================
+BLOG MANAGEMENT
+====================================================
+
+Create Blog
+
+Categories
+
+Tags
+
+Featured Image
+
+SEO
+
+Draft
+
+Publish
+
+Schedule
+
+Author
+
+====================================================
+STUDENT REVIEWS
+====================================================
+
+Reviews
+
+Videos
+
+Photos
+
+Ratings
+
+Featured Reviews
+
+====================================================
+FAQ MANAGEMENT
+====================================================
+
+Unlimited FAQ
+
+Categories
+
+Sorting
+
+====================================================
+MEDIA LIBRARY
+====================================================
+
+Upload
+
+Images
+
+Videos
+
+PDF
+
+Brochure
+
+Logo
+
+Delete
+
+Folders
+
+Search
+
+Automatic WebP
+
+====================================================
+DOWNLOAD CENTER
+====================================================
+
+Upload
+
+Brochure
+
+Price List
+
+Promotion PDF
+
+Visa Guide
+
+Students must submit Lead Form before downloading.
+
+====================================================
+REGISTRATION MANAGEMENT
+====================================================
+
+Store every registration.
+
+Fields
+
+Full Name
+
+Nickname
+
+Phone
+
+Email
+
+LINE ID
+
+Facebook
+
+Province
+
+Country
+
+Interested School
+
+Interested Course
+
+Budget
+
+Preferred Start Date
+
+Questions
+
+Notes
+
+Registration Status
+
+Export Excel
+
+Export CSV
+
+Export PDF
+
+====================================================
+CRM
+====================================================
+
+Lead Management
+
+Status
+
+New
+
+Contacted
+
+Interested
+
+Follow Up
+
+Registered
+
+Paid
+
+Completed
+
+Cancelled
+
+Assign Staff
+
+Reminder
+
+Internal Notes
+
+====================================================
+REQUEST QUOTATION
+====================================================
+
+Quotation Request Form
+
+Fields
+
+Full Name
+
+Phone
+
+Email
+
+LINE ID
+
+Interested Country
+
+Interested School
+
+Course
+
+Duration
+
+Budget
+
+Preferred Start
+
+Questions
+
+Every quotation request must
+
+Save into database
+
+Save into CRM
+
+Generate quotation request ID
+
+Send Email
+
+Send LINE Notification
+
+====================================================
+CONTACT MANAGEMENT
+====================================================
+
+Editable
+
+Company Name
+
+Company Registration Number
+
+Address
+
+Telephone
+
+Mobile
+
+Email
+
+Business Hours
+
+Google Maps
+
+====================================================
+SOCIAL MEDIA MANAGEMENT
+====================================================
+
+Editable
+
+LINE Official
+
+LINE Add Friend
+
+LINE Chat
+
+Facebook
+
+Facebook Messenger
+
+TikTok
+
+Instagram
+
+YouTube
+
+LinkedIn
+
+Threads
+
+WhatsApp
+
+Telegram
+
+Floating Buttons
+
+Enable / Disable
+
+====================================================
+LINE INTEGRATION
+====================================================
+
+Connect LINE Official Account.
+
+After
+
+Contact Form
+
+Quotation Request
+
+Seminar Registration
+
+Consultation Request
+
+Automatically
+
+Send LINE Message to Administrator.
+
+Include
+
+Customer Name
+
+Phone
+
+Email
+
+Interested School
+
+Course
+
+Seminar
+
+====================================================
+EMAIL SETTINGS
+====================================================
+
+SMTP
+
+Google Workspace
+
+Microsoft 365
+
+Zoho
+
+Resend
+
+Editable
+
+Sender Name
+
+Sender Email
+
+Admin Email
+
+Multiple Recipients
+
+====================================================
+CONTACT FORMS
+====================================================
+
+All forms
+
+Contact
+
+Consultation
+
+Quotation
+
+Seminar
+
+Newsletter
+
+Automatically
+
+Save Database
+
+Send Email
+
+Send LINE Notification
+
+Send Confirmation Email
+
+====================================================
+THANK YOU PAGE
+====================================================
+
+After submit
+
+Show Success Page
+
+Auto Redirect after 5 seconds
+
+Destination selectable
+
+LINE Official
+
+Messenger
+
+WhatsApp
+
+Website Home
+
+====================================================
+SEO MANAGEMENT
+====================================================
+
+Meta Title
+
+Meta Description
+
+Keywords
+
+Slug
+
+Canonical
+
+Schema.org
+
+Open Graph
+
+Twitter Card
+
+Robots
+
+XML Sitemap
+
+====================================================
+MENU MANAGEMENT
+====================================================
+
+Header Menu
+
+Footer Menu
+
+Mobile Menu
+
+Drag and Drop
+
+====================================================
+USER MANAGEMENT
+====================================================
+
+Create User
+
+Edit User
+
+Delete User
+
+Permissions
+
+====================================================
+ANALYTICS
+====================================================
+
+Google Analytics
+
+Google Search Console
+
+Google Tag Manager
+
+Meta Pixel
+
+TikTok Pixel
+
+Google Ads Conversion
+
+====================================================
+REPORTS
+====================================================
+
+Visitors
+
+Registrations
+
+Leads
+
+Quotation Requests
+
+Downloads
+
+Popular Schools
+
+Popular Courses
+
+Popular Countries
+
+Export
+
+Excel
+
+CSV
+
+PDF
+
+====================================================
+SETTINGS
+====================================================
+
+Website Name
+
+Logo
+
+Favicon
+
+Theme Colors
+
+Cookie Banner
+
+Maintenance Mode
+
+Announcement Bar
+
+Popup Banner
+
+====================================================
+SECURITY
+====================================================
+
+HTTPS
+
+Password Encryption
+
+Role Permission
+
+Activity Logs
+
+Login Logs
+
+Spam Protection
+
+Google reCAPTCHA
+
+Daily Backup
+
+====================================================
+FINAL REQUIREMENTS
+====================================================
+
+Keep the existing frontend exactly the same.
+
+Build a fully functional Admin CMS.
+
+Every text, image, button, section, seminar, school, country, promotion, course, review, FAQ, gallery, menu, SEO setting, contact information, social media link, email setting, and website configuration must be editable from the Admin Dashboard.
+
+Generate all database tables, relationships, CRUD operations, authentication, APIs, storage buckets, file upload system, and admin interface automatically.
+
+The system must be production-ready, secure, responsive, and deployable on Replit without additional coding.
+```
+
+**คำแนะนำเพิ่มเติม:** ก่อนให้ Replit AI ทำงาน ให้ Commit หรือสร้าง Snapshot ของโปรเจกต์ปัจจุบันไว้ก่อน เผื่อ AI แก้ไขผิดพลาดจะได้ย้อนกลับได้ง่าย โดยยังคงเว็บไซต์เดิมของคุณไว้เป็นสำเนาสำรอง.

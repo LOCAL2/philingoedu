@@ -1,0 +1,129 @@
+import express, { type Express } from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import cookieParser from "cookie-parser";
+import pinoHttp from "pino-http";
+import path from "path";
+import router from "./routes/index.js";
+import { logger } from "./lib/logger.js";
+
+const app: Express = express();
+
+app.set("trust proxy", 1);
+
+// Security headers
+app.use(helmet({
+  crossOriginEmbedderPolicy: false,
+  contentSecurityPolicy: false,
+}));
+
+// CORS
+const allowedOrigins = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["*"];
+app.use(cors({
+  origin: allowedOrigins.includes("*") ? "*" : allowedOrigins,
+  credentials: true,
+}));
+
+// Rate limiting
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 min
+  max: 20,
+  message: { error: "Too Many Requests", message: "Too many login attempts, try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+const formLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: "Too Many Requests", message: "Too many form submissions, try again later" },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api/auth", authLimiter);
+app.use("/api/contacts", formLimiter);
+app.use("/api/forms", formLimiter);
+
+// Logging
+app.use(
+  pinoHttp({
+    logger,
+    serializers: {
+      req(req) {
+        return { id: req.id, method: req.method, url: req.url?.split("?")[0] };
+      },
+      res(res) {
+        return { statusCode: res.statusCode };
+      },
+    },
+  }),
+);
+
+// Body parsing
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+app.use(cookieParser());
+
+// Robots.txt
+app.get("/robots.txt", (_req, res) => {
+  res.type("text/plain");
+  const siteUrl = process.env.SITE_URL || "";
+  res.send(`User-agent: *\nAllow: /\n${siteUrl ? `Sitemap: ${siteUrl}/sitemap.xml` : ""}`);
+});
+
+// Serve uploaded images from GCS (permanent storage — survives redeployments)
+app.get("/api/uploads/:filename", async (req, res, _next) => {
+  const filename = req.params.filename;
+  if (!filename || filename.includes('/') || filename.includes('..')) {
+    res.status(400).json({ error: 'Invalid filename' });
+    return;
+  }
+  try {
+    const { getImageFromGcs } = await import('./lib/gcsImages.js');
+    const result = await getImageFromGcs('uploads', filename);
+    if (!result) {
+      res.status(404).json({ error: 'Image not found' });
+      return;
+    }
+    res.set('Cache-Control', 'public, max-age=604800, immutable'); // 7 days
+    res.set('Content-Type', result.contentType);
+    if (result.size) res.set('Content-Length', String(result.size));
+    result.stream.pipe(res);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to retrieve image', message: String(err) });
+  }
+});
+
+// No-cache for all dynamic API responses (prevents mobile browsers / CDN from serving stale data)
+app.use("/api", (_req, res, next) => {
+  // Skip image routes — they set their own long-lived Cache-Control headers
+  if (!_req.path.startsWith("/uploads") && !_req.path.startsWith("/gallery/image/")) {
+    res.set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.set("Pragma", "no-cache");
+    res.set("Expires", "0");
+  }
+  next();
+});
+
+// API Routes
+app.use("/api", router);
+
+// ── Serve Static Frontends ────────────────────────────────────────────────────
+// Admin panel at /admin (built to artifacts/admin/dist/public)
+const adminDist = path.resolve(process.cwd(), "../../artifacts/admin/dist/public");
+app.use("/admin", express.static(adminDist));
+app.get("/admin/*path", (_req, res) => {
+  res.sendFile(path.join(adminDist, "index.html"));
+});
+
+// Main frontend (built to artifacts/philingo/dist/public)
+const philingoDist = path.resolve(process.cwd(), "../../artifacts/philingo/dist/public");
+app.use(express.static(philingoDist));
+app.get("*path", (_req, res) => {
+  res.sendFile(path.join(philingoDist, "index.html"));
+});
+
+export default app;

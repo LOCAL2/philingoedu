@@ -1,0 +1,45 @@
+[CRITICAL BUG FIX & SYSTEM RULE] 
+Fix Data Reverting/Disappearing Issue on Server Restart & Prevent Overwrites
+
+----------------------------------------------------------------------
+PROBLEM STATEMENT:
+Currently, when updates are made in the Admin panel (e.g., updating LINE contact URL, email, course/school details), the public website still displays old/fallback data. Furthermore, restarting the server or deploying new code causes the updated data to disappear or revert back to initial mock data.
+
+Please locate and fix the root causes using the step-by-step instructions below:
+
+----------------------------------------------------------------------
+STEP 1: STOP AUTOMATIC DB RESET & AUTO-SEEDING (DATA LOSS PREVENTION)
+----------------------------------------------------------------------
+1. Check `package.json`, `Dockerfile`, and `docker-compose.yml`:
+   - REMOVE any automatic seed commands (e.g., `npm run seed`, `prisma db seed`, `knex seed:run`) from startup/boot scripts (`scripts.start`, `entrypoint.sh`). Seeding must ONLY be run manually on initial setup.
+2. Check ORM Configurations (Prisma, TypeORM, Sequelize, Mongoose):
+   - REMOVE any destructive sync options such as `sync({ force: true })`, `dropSchema: true`, or `synchronize: true` in production/staging environments.
+   - Use non-destructive incremental migrations only (e.g., `prisma migrate deploy`).
+3. Verify DB Storage Volume:
+   - Ensure the database uses persistent storage (e.g., Docker Volume for Postgres/MySQL or an external managed database) so data survives container restarts.
+
+----------------------------------------------------------------------
+STEP 2: FIX FRONTEND LINE/EMAIL & DATA BINDING (OLD DATA DISPLAY ISSUE)
+----------------------------------------------------------------------
+1. Remove Hardcoded Fallbacks:
+   - Search the frontend codebase for old hardcoded LINE URLs/emails.
+   - Remove fallbacks like: `const lineUrl = course.line_cta_url || "https://line.me/ti/p/OLD_DEFAULT_LINK"`.
+   - Ensure the UI reads the updated string directly from the DB response.
+2. Fix API Data Source:
+   - Verify that the frontend fetches contact and course data directly from the dynamic Database API endpoint, NOT from a static `.env` file or hardcoded config file.
+
+----------------------------------------------------------------------
+STEP 3: IMPLEMENT CACHE REVALIDATION (NEXT.JS / FRAMEWORK CACHE)
+----------------------------------------------------------------------
+1. On Admin Update API (PATCH / POST / PUT):
+   - Trigger explicit Cache Revalidation upon successful database save (e.g., `revalidatePath('/schools/[slug]')`, `revalidateTag('school-details')`).
+2. Ensure the public website renders the newly revalidated data instantly without requiring a hard refresh or server reboot.
+
+----------------------------------------------------------------------
+STEP 4: VERIFICATION CHECKLIST (DEVELOPER MUST TEST)
+----------------------------------------------------------------------
+[ ] 1. Go to Admin -> Update LINE URL for a school/course -> Click Save.
+[ ] 2. Check Database -> Confirm the new LINE URL is stored in the database record.
+[ ] 3. Check Public Website -> Confirm the new LINE button opens the newly saved URL.
+[ ] 4. RESTART THE SERVER / RE-DEPLOY CONTAINER.
+[ ] 5. Check Public Website AGAIN -> Confirm the new LINE URL is STILL PRESENT and has NOT reverted to old data.

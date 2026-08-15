@@ -1,0 +1,627 @@
+คัดลอก Prompt ด้านล่างไปใช้กับ **Lovable, Replit AI หรือ Claude Code** ได้เลย เป็นคำสั่งสำหรับ "ออกแบบเว็บไซต์" ที่ให้ AI ตัดสินใจทุกอย่างเอง โดยเน้นบริษัทแนะแนวเรียนต่อต่างประเทศระดับพรีเมียม
+
+---
+
+```
+You are an award-winning Creative Director, UX/UI Designer, Branding Expert, Digital Marketing Strategist, SEO Specialist, and Senior Full Stack Developer.
+
+Design and build a world-class bilingual corporate website for:
+
+PHILINGO
+
+Powered by
+
+Thai Study Abroad Consultant Co., Ltd.
+
+IMPORTANT
+
+Do NOT ask me any questions.
+
+Make every design, UX, branding, and content decision yourself based on best practices for an international education company.
+
+Create a complete premium website ready for production.
+
+====================
+WEBSITE GOAL
+====================
+
+This website must:
+
+• Build trust
+• Increase student registrations
+• Generate qualified leads
+• Promote seminars
+• Promote partner schools
+• Increase LINE inquiries
+• Increase TikTok followers
+• Increase Facebook followers
+• Increase Messenger conversations
+• Encourage free consultations
+
+The website should feel like a premium international education company.
+
+====================
+LANGUAGE
+====================
+
+Default language
+
+🇹🇭 Thai
+
+Second language
+
+🇬🇧 English
+
+Every page must support both languages.
+
+Create a beautiful language switcher in the header.
+
+====================
+DESIGN STYLE
+====================
+
+Modern
+
+Premium
+
+Elegant
+
+Corporate
+
+Luxury
+
+Education
+
+International
+
+Clean
+
+Minimal
+
+High Conversion
+
+Inspired by
+
+Apple
+
+Stripe
+
+Canva
+
+Notion
+
+Airbnb
+
+Duolingo
+
+====================
+COLOR
+====================
+
+Primary
+
+Royal Blue
+
+Secondary
+
+Golden Yellow
+
+Accent
+
+Sky Blue
+
+Background
+
+White
+
+Soft Gray
+
+====================
+TYPOGRAPHY
+====================
+
+Thai
+
+Prompt
+
+Sarabun
+
+English
+
+Inter
+
+====================
+HEADER
+====================
+
+Sticky Header
+
+Horizontal Navigation
+
+Left
+
+Company Logo
+
+Center
+
+หน้าแรก
+
+เกี่ยวกับเรา
+
+เรียนที่ฟิลิปปินส์
+
+หลักสูตร
+
+โรงเรียน
+
+โปรโมชั่น
+
+งานสัมมนา
+
+รีวิวนักเรียน
+
+บทความ
+
+FAQ
+
+ติดต่อเรา
+
+Right
+
+TH | EN
+
+สมัครเรียน
+
+ลงทะเบียนฟรี
+
+====================
+HOME PAGE
+====================
+
+Large Hero Banner
+
+Background Video
+
+Strong Headline
+
+Call To Action
+
+About Company
+
+Why Choose Philingo
+
+20+ Years Experience
+
+Partner Schools
+
+Featured Courses
+
+Student Success
+
+Latest Promotions
+
+Upcoming Seminars
+
+Student Reviews
+
+Gallery
+
+Latest Articles
+
+FAQ Preview
+
+Contact
+
+====================
+ABOUT
+====================
+
+Company Story
+
+Mission
+
+Vision
+
+Core Values
+
+Company Timeline
+
+Management Team
+
+====================
+WHY STUDY IN THE PHILIPPINES
+====================
+
+Benefits
+
+One-on-One Classes
+
+Affordable Cost
+
+Fast English Improvement
+
+Student Life
+
+Cities
+
+Travel
+
+Safety
+
+Accommodation
+
+====================
+COURSES
+====================
+
+General English
+
+IELTS
+
+TOEIC
+
+Business English
+
+Junior Camp
+
+Family Program
+
+Online English
+
+University Pathway
+
+Each course includes
+
+Description
+
+Suitable For
+
+Duration
+
+Price Placeholder
+
+Accommodation
+
+Gallery
+
+Register Button
+
+====================
+PARTNER SCHOOLS
+====================
+
+Beautiful School Cards
+
+School Logo
+
+Campus Photos
+
+Facilities
+
+Programs
+
+Accommodation
+
+Location
+
+Gallery
+
+Student Reviews
+
+Apply Now
+
+Compare Schools
+
+Search Schools
+
+Filter Schools
+
+====================
+PROMOTIONS
+====================
+
+Beautiful Promotion Cards
+
+Countdown Timer
+
+Special Offers
+
+Limited Seats
+
+Register Now
+
+====================
+EVENTS & SEMINARS
+====================
+
+Professional Event Center
+
+Upcoming Events
+
+Previous Events
+
+Event Calendar
+
+Countdown
+
+Agenda
+
+Guest Speakers
+
+Venue
+
+Google Maps
+
+Zoom
+
+Promotion
+
+Lucky Draw
+
+Gallery
+
+Register Button
+
+====================
+ONLINE REGISTRATION
+====================
+
+Professional Registration Form
+
+Full Name
+
+Nickname
+
+Phone
+
+LINE ID
+
+Email
+
+Province
+
+Age
+
+Education
+
+Interested Course
+
+Interested School
+
+Budget
+
+Preferred Study Date
+
+Questions
+
+Consent Checkbox
+
+Submit
+
+After Submit
+
+Show Thank You Page
+
+====================
+REVIEWS
+====================
+
+Student Testimonials
+
+Video Reviews
+
+Success Stories
+
+Google Reviews Placeholder
+
+Facebook Reviews Placeholder
+
+====================
+BLOG
+====================
+
+Study Abroad
+
+English Tips
+
+IELTS
+
+TOEIC
+
+Visa
+
+Student Stories
+
+Travel
+
+Promotions
+
+====================
+FAQ
+====================
+
+Create at least 20 FAQs
+
+====================
+CONTACT
+====================
+
+Google Maps
+
+Company Address Placeholder
+
+Phone
+
+Email
+
+LINE Official
+
+Facebook
+
+Messenger
+
+TikTok
+
+Instagram
+
+YouTube
+
+QR Code
+
+====================
+SOCIAL MEDIA
+====================
+
+Create Follow Section
+
+Facebook
+
+TikTok
+
+Instagram
+
+YouTube
+
+LINE Official
+
+Messenger
+
+Embed TikTok videos
+
+Embed YouTube videos
+
+====================
+FLOATING BUTTONS
+====================
+
+LINE
+
+Messenger
+
+Phone
+
+TikTok
+
+Register Seminar
+
+Apply Now
+
+Back To Top
+
+====================
+FOOTER
+====================
+
+Company Logo
+
+Quick Links
+
+Services
+
+Courses
+
+Schools
+
+Seminars
+
+Contact
+
+Social Media
+
+Privacy Policy
+
+Terms
+
+Cookie Policy
+
+Copyright
+
+====================
+FEATURES
+====================
+
+Responsive
+
+Mobile First
+
+Sticky Header
+
+Mega Menu
+
+Hero Slider
+
+Gallery
+
+Lightbox
+
+Animation
+
+Scroll Effects
+
+Lazy Loading
+
+Search
+
+Dark Mode
+
+Newsletter
+
+Cookie Consent
+
+Accessibility
+
+SEO Ready
+
+====================
+SEO
+====================
+
+Meta Title
+
+Meta Description
+
+Schema
+
+OpenGraph
+
+Twitter Card
+
+Canonical
+
+Sitemap
+
+Robots.txt
+
+Fast Loading
+
+====================
+LEAD GENERATION
+====================
+
+Every page must include clear Call-To-Action buttons.
+
+Encourage visitors to
+
+• สมัครเรียน
+• ลงทะเบียนสัมมนา
+• ปรึกษาฟรีผ่าน LINE
+• ติดต่อ Messenger
+• โทรหาเจ้าหน้าที่
+• ติดตาม TikTok
+• ติดตาม Facebook
+• สมัครรับข่าวสาร
+
+====================
+FINAL REQUIREMENTS
+====================
+
+Design every page with premium UI/UX.
+
+Use modern illustrations, icons, animations and high-quality education-themed imagery.
+
+Create a visually stunning website that looks like a global education brand.
+
+The website should be beautiful, trustworthy, easy to navigate, optimized for SEO, mobile-first, and designed to maximize conversions.
+```
+
+**คำแนะนำเพิ่มเติม:** ถ้าคุณใช้ **Replit AI Agent** ให้แนบไฟล์โลโก้บริษัท, รูปโรงเรียน, รูปนักเรียน และโบรชัวร์ไปพร้อมกับ Prompt นี้ AI จะใช้รูปจริงของคุณแทนภาพตัวอย่าง ทำให้เว็บไซต์พร้อมใช้งานจริงตั้งแต่รอบแรกมากขึ้นครับ

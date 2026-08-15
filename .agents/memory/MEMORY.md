@@ -1,0 +1,7 @@
+- [Philingo project overview](philingo-overview.md) — Full CMS stack: philingo frontend (/), api-server (/api), admin panel (/admin); DB seeded with admin@philingo.com/Admin@2024!
+- [Project Rules](project-rules.md) — Governance rules (PROJECT_RULES_รวม.md): confirm before edit, one file at a time, no full-file regeneration, no maximum-scale=1 in viewport, mobile-first, locale files protected
+- [Philingo stability rules & fix registry](philingo-stability-rules.md) — Critical rules (no rebuild/reset) + full table of every bug fix confirmed present; run checklist before any change
+- [Admin named exports pattern](admin-exports.md) — Admin subagent uses named exports like `export function BannersPage()`, NOT `export default`; App.tsx imports `{ BannersPage }` etc.
+- [JWT_SECRET setup](jwt-secret.md) — JWT_SECRET set via setEnvVars (shared env); generated 96-char hex; never use requestSecrets for auto-generated keys
+- [Seed scripts](seed-scripts.md) — Run with `/home/runner/workspace/node_modules/.pnpm/node_modules/.bin/tsx artifacts/api-server/src/seed.ts`; seed-content.ts needs dotenv removed
+- [Anthropic AI integration](anthropic-integration.md) — Provisioned via setupReplitAIIntegrations; lib at lib/integrations-anthropic-ai; generate-description route live at POST /api/schools/:id/generate-description

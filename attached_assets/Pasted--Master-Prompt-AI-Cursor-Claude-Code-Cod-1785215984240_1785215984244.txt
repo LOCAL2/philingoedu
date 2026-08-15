@@ -1,0 +1,275 @@
+ถ้าคุณจะใช้เป็น **Master Prompt** สำหรับสั่ง AI ให้พัฒนาระบบเป็นรอบ ๆ (เช่น Cursor, Claude Code, Codex หรือ GPT) แนะนำให้เขียนแบบนี้เพื่อให้ AI เข้าใจขอบเขตงานชัดเจนและไม่ทำงานเกิน Phase
+
+# Master Development Prompt (Phase-by-Phase)
+
+พัฒนาระบบเว็บไซต์โดยแบ่งการทำงานออกเป็น 5 รอบ (Phase) อย่างชัดเจน โดยให้ดำเนินการเฉพาะงานของแต่ละ Phase เท่านั้น ห้ามข้ามไปทำงานของ Phase ถัดไปจนกว่าจะได้รับอนุมัติ
+
+ทุก Phase ต้อง
+
+* ใช้โครงสร้างโค้ดที่สะอาด (Clean Architecture)
+* รองรับการขยายระบบในอนาคต
+* แยก Frontend, Backend และ Database อย่างเป็นระบบ
+* เขียนโค้ดตาม Best Practices
+* มี Error Handling
+* มี Validation ทุกฟอร์ม
+* รองรับ Responsive Design
+* มี Comment อธิบายเฉพาะส่วนสำคัญ
+* ก่อนจบแต่ละ Phase ให้สรุปรายการไฟล์ที่สร้างหรือแก้ไข พร้อมอธิบายสิ่งที่ทำทั้งหมด
+
+---
+
+# Phase 1 : Database + Authentication + Admin Login
+
+วัตถุประสงค์
+
+สร้างโครงสร้างพื้นฐานของระบบทั้งหมด
+
+งานที่ต้องทำ
+
+* ออกแบบฐานข้อมูลทั้งหมด
+* สร้าง ER Diagram
+* สร้าง Database Schema
+* Migration
+* Seed Data
+* สร้างระบบ Authentication
+* Login
+* Logout
+* Forgot Password
+* Reset Password
+* Role Management
+* Admin
+* User
+* Middleware
+* Session / JWT
+* Password Hash
+* Protected Route
+* Admin Login Page
+* Dashboard Layout (โครงสร้างเปล่า)
+* Environment Configuration
+* API Structure
+
+เมื่อเสร็จแล้วให้สรุป
+
+* Database Structure
+* API List
+* Folder Structure
+* วิธีติดตั้ง
+
+จากนั้นหยุดรอคำสั่ง
+
+---
+
+# Phase 2 : Dashboard + CRUD ทั้งหมด
+
+สร้างระบบหลังบ้านทั้งหมด
+
+ประกอบด้วย
+
+Dashboard
+
+* Statistics
+* Recent Activity
+* Charts
+
+CRUD
+
+* Banner
+* Promotion
+* Country
+* School
+* Course
+* Category
+* Article / Blog
+* FAQ
+* Testimonials
+* Partner
+* Gallery
+* Team
+* Student Review
+* Contact Information
+* SEO Settings
+* User Management
+* Role Management
+
+ทุก Module ต้องมี
+
+* Create
+* Read
+* Update
+* Delete
+* Search
+* Filter
+* Pagination
+* Status
+* Soft Delete
+* Image Upload
+* Validation
+
+เมื่อเสร็จให้สรุปทุก Module แล้วหยุดรอคำสั่ง
+
+---
+
+# Phase 3 : เชื่อมเว็บไซต์เดิมกับฐานข้อมูล
+
+นำเว็บไซต์ Frontend เดิมมาเชื่อมกับ Backend
+
+เชื่อมข้อมูลทั้งหมด ได้แก่
+
+* Home
+* About
+* Countries
+* Schools
+* Courses
+* Promotions
+* Blog
+* News
+* Gallery
+* Contact
+* FAQ
+
+ปรับทุกหน้าให้ดึงข้อมูลจาก Database
+
+เพิ่ม
+
+* Dynamic Routing
+* API Integration
+* Loading State
+* Error State
+* Image Optimization
+* Cache
+
+เมื่อเสร็จให้สรุปหน้าเว็บทั้งหมดที่เชื่อมสำเร็จ
+
+แล้วหยุดรอคำสั่ง
+
+---
+
+# Phase 4 : Integration
+
+เชื่อมระบบภายนอกทั้งหมด
+
+ประกอบด้วย
+
+LINE
+
+* LINE OA
+* LINE Notify (หากใช้งาน)
+* LINE Messaging API
+* Webhook
+
+Email
+
+* SMTP
+* Auto Reply
+* Admin Notification
+
+Forms
+
+* Contact Form
+* Apply Now
+* Study Consultation
+* Request Quotation
+* Scholarship Form
+
+Workflow
+
+* บันทึกข้อมูลลง Database
+* ส่ง Email
+* แจ้ง LINE
+* อัปเดต Dashboard
+
+สร้างระบบ Tracking
+
+* Lead Source
+* UTM
+* Campaign
+
+เมื่อเสร็จให้สรุป Workflow ทั้งหมด
+
+แล้วหยุดรอคำสั่ง
+
+---
+
+# Phase 5 : SEO + Analytics + Security + Backup + Testing
+
+เพิ่มระบบ Production
+
+SEO
+
+* Meta Tags
+* Open Graph
+* Twitter Card
+* Structured Data
+* Robots.txt
+* Sitemap.xml
+* Canonical URL
+
+Analytics
+
+* Google Analytics 4
+* Google Tag Manager
+* Meta Pixel
+* Conversion Tracking
+* Event Tracking
+
+Security
+
+* CSRF Protection
+* XSS Protection
+* SQL Injection Protection
+* Rate Limiting
+* Security Headers
+* HTTPS Enforcement
+* Audit Log
+
+Backup
+
+* Database Backup
+* File Backup
+* Restore Guide
+
+Performance
+
+* Lazy Load
+* Image Optimization
+* Code Splitting
+* Caching
+* Compression
+
+Testing
+
+* Unit Test
+* API Test
+* Integration Test
+* End-to-End Test
+* Performance Test
+
+Deployment
+
+* Production Build
+* Environment Variables
+* Deployment Guide
+* Maintenance Guide
+
+Documentation
+
+* System Manual
+* API Documentation
+* Database Documentation
+* Admin Manual
+
+เมื่อทุกอย่างเสร็จ
+
+ให้ตรวจสอบทั้งระบบอีกครั้ง
+
+* ตรวจสอบ Error
+* ตรวจสอบ Performance
+* ตรวจสอบ Security
+* ตรวจสอบ Responsive
+* ตรวจสอบ SEO
+* ตรวจสอบ API
+* ตรวจสอบ Database
+
+จากนั้นจัดทำรายงานสรุประบบทั้งหมด พร้อม Checklist ความพร้อมก่อนขึ้น Production
+
+คำสั่งนี้เหมาะสำหรับใช้เป็น Master Prompt เพื่อให้ AI ทำงานเป็นเฟสอย่างเป็นระบบ ลดการทำงานข้ามขั้น และทำให้สามารถตรวจสอบคุณภาพของแต่ละรอบก่อนเริ่มเฟสถัดไปได้।

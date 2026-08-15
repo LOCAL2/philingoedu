@@ -1,0 +1,175 @@
+Fix Mobile Responsive Issues – School Detail Pages
+
+Please perform a complete audit and fix all mobile responsive issues on the school detail pages of the website.
+
+Currently, when viewing the website on a mobile device, several sections are either cut off, collapsed incorrectly, or cannot be interacted with.
+
+The goal is to ensure that all information is fully visible and accessible on desktop, tablet, and especially mobile devices.
+
+Issues to Fix
+1. Accommodation Section
+Display all room types.
+Display all room photos.
+Display all room descriptions.
+Display room prices correctly.
+Ensure the section does not cut off after the first few items.
+Users should be able to scroll through all accommodation information.
+2. Facilities Section
+
+Currently, only part of the facilities are shown.
+
+Please:
+
+Display every facility stored in the database.
+Display all facility icons/images.
+Show the complete facility description.
+Ensure nothing is hidden on mobile.
+3. Image Gallery
+
+Users cannot view all images on mobile.
+
+Please:
+
+Make every image clickable.
+Open images in a full-screen lightbox/gallery.
+Support swipe left/right on mobile.
+Ensure no images are hidden because of CSS overflow.
+4. Tabs / Accordion
+
+If Accommodation, Facilities, Courses or Gallery use Tabs or Accordions,
+
+Please ensure:
+
+Every tab opens correctly.
+Every accordion expands correctly.
+No JavaScript errors.
+Content is never hidden behind fixed heights.
+5. CSS Issues
+
+Search the entire project for:
+
+overflow:hidden
+
+max-height
+
+height
+
+display:none
+
+hidden
+
+line-clamp
+
+truncate
+
+
+Remove any CSS that causes mobile content to be clipped.
+
+Use
+
+height:auto;
+
+overflow:visible;
+
+
+where appropriate.
+
+6. Responsive Layout
+
+Make every school page responsive.
+
+Support:
+
+320px
+360px
+375px
+390px
+414px
+430px
+Tablet
+Desktop
+
+No horizontal scrolling.
+
+7. Long Content
+
+Some schools have many:
+
+Room Types
+Facilities
+Course Packages
+Photos
+
+Do NOT limit the number shown.
+
+Render all database records.
+
+Never truncate content.
+
+8. Database Rendering
+
+Verify that every record stored in the database is rendered.
+
+Do not use:
+
+slice()
+
+limit()
+
+take()
+
+first()
+
+
+unless used for pagination.
+
+If pagination exists, provide a "View More" button.
+
+9. Mobile Testing
+
+Test every school page on:
+
+iPhone SE
+iPhone 13
+iPhone 15 Pro Max
+Samsung Galaxy S24
+Google Pixel
+
+Confirm:
+
+Every section opens.
+Every image loads.
+Every room is visible.
+Every facility is visible.
+Every course is visible.
+Every button works.
+10. Performance
+
+Lazy-load images correctly.
+
+Do not lazy-load text.
+
+Preload the first image.
+
+11. Final Verification
+
+Audit every school detail page.
+
+Compare:
+
+Desktop vs Mobile
+
+There should be 100% identical content.
+
+Mobile must never hide or omit any information shown on desktop.
+
+Deliverables
+Fix all responsive issues.
+Fix all CSS issues.
+Fix all JavaScript issues.
+Ensure all database content is displayed.
+Test on real mobile layouts.
+Commit all changes.
+Provide a summary of every issue fixed.
+
+Do not stop until every school page displays all content correctly on mobile devices.

@@ -1,0 +1,217 @@
+CRITICAL PROJECT STABILITY RULES
+
+Read and analyze the entire existing project before making any changes.
+
+This is an existing production project.
+
+DO NOT rebuild.
+DO NOT regenerate.
+DO NOT recreate.
+DO NOT overwrite working code.
+DO NOT reset database.
+DO NOT reset configuration.
+DO NOT create a new project structure.
+
+==================================================
+PROJECT PRESERVATION RULES
+==================================================
+
+1. Preserve all existing functionality.
+
+2. Preserve all previous bug fixes.
+
+3. Preserve all existing pages.
+
+4. Preserve all API endpoints.
+
+5. Preserve all database tables.
+
+6. Preserve all admin accounts.
+
+7. Preserve all settings.
+
+8. Preserve all uploaded files.
+
+9. Preserve all SEO settings.
+
+10. Preserve all existing integrations.
+
+Never replace working code with generated code.
+
+Always patch existing code only.
+
+==================================================
+THAI LANGUAGE REQUIREMENTS
+==================================================
+
+This website's primary language is Thai.
+
+Must permanently support:
+
+- Thai language
+- English language
+- UTF-8 encoding
+- Thai search
+- Thai forms
+- Thai database content
+- Microsoft Edge Read Aloud
+- Google Translate compatibility
+
+Required settings:
+
+<meta charset="UTF-8">
+
+<html lang="th">
+
+Database charset:
+utf8mb4
+
+Database collation:
+utf8mb4_unicode_ci
+
+Do not remove these settings.
+
+Never convert Thai text to invalid encoding.
+
+==================================================
+REGRESSION PROTECTION
+==================================================
+
+Before changing anything:
+
+1. Scan existing code.
+2. Identify dependencies.
+3. Identify existing fixes.
+4. Preserve all previous fixes.
+
+After every modification:
+
+Run regression testing for:
+
+- Login
+- Admin Login
+- Dashboard
+- Forms
+- Contact Form
+- Registration Form
+- Quotation Form
+- Email
+- LINE Integration
+- Database CRUD
+- Search
+- SEO
+- Thai Language
+- Mobile Responsive
+
+Any previous working feature must remain working.
+
+==================================================
+DATABASE RULES
+==================================================
+
+Never:
+
+- Drop tables
+- Recreate tables
+- Delete records
+- Reset users
+- Reset settings
+- Reset migrations
+
+Use migration only when necessary.
+
+Preserve all data.
+
+==================================================
+FRONTEND RULES
+==================================================
+
+Do not rewrite pages.
+
+Do not regenerate components.
+
+Modify only requested sections.
+
+Reuse existing components.
+
+Reuse existing layouts.
+
+Reuse existing API calls.
+
+==================================================
+BACKEND RULES
+==================================================
+
+Do not rewrite backend architecture.
+
+Do not rename APIs unless explicitly requested.
+
+Do not change database schema unless required.
+
+Maintain backward compatibility.
+
+==================================================
+PERFORMANCE RULES
+==================================================
+
+Check:
+
+- Broken links
+- Duplicate API calls
+- Console errors
+- Encoding issues
+- Memory leaks
+- Slow queries
+- Unused components
+
+Optimize without breaking functionality.
+
+==================================================
+SEO RULES
+==================================================
+
+Preserve:
+
+- Meta Tags
+- Open Graph
+- Structured Data
+- Sitemap
+- Robots.txt
+- Canonical URLs
+
+Do not remove existing SEO settings.
+
+==================================================
+SAVE RULES
+==================================================
+
+Before saving:
+
+1. Run full project validation.
+2. Run regression tests.
+3. Verify Thai language rendering.
+4. Verify UTF-8 encoding.
+5. Verify Microsoft Read Aloud compatibility.
+6. Verify database connectivity.
+7. Verify all existing pages still work.
+
+==================================================
+CHANGE REPORT
+==================================================
+
+After every task provide:
+
+1. Files modified
+2. Functions modified
+3. Database changes
+4. API changes
+5. New features added
+6. Existing features preserved
+7. Regression test results
+
+Only then save changes.
+
+Never rebuild the project.
+Never regenerate working code.
+Always preserve previous fixes.
+Always modify only requested components.

@@ -1,0 +1,154 @@
+URGENT: Contact Information Saved in Admin Panel Is Not Reflected on the Public Website
+
+I updated the contact information in the Admin Panel and clicked Save successfully.
+
+The new values are:
+
+Email
+
+philingoedu@gmail.com
+
+LINE ID
+
+@philingo
+
+However, the public website is still displaying the old email address and old LINE ID.
+
+This should never happen.
+
+Please investigate and fix the issue.
+Expected Behavior
+
+The public website must always display the latest contact information stored in the Admin Panel.
+
+There should be only ONE source of truth for:
+
+Email
+LINE ID
+Phone Number
+Website
+Social Media Links
+Investigation Checklist
+1. Verify Admin Save
+
+Confirm that the Admin Panel is correctly saving:
+
+Email:
+philingoedu@gmail.com
+
+LINE ID:
+@philingo
+
+into the database.
+
+2. Check Database
+
+Verify the database contains the latest values.
+
+If the database contains the correct values, continue investigating why the frontend is not using them.
+
+3. Search the Entire Project
+
+Search for every occurrence of:
+
+gmail
+
+line
+
+@thaistudyabroad
+
+philingoedu@gmail.com
+
+@philingo
+
+Locate every hardcoded contact value.
+
+Replace all hardcoded values with dynamic values loaded from the Admin Panel.
+
+4. Check Frontend Components
+
+Inspect all components that display:
+
+Footer
+Contact Section
+Header
+Floating Contact Buttons
+Contact Page
+Registration Page
+Event Page
+
+Ensure every component loads data from the same settings table/API.
+
+5. Check API
+
+Verify the frontend is requesting the latest contact settings.
+
+Confirm the API response contains:
+
+Email:
+
+philingoedu@gmail.com
+
+LINE:
+
+@philingo
+6. Remove Duplicate Configuration
+
+If there are multiple configuration files, such as:
+
+config.ts
+constants.ts
+settings.json
+env variables
+defaultSettings
+
+remove duplicate contact information.
+
+The Admin Panel must be the only editable source.
+
+7. Clear Cache
+
+Clear:
+
+Browser Cache
+API Cache
+Build Cache
+Service Worker Cache (if any)
+8. Rebuild Production
+
+Deploy a fresh production build.
+
+Do not reuse cached configuration.
+
+9. Final Verification
+
+Confirm that the following values appear consistently across the entire website:
+
+Email:
+
+philingoedu@gmail.com
+
+LINE:
+
+@philingo
+
+These values must be identical on:
+
+Homepage
+Footer
+Contact Page
+Event Pages
+Floating Buttons
+Registration Forms
+Mobile Version
+Desktop Version
+Deliverables
+
+Provide:
+
+The root cause.
+The files that were modified.
+Confirmation that all contact information is now dynamically loaded from the Admin Panel.
+Confirm there are no hardcoded contact details remaining anywhere in the project.
+
+Do not close this task until every page on the public website displays the updated Email and LINE ID exactly as saved in the Admin Panel.

@@ -1,0 +1,36 @@
+คุณคือ Senior Full-Stack Developer และ Technical SEO Specialist โปรดพัฒนาระบบโครงสร้างเว็บไซต์ทั้งหมดให้รองรับ "Advanced SEO" และ "Google AI Friendly (SGE/Rich Results)" โดยมีรายละเอียดการทำงานดังนี้:
+
+==================================================
+1. สร้าง Global SEO Component (ระบบจัดการ Meta Tags อัตโนมัติ)
+==================================================
+- สร้าง Reusable Component (เช่น `<SeoHead />` หรือใช้ `react-helmet-async` / `next/head` ตามสแต็กที่ใช้) เพื่อจัดการ Meta Tags ทุกหน้า
+- รองรับการตั้งค่า Default SEO สำหรับหน้า Landing Page (Title, Description, Keywords, Open Graph, Twitter Card)
+- **Auto-Generate Meta:** หากหน้าบทความ/รีวิวไม่ได้ระบุ Meta Description ให้ระบบดึงข้อความ 160 ตัวอักษรแรกของเนื้อหามาใส่เป็น Meta Description อัตโนมัติ
+- เพิ่ม Tag `<link rel="canonical" href="..." />` อัตโนมัติเพื่อป้องกันปัญหา Duplicate Content
+
+==================================================
+2. โครงสร้าง Google AI Friendly & Schema Markup (JSON-LD)
+==================================================
+โปรดฝัง Structured Data (JSON-LD) ลงในแท็ก `<head>` เพื่อให้ Google AI และ SGE (Search Generative Experience) เข้าใจเนื้อหาได้ลึกซึ้ง:
+- **หน้าบทความ / รีวิวสถาบัน:** ฝัง `Article` Schema และ `Review` Schema (ระบุ Author, Published Date, Rating Stars)
+- **หน้า Landing Page / หน้าแรก:** ฝัง `Organization` Schema และ `WebSite` Schema
+- **ระบบ Breadcrumbs:** สร้างหน้าต่าง Breadcrumbs Navigation (เช่น หน้าแรก > สถาบัน > CIA) และฝัง `BreadcrumbList` Schema ทุกหน้า
+- **หน้า FAQ (คำถามที่พบบ่อย):** หากมีส่วน FAQ ให้ฝัง `FAQPage` Schema เพื่อให้ Google ดึงไปแสดงผลเป็น Rich Snippets ได้ทันที
+
+==================================================
+3. Semantic HTML & Image Optimization (โครงสร้างโค้ดที่บอทชอบ)
+==================================================
+- ปรับโครงสร้าง HTML ให้ถูกต้องตามหลัก Semantic: ใช้แท็ก `<header>`, `<main>`, `<article>`, `<section>`, `<footer>` ให้ชัดเจน
+- **Heading Tags:** ตรวจสอบให้แน่ใจว่าทุกหน้ามี `<h1>` เพียงแค่ 1 แท็กเท่านั้น (เป็นชื่อสถาบันหรือหัวข้อบทความ) และลำดับเนื้อหาย่อยด้วย `<h2>`, `<h3>` อย่างถูกต้อง
+- **Auto Image Alt-Text:** รูปภาพทุกรูป (โดยเฉพาะรูปหน้าปก, รูปแกลเลอรี) ต้องมี attribute `alt` เสมอ หากไม่มีให้ดึงชื่อสถาบัน หรือ Title ของบทความมาใส่เป็น fallback อัตโนมัติ
+
+==================================================
+4. Sitemap.xml & Robots.txt อัตโนมัติ
+==================================================
+- สร้างไฟล์ `robots.txt` ที่อนุญาตให้ Search Engine เข้าถึงหน้าเว็บทั้งหมดได้ (Allow: /)
+- หากเป็นไปได้ ให้สร้างระบบ Auto-generate `sitemap.xml` ที่จะอัปเดตลิงก์หน้าบทความ/สถาบันใหม่ๆ อัตโนมัติ เพื่อให้ Google Index หน้าเว็บได้ทันที
+
+==================================================
+5. Dynamic URL Routing
+==================================================
+- ตรวจสอบ URL ของหน้าบทความและหน้ารายละเอียดสถาบัน ต้องเป็น "SEO Friendly URL" หรือ Slug ที่อ่านรู้เรื่อง (เช่น `/schools/cia-cebu` หรือ `/articles/study-in-philippines`) หลีกเลี่ยงการใช้ ID ที่เป็นตัวเลขมั่วๆ บน URL

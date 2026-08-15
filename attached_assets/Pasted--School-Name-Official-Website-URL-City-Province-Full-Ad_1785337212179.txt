@@ -1,0 +1,61 @@
+ห้สร้างข้อมูลดังนี้
+
+- School Name
+- Official Website URL
+- City
+- Province
+- Full Address
+- Google Maps Link
+- Established Year
+- School Type
+- Campus Images URL
+- School Logo URL
+
+เริ่มจากรายชื่อโรงเรียนต่อไปนี้
+
+1. CPILS - https://www.cpils.com
+2. CIA (Cebu International Academy) - https://www.cebucia.com
+3. EV Academy - https://www.evacademy.com
+4. Philinter Academy - https://philinter.com
+5. SMEAG Global Education - https://smeag.com
+6. English Fella - https://englishfella.com
+7. Cebu Pelis Institute (CPI) - https://www.cebucpi.com
+8. CELLA English Academy - https://www.cellaenglish.com
+9. CG Academy - https://www.cgesl.com
+10. IMS Academy - https://imsacademy.net
+11. QQ English - https://qqenglish.com
+12. GLC English Academy - https://glcenglish.com
+13. I.BREEZE - https://cebuibreeze.com
+14. Winning English Academy - https://winningenglishschool.com
+15. Genius English - https://studyenglishgenius.com
+16. 3D Academy - https://3d-universal.com
+17. IDEA English - https://ideaenglish.net
+18. BTES - https://btes.ph
+19. PINES International Academy - https://pinesacademy.com
+20. BECI Academy - https://beciedu.com
+21. MONOL - https://monol.edu.ph
+22. HELP English Academy - https://helpenglish.org
+23. JIC Academy - https://baguiojic.com
+24. A&J Academy - https://anjacademy.com
+25. WALES English Academy - https://walesacademy.com
+26. CNS Academy - https://cnsenglish.com
+27. CIP English Academy - https://cipenglish.net
+28. EG Academy - https://egesl.com
+29. HANA Academy - https://clarkhana.com
+30. WE Academy - https://clarkweacademy.com
+31. GS Academy - https://gsnels.com
+32. MK Education - https://mk-edu.com
+33. WESLI - https://wesli.com.ph
+34. E-Room Language Center - https://e-roominc.com
+35. LSLC Language Skills Institute - https://lslc.edu.ph
+36. Enderun Language Center - https://www.enderuncolleges.com
+
+Requirements
+
+- Crawl only official websites.
+- Ignore third-party agency websites.
+- Store all data in a database.
+- Avoid duplicate schools.
+- Make every school accessible via slug.
+- Generate SEO-friendly slug automatically.
+- Ready for future CMS integration.

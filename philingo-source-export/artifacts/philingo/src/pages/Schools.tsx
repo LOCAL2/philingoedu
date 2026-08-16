@@ -215,7 +215,7 @@ export default function Schools() {
                   }`}
                 >
                   <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
-                    <img src={CITY_PHOTO[school.city] ?? cebuImg} alt={school.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                    <img src={school.photo || CITY_PHOTO[school.city] || cebuImg} alt={school.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
                       <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> {school.rating}

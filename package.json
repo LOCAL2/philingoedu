@@ -3,21 +3,20 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "pnpm -r --parallel --filter \"./artifacts/**\" --filter \"!@workspace/mockup-sandbox\" --if-present run dev",
-    "dev:api": "pnpm --filter @workspace/api-server run dev",
-    "dev:web": "pnpm --filter @workspace/philingo run dev",
-    "dev:admin": "pnpm --filter @workspace/admin run dev",
-    "build": "pnpm run typecheck && pnpm -r --if-present run build",
-    "build:prod": "pnpm --filter @workspace/philingo run build && pnpm --filter @workspace/admin run build && pnpm --filter @workspace/api-server run build",
+    "dev": "bun run --filter \"@workspace/api-server\" --filter \"@workspace/philingo\" --filter \"@workspace/admin\" dev",
+    "dev:api": "bun run --filter @workspace/api-server dev",
+    "dev:web": "bun run --filter @workspace/philingo dev",
+    "dev:admin": "bun run --filter @workspace/admin dev",
+    "build": "bun run typecheck && bun --if-present run build",
+    "build:prod": "bun run --filter @workspace/philingo build && bun run --filter @workspace/admin build && bun run --filter @workspace/api-server build",
     "start": "node --env-file=artifacts/api-server/.env --enable-source-maps artifacts/api-server/dist/index.mjs",
     "typecheck:libs": "tsc --build",
-    "typecheck": "pnpm run typecheck:libs && pnpm -r --filter \"./artifacts/**\" --filter \"./scripts\" --if-present run typecheck"
+    "typecheck": "bun run typecheck:libs && bun --filter \"@workspace/*\" --if-present run typecheck"
   },
   "private": true,
-  "dependencies": {
-    "@replit/connectors-sdk": "^0.4.1"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "playwright": "^1.62.1",
     "prettier": "^3.9.5",
     "typescript": "~5.9.3"
   },
@@ -35,9 +34,6 @@
       "scripts"
     ],
     "catalog": {
-      "@replit/vite-plugin-cartographer": "^0.5.21",
-      "@replit/vite-plugin-dev-banner": "^0.1.1",
-      "@replit/vite-plugin-runtime-error-modal": "^0.0.6",
       "@tailwindcss/vite": "^4.1.14",
       "@tanstack/react-query": "^5.90.21",
       "@types/node": "^25.3.3",

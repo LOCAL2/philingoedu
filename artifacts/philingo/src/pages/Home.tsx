@@ -278,7 +278,7 @@ export default function Home() {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-3 pt-2 lg:pt-4">
-                <Link href="/seminars" className="inline-flex justify-center items-center gap-2 bg-[#FFFF66] hover:bg-yellow-300 text-gray-900 px-6 lg:px-8 py-3.5 lg:py-4 rounded-xl font-bold text-base lg:text-lg transition-all hover:scale-105 hover:shadow-xl shadow-yellow-400/30 shadow-lg">
+                <Link href="/register" className="inline-flex justify-center items-center gap-2 bg-[#FFFF66] hover:bg-yellow-300 text-gray-900 px-6 lg:px-8 py-3.5 lg:py-4 rounded-xl font-bold text-base lg:text-lg transition-all hover:scale-105 hover:shadow-xl shadow-yellow-400/30 shadow-lg">
                   {t('common.apply_now')} <ArrowRight className="w-5 h-5" />
                 </Link>
                 <Link href="/contact" className="inline-flex justify-center items-center gap-2 bg-white/15 backdrop-blur-md border-2 border-white/60 text-white hover:bg-white/25 px-6 lg:px-8 py-3.5 lg:py-4 rounded-xl font-semibold text-base lg:text-lg transition-all">

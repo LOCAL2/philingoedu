@@ -334,6 +334,19 @@ export function FormsPage() {
               <div><p className="text-gray-500 text-xs mb-1">โทรศัพท์</p><p>{viewForm.phone ?? '-'}</p></div>
               <div><p className="text-gray-500 text-xs mb-1">โรงเรียนที่สนใจ</p><p>{viewForm.schoolInterest ?? '-'}</p></div>
               <div><p className="text-gray-500 text-xs mb-1">วันที่ส่ง</p><p>{formatDateTime(viewForm.createdAt)}</p></div>
+              {(() => {
+                const lineIdMatch = viewForm.message?.match(/LINE ID:\s*([^\n]+)/);
+                const lineId = lineIdMatch?.[1]?.trim();
+                return lineId ? <div><p className="text-gray-500 text-xs mb-1">LINE ID</p><p className="font-semibold text-green-600 dark:text-green-400">{lineId}</p></div> : null;
+              })()}
+              {viewForm.message && (
+                <div className="col-span-2">
+                  <p className="text-gray-500 text-xs mb-1">ข้อความ / รายละเอียด</p>
+                  <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 whitespace-pre-line text-xs font-mono">
+                    {viewForm.message}
+                  </div>
+                </div>
+              )}
             </div>
             {viewForm.data && Object.keys(viewForm.data).length > 0 && (
               <div>
@@ -382,8 +395,27 @@ export function FormsPage() {
               <div><p className="text-gray-500 text-xs mb-1">จำนวนผู้เข้าร่วม</p><p>{viewSeminar.numParticipants ?? '1'} คน</p></div>
               <div><p className="text-gray-500 text-xs mb-1">โรงเรียนที่สนใจ</p><p>{viewSeminar.schoolInterest ?? '-'}</p></div>
               <div><p className="text-gray-500 text-xs mb-1">หลักสูตร</p><p>{viewSeminar.programInterest ?? '-'}</p></div>
+              {(() => {
+                const lineIdMatch = viewSeminar.specialRequests?.match(/LINE ID:\s*([^|]+)/);
+                const lineId = lineIdMatch?.[1]?.trim();
+                return lineId ? <div><p className="text-gray-500 text-xs mb-1">LINE ID</p><p className="font-semibold text-green-600 dark:text-green-400">{lineId}</p></div> : null;
+              })()}
               {viewSeminar.specialRequests && (
-                <div className="col-span-2"><p className="text-gray-500 text-xs mb-1">ความต้องการพิเศษ</p><p>{viewSeminar.specialRequests}</p></div>
+                <div className="col-span-2">
+                  <p className="text-gray-500 text-xs mb-1">ความต้องการพิเศษ</p>
+                  <p>
+                    {(() => {
+                      const reqs = viewSeminar.specialRequests;
+                      if (reqs.includes('LINE ID:')) {
+                        // Strip out LINE ID prefix and separator for clean display
+                        const split = reqs.split('|');
+                        const filtered = split.filter(s => !s.trim().startsWith('LINE ID:'));
+                        return filtered.join('|').trim();
+                      }
+                      return reqs;
+                    })()}
+                  </p>
+                </div>
               )}
               <div><p className="text-gray-500 text-xs mb-1">วันที่ลงทะเบียน</p><p>{formatDateTime(viewSeminar.createdAt)}</p></div>
               {viewSeminar.utmSource && (

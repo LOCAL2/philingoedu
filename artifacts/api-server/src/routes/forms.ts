@@ -227,9 +227,13 @@ router.post('/seminar', async (req, res) => {
       return;
     }
     const safeEmail = email?.trim() || '';
+    const finalSpecialRequests = lineId 
+      ? `LINE ID: ${lineId}${specialRequests ? ` | ${specialRequests}` : ''}`
+      : specialRequests;
+
     const [row] = await db.insert(seminarRegistrationsTable).values({
       eventName: eventName || 'Philingo Cebu Online Education Fair 2026',
-      name, email: safeEmail, phone, schoolInterest, programInterest, numParticipants, specialRequests,
+      name, email: safeEmail, phone, schoolInterest, programInterest, numParticipants, specialRequests: finalSpecialRequests,
       utmSource, utmMedium, utmCampaign, status: 'new',
     }).returning();
     const { email: notifyEmail, lineToken } = await getNotifySettings();

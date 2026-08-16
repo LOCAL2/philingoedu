@@ -24,7 +24,7 @@ export function AdminModeProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AdminModeContext.Provider value={{ isAdmin }}>
-      {isAdmin && <div style={{ height: 40 }} />}
+
       {children}
     </AdminModeContext.Provider>
   );

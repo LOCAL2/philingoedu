@@ -140,7 +140,6 @@ export function FormsPage() {
     { key: 'phone', header: 'โทร', cell: (r: FormSubmission) => <span className="text-sm">{r.phone ?? '-'}</span> },
     { key: 'school', header: 'โรงเรียน', cell: (r: FormSubmission) => <span className="text-sm">{r.schoolInterest ? truncate(r.schoolInterest, 20) : '-'}</span> },
     { key: 'date', header: 'วันที่', cell: (r: FormSubmission) => <span className="text-xs text-gray-500">{formatDateTime(r.createdAt)}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: FormSubmission) => <ContactStatusBadge status={r.status} /> },
     {
       key: 'actions', header: '',
       cell: (r: FormSubmission) => (
@@ -157,7 +156,6 @@ export function FormsPage() {
     { key: 'school', header: 'โรงเรียน', cell: (r: SeminarRegistration) => <span className="text-sm">{r.schoolInterest ? truncate(r.schoolInterest, 18) : '-'}</span> },
     { key: 'participants', header: 'จำนวน', cell: (r: SeminarRegistration) => <span className="text-sm text-center">{r.numParticipants ?? '1'}</span> },
     { key: 'date', header: 'วันที่', cell: (r: SeminarRegistration) => <span className="text-xs text-gray-500">{formatDateTime(r.createdAt)}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: SeminarRegistration) => <ContactStatusBadge status={r.status} /> },
     {
       key: 'actions', header: '',
       cell: (r: SeminarRegistration) => (

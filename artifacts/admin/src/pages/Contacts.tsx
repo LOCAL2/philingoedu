@@ -68,7 +68,6 @@ export function ContactsPage() {
     { key: 'email', header: 'อีเมล', cell: (r: Contact) => <span className="text-sm text-gray-600">{r.email}</span> },
     { key: 'phone', header: 'โทร', cell: (r: Contact) => <span className="text-sm">{r.phone ?? '-'}</span> },
     { key: 'subject', header: 'เรื่อง', cell: (r: Contact) => <span className="text-sm">{truncate(r.subject ?? r.message, 30)}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: Contact) => <ContactStatusBadge status={r.status} /> },
     { key: 'date', header: 'วันที่', cell: (r: Contact) => <span className="text-xs text-gray-500">{formatDateTime(r.createdAt)}</span> },
     {
       key: 'actions', header: '',

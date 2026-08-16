@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { dashboardApi } from '@/lib/api';
 import { formatDateTime } from '@/lib/utils';
-import { ContactStatusBadge } from '@/components/ui/Badge';
+import { ContactStatusBadge } from '@/components/ui/badge';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
 import {
   BarChart,

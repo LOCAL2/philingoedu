@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { Table } from '@/components/ui/Table';
-import { Button } from '@/components/ui/Button';
+import { Table } from '@/components/ui/table';
+import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/Modal';
-import { Select } from '@/components/ui/Select';
-import { Textarea } from '@/components/ui/Textarea';
-import { ContactStatusBadge } from '@/components/ui/Badge';
+import { Select } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { ContactStatusBadge } from '@/components/ui/badge';
 import { contactsApi, Contact } from '@/lib/api';
 import { formatDateTime, truncate } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';

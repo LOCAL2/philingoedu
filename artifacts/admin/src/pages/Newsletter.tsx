@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/layout/AdminLayout';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/Modal';
 import { newsletterApi, NewsletterSubscriber } from '@/lib/api';
 import { formatDateTime } from '@/lib/utils';

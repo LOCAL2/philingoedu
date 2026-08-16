@@ -410,7 +410,6 @@ export function CoursesPage() {
           </span>
         : <span className="text-xs text-gray-300">—</span>
     )},
-    { key: 'status', header: 'สถานะ', cell: (r: Course) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: Course) => (

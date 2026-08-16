@@ -101,7 +101,6 @@ export function TestimonialsPage() {
       ),
     },
     { key: 'featured', header: 'แนะนำ', cell: (r: Testimonial) => <FeaturedBadge featured={r.featured} /> },
-    { key: 'status', header: 'สถานะ', cell: (r: Testimonial) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: Testimonial) => (

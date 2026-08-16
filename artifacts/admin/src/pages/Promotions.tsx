@@ -97,7 +97,6 @@ export function PromotionsPage() {
     { key: 'discount', header: 'ส่วนลด', cell: (r: Promotion) => <span className="text-sm">{r.discountPercent != null ? `${r.discountPercent}%` : '-'}</span> },
     { key: 'expires', header: 'หมดอายุ', cell: (r: Promotion) => <span className="text-sm">{formatDate(r.expiresAt)}</span> },
     { key: 'featured', header: 'แนะนำ', cell: (r: Promotion) => <FeaturedBadge featured={r.isFeatured} /> },
-    { key: 'status', header: 'สถานะ', cell: (r: Promotion) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: Promotion) => (

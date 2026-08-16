@@ -78,7 +78,6 @@ export function FAQsPage() {
     { key: 'question', header: 'คำถาม (TH)', cell: (r: FAQ) => <span className="text-sm font-medium">{truncate(r.questionTh, 60)}</span> },
     { key: 'category', header: 'หมวดหมู่', cell: (r: FAQ) => <span className="text-sm text-gray-600">{r.category ?? '-'}</span> },
     { key: 'sort', header: 'ลำดับ', cell: (r: FAQ) => <span className="text-sm">{r.sortOrder}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: FAQ) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: FAQ) => (

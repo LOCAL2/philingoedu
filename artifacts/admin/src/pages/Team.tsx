@@ -85,7 +85,6 @@ export function TeamPage() {
       </div>
     ) },
     { key: 'role', header: 'ตำแหน่ง', cell: (r: TeamMember) => <span className="text-sm text-gray-600">{r.role ?? '-'}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: TeamMember) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: TeamMember) => (

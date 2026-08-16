@@ -125,7 +125,6 @@ export function BannersPage() {
         : <span className="text-xs text-gray-400">-</span>,
     },
     { key: 'sort', header: 'ลำดับ', cell: (r: Banner) => <span className="text-sm">{r.sortOrder}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: Banner) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: Banner) => (

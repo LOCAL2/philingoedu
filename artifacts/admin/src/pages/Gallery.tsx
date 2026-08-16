@@ -214,7 +214,6 @@ export function GalleryPage() {
     },
     { key: 'title', header: 'ชื่อ', cell: (r: GalleryItem) => <span className="text-sm">{r.titleTh ?? r.titleEn ?? '-'}</span> },
     { key: 'category', header: 'หมวดหมู่', cell: (r: GalleryItem) => <span className="text-sm text-gray-600">{r.category ?? '-'}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: GalleryItem) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: GalleryItem) => (

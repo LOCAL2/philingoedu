@@ -494,7 +494,6 @@ export function ReviewsPage() {
     },
     { key: 'views', header: 'ยอดชม', cell: (r: FullBlogPost) => <span className="text-sm">{r.views?.toLocaleString() ?? 0}</span> },
     { key: 'isFeatured', header: '⭐', cell: (r: FullBlogPost) => r.isFeatured ? <span className="text-yellow-500">⭐</span> : <span className="text-gray-300">–</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: FullBlogPost) => <StatusBadge active={r.isPublished} /> },
     {
       key: 'actions', header: '',
       cell: (r: FullBlogPost) => (

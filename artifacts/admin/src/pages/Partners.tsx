@@ -82,7 +82,6 @@ export function PartnersPage() {
         ),
     },
     { key: 'type', header: 'ประเภท', cell: (r: Partner) => <span className="text-sm text-gray-600">{r.partnerType ?? '-'}</span> },
-    { key: 'status', header: 'สถานะ', cell: (r: Partner) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: Partner) => (

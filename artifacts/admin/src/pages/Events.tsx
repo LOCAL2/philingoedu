@@ -264,7 +264,6 @@ export function EventsPage() {
         ? <span className="text-sm">{r.seatsRemaining ?? r.seatsTotal} / {r.seatsTotal}</span>
         : <span className="text-gray-300 text-sm">—</span>,
     },
-    { key: 'status', header: 'สถานะ', cell: (r: PhilingoEvent) => <StatusBadge active={r.isActive} /> },
     {
       key: 'actions', header: '',
       cell: (r: PhilingoEvent) => (

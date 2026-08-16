@@ -1707,7 +1707,6 @@ export function SchoolsPage() {
       ),
     },
     { key: 'featured', header: 'แนะนำ', cell: (row: School) => <FeaturedBadge isFeatured={row.featured} /> },
-    { key: 'status', header: 'สถานะ', cell: (row: School) => <StatusBadge isActive={row.isActive} /> },
     {
       key: 'pricing', header: 'ราคา & หลักสูตร',
       cell: (row: School) => (

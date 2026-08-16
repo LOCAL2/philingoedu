@@ -4,6 +4,8 @@ import { useSeoMeta } from '@/hooks/use-seo-meta';
 import { Search, MapPin, Star, Coffee, Wifi, Home, ArrowRight, Thermometer, Building2, ShieldCheck } from 'lucide-react';
 import { Link } from 'wouter';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { schoolsApi } from '@/lib/api';
 import cebuImg    from '@assets/city-photos/cebu.jpg';
 import baguioImg  from '@assets/city-photos/baguio.jpg';
 import clarkImg   from '@assets/city-photos/clark.jpg';
@@ -22,62 +24,8 @@ const CITIES = [
   { slug: 'iloilo', nameTh: 'อิโลอิโล', nameEn: 'Iloilo', emoji: '🌺', temp: '27–31°C', schoolCount: 5,  photo: iloiloImg, gradient: 'from-rose-500 to-pink-500' },
 ];
 
-// Philingo partner schools — shown in the main grid with full detail pages
-type SchoolEntry = { id: number; name: string; nameTh?: string; slug: string; city: string; tags: string[]; rating: number; type: string; partner: boolean };
-const allSchools: SchoolEntry[] = [
-  // ── Cebu Partners ─────────────────────────────────────────────────────────────────────
-  { id: 1,  name: 'CIA (Cebu International Academy)', slug: 'cia',        city: 'Cebu',   tags: ['Semi-Sparta','New Campus','IELTS','TOEIC'], rating: 4.8, type: 'ESL, IELTS, TOEIC, Business', partner: true },
-  { id: 2,  name: 'QQ English',                        slug: 'qq-english', city: 'Cebu',   tags: ['Callan Method','IT Park','ESL','IELTS'],    rating: 4.7, type: 'ESL, IELTS, Business',        partner: true },
-  { id: 3,  name: 'Philinter Academy',                 slug: 'philinter',  city: 'Cebu',   tags: ['Business','Speaking','Cambridge'],           rating: 4.7, type: 'ESL, Business, Cambridge',    partner: true },
-  { id: 4,  name: "B'Cebu Language School",            slug: 'b-cebu',     city: 'Cebu',   tags: ['New Campus','Intensive','IELTS'],            rating: 4.6, type: 'ESL, IELTS, TOEIC',          partner: true },
-  { id: 5,  name: 'CPILS',                             slug: 'cpils',      city: 'Cebu',   tags: ['Native Teachers','IELTS','ESL'],             rating: 4.7, type: 'ESL, IELTS, TOEIC',          partner: true },
-  { id: 6,  name: 'EV Academy',                        slug: 'ev-academy', city: 'Cebu',   tags: ['Resort Style','French Owner','IELTS'],       rating: 4.7, type: 'ESL, IELTS',                 partner: true },
-  { id: 7,  name: 'SMEAG Global School',               slug: 'smeag',      city: 'Cebu',   tags: ['Sparta','IELTS Guarantee','Big Campus'],     rating: 4.8, type: 'ESL, IELTS, TOEIC',          partner: true },
-  // ── Cebu Other ────────────────────────────────────────────────────────────────────────
-  { id: 10, name: 'English Fella',                     slug: 'english-fella',   city: 'Cebu',   tags: ['Semi-Sparta','Speaking','IT Park'],          rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 11, name: 'Cebu Pelis Institute (CPI)',        slug: 'cpi',             city: 'Cebu',   tags: ['ESL','Affordable'],                          rating: 4.4, type: 'ESL, Speaking', partner: false },
-  { id: 12, name: 'CELLA English Academy',             slug: 'cella',           city: 'Cebu',   tags: ['ESL','IELTS','General English'],             rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 13, name: 'CG Academy',                        slug: 'cg-academy',      city: 'Cebu',   tags: ['Callan','ESL'],                              rating: 4.4, type: 'ESL, Business', partner: false },
-  { id: 14, name: 'IMS Academy',                       slug: 'ims-academy',     city: 'Cebu',   tags: ['Intensive','IELTS','Small Class'],           rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 15, name: 'GLC English Academy',               slug: 'glc-english',     city: 'Cebu',   tags: ['ESL','IELTS'],                               rating: 4.4, type: 'ESL, IELTS', partner: false },
-  { id: 16, name: 'I.BREEZE',                          slug: 'ibreeze',         city: 'Cebu',   tags: ['ESL','Semi-Sparta'],                         rating: 4.5, type: 'ESL, Speaking', partner: false },
-  { id: 17, name: 'Winning English Academy',           slug: 'winning-english', city: 'Cebu',   tags: ['ESL','IELTS'],                               rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 18, name: 'Genius English',                    slug: 'genius-english',  city: 'Cebu',   tags: ['Sparta','IELTS'],                            rating: 4.6, type: 'ESL, IELTS', partner: false },
-  { id: 19, name: '3D Academy',                        slug: '3d-academy',      city: 'Cebu',   tags: ['3D System','ESL'],                           rating: 4.5, type: 'ESL, Business', partner: false },
-  { id: 20, name: 'IDEA English',                      slug: 'idea-english',    city: 'Cebu',   tags: ['IDEA Method','IELTS'],                       rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 21, name: 'BTES',                              slug: 'btes',            city: 'Cebu',   tags: ['Sparta','IELTS','TOEIC'],                    rating: 4.5, type: 'ESL, IELTS, TOEIC', partner: false },
-  // ── Baguio Partners ───────────────────────────────────────────────────────────────────
-  { id: 8,  name: 'PINES International Academy',       slug: 'pines',           city: 'Baguio', tags: ['Sparta','Cool Weather','IELTS'],             rating: 4.9, type: 'ESL, IELTS, TOEIC',     partner: true },
-  { id: 9,  name: "B'Cebu (สาขาบาเกียว)",             slug: 'bcebu',           city: 'Baguio', tags: ["B'Sparta",'Baguio','Intensive'],             rating: 4.6, type: 'ESL, IELTS, Business',  partner: true },
-  // ── Baguio Other ──────────────────────────────────────────────────────────────────────
-  { id: 22, name: 'BECI Academy',                      slug: 'beci',            city: 'Baguio', tags: ['Sparta','IELTS'],                            rating: 4.6, type: 'ESL, IELTS', partner: false },
-  { id: 23, name: 'MONOL International',               slug: 'monol',           city: 'Baguio', tags: ['Sparta','IELTS','Big Campus'],               rating: 4.7, type: 'ESL, IELTS, TOEIC', partner: false },
-  { id: 24, name: 'HELP English Academy',              slug: 'help-english',    city: 'Baguio', tags: ['Semi-Sparta','Affordable'],                  rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 25, name: 'JIC Academy',                       slug: 'jic-academy',     city: 'Baguio', tags: ['Japanese Mgmt','Business'],                  rating: 4.5, type: 'ESL, Business', partner: false },
-  { id: 26, name: 'A&J Academy',                       slug: 'aj-academy',      city: 'Baguio', tags: ['ESL','Speaking'],                            rating: 4.4, type: 'ESL, Speaking', partner: false },
-  { id: 27, name: 'WALES English Academy',             slug: 'wales-english',   city: 'Baguio', tags: ['Semi-Sparta','IELTS'],                       rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 28, name: 'CNS Academy',                       slug: 'cns-academy',     city: 'Baguio', tags: ['Sparta','TOEIC'],                            rating: 4.5, type: 'ESL, TOEIC', partner: false },
-  { id: 29, name: 'CIP English Academy',               slug: 'cip-english',     city: 'Baguio', tags: ['Comprehensive','IELTS','Business'],          rating: 4.6, type: 'ESL, IELTS, Business', partner: false },
-  { id: 30, name: 'EG Academy',                        slug: 'eg-academy',      city: 'Baguio', tags: ['Sparta','Speaking'],                         rating: 4.4, type: 'ESL, Speaking', partner: false },
-  // ── Clark ─────────────────────────────────────────────────────────────────────────────
-  { id: 31, name: 'HANA Academy',                      slug: 'hana-academy',    city: 'Clark',  tags: ['ESL','Japanese Mgmt'],                       rating: 4.5, type: 'ESL, IELTS', partner: false },
-  { id: 32, name: 'WE Academy',                        slug: 'we-academy',      city: 'Clark',  tags: ['ESL','Speaking'],                            rating: 4.4, type: 'ESL, IELTS', partner: false },
-  { id: 33, name: 'GS Academy (NELS)',                  slug: 'gs-academy',      city: 'Clark',  tags: ['ESL','General English'],                     rating: 4.4, type: 'ESL, General English', partner: false },
-  { id: 34, name: 'MK Education',                      slug: 'mk-education',    city: 'Clark',  tags: ['ESL','IELTS'],                               rating: 4.4, type: 'ESL, IELTS, TOEIC', partner: false },
-  // ── Manila ────────────────────────────────────────────────────────────────────────────
-  { id: 35, name: 'E-Room Language Center',            slug: 'e-room',             city: 'Manila',  tags: ['ESL','Online','Business'],                   rating: 4.4, type: 'ESL, Business',          partner: false },
-  { id: 36, name: 'LSLC Language Skills Institute',   slug: 'lslc',               city: 'Manila',  tags: ['ESL','Professional'],                        rating: 4.4, type: 'ESL, Business, IELTS',    partner: false },
-  { id: 37, name: 'Enderun Language Center',           slug: 'enderun',            city: 'Manila',  tags: ['Premium','BGC','Business'],                  rating: 4.7, type: 'ESL, Business, IELTS',    partner: false },
-  { id: 38, name: 'WESLI',                             slug: 'wesli',              city: 'Manila',  tags: ['ESL','Eastwood','Business'],                 rating: 4.4, type: 'ESL, Business',          partner: false },
-  // ── Iloilo ────────────────────────────────────────────────────────────────────────────
-  { id: 39, name: 'We Academy',                        slug: 'we-academy-iloilo',  city: 'Iloilo',  tags: ['IELTS Computer-Based','ESL','Swimming Pool'], rating: 4.5, type: 'ESL, IELTS, TOEIC',      partner: true },
-  { id: 40, name: 'GITC (Green International Tech)',   slug: 'gitc-iloilo',        city: 'Iloilo',  tags: ['ESL','IELTS','TOEIC','Quiet'],               rating: 4.5, type: 'ESL, IELTS, TOEIC',      partner: true },
-  { id: 41, name: 'MK Education',                      slug: 'mk-education-iloilo',city: 'Iloilo',  tags: ['Family Program','Business English'],          rating: 4.4, type: 'ESL, IELTS, Business',   partner: true },
-  { id: 42, name: 'PIA (Polyglot International)',      slug: 'pia-iloilo',         city: 'Iloilo',  tags: ['Modern','Small Class','ESL'],                rating: 4.5, type: 'ESL, IELTS, Speaking',    partner: true },
-  { id: 43, name: 'Columbus English Academy',          slug: 'columbus-english',   city: 'Iloilo',  tags: ['Small School','Family Atmosphere'],          rating: 4.4, type: 'ESL, Speaking',           partner: true },
-  // ── Cebu (additional) ─────────────────────────────────────────────────────────────────
-  { id: 44, name: 'GITC',                              slug: 'gitc',               city: 'Cebu',    tags: ['ESL','IELTS','TOEIC'],                       rating: 4.4, type: 'ESL, IELTS, TOEIC',      partner: true },
-];
+// Types matching the component logic
+type SchoolEntry = { id: number; name: string; nameTh?: string; slug: string; city: string; tags: string[]; rating: number; type: string; partner: boolean; photo: string | null };
 
 export default function Schools() {
   const [search, setSearch] = useState('');
@@ -85,6 +33,37 @@ export default function Schools() {
     'โรงเรียนสอนภาษาอังกฤษที่ฟิลิปปินส์ ครบทุกเมือง | Philingo',
     'เปรียบเทียบโรงเรียนสอนภาษาอังกฤษที่ฟิลิปปินส์กว่า 30 โรงเรียน ในเซบู บาเกียว คลาร์ก มะนิลา พร้อมราคาและรีวิว'
   );
+
+  // Fetch real data from the API instead of hardcoded array
+  const { data: schoolsData, isLoading } = useQuery({
+    queryKey: ['schools'],
+    queryFn: () => schoolsApi.list({ limit: 1000 }),
+  });
+
+  const allSchools: SchoolEntry[] = React.useMemo(() => {
+    if (!schoolsData?.data) return [];
+    return schoolsData.data.map(s => ({
+      id: s.id,
+      name: s.nameEn || (s as any).name || '',
+      nameTh: s.nameTh || undefined,
+      slug: s.slug,
+      city: (() => {
+        const c = s.city || 'Cebu';
+        const lower = c.toLowerCase();
+        if (lower.includes('cebu')) return 'Cebu';
+        if (lower.includes('baguio')) return 'Baguio';
+        if (lower.includes('clark')) return 'Clark';
+        if (lower.includes('manila')) return 'Manila';
+        if (lower.includes('iloilo')) return 'Iloilo';
+        return c.split(',').pop()?.trim() || 'Cebu';
+      })(),
+      tags: s.tags || [],
+      rating: parseFloat(s.rating || '0') || 4.5,
+      type: (s.programs && s.programs.length > 0) ? s.programs.map((p: any) => typeof p === 'string' ? p : (p.name || p.title || '')).filter(Boolean).join(', ') : 'ESL',
+      partner: s.isFeatured,
+      photo: (s.photos && s.photos.length > 0) ? s.photos[0] : (s.heroImageUrl || null),
+    }));
+  }, [schoolsData]);
   const [cityFilter, setCityFilter] = useState('All');
   const [partnerOnly, setPartnerOnly] = useState(false);
 
@@ -190,7 +169,12 @@ export default function Schools() {
       {/* ── School Grid ── */}
       <section className="py-10 bg-gray-50 dark:bg-gray-900/50">
         <div className="container max-w-7xl mx-auto px-4">
-          {filtered.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <div className="w-8 h-8 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-4" />
+              <p className="text-gray-500 font-medium">กำลังโหลดข้อมูลโรงเรียน...</p>
+            </div>
+          ) : filtered.length > 0 ? (
             <motion.div 
               initial="hidden"
               animate="show"
@@ -215,7 +199,7 @@ export default function Schools() {
                   }`}
                 >
                   <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
-                    <img src={CITY_PHOTO[school.city] ?? cebuImg} alt={school.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                    <img src={CITY_PHOTO[school.city] || cebuImg} alt={school.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                     <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm">
                       <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> {school.rating}
@@ -230,8 +214,7 @@ export default function Schools() {
                     </div>
                   </div>
                   <div className="p-5 relative flex flex-col flex-1">
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5 leading-snug">{school.nameTh || school.name}</h2>
-                    <p className="text-gray-500 dark:text-gray-400 text-xs mb-3 font-medium">{school.type}</p>
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5 leading-snug">{school.name}</h2>
                     <div className="flex flex-wrap gap-1.5 mb-4">
                       {school.tags.map((tag, i) => (
                         <span key={i} className="bg-primary/5 text-primary dark:bg-primary/10 dark:text-primary/90 border border-primary/10 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider">{tag}</span>

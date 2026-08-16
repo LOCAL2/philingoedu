@@ -15,8 +15,21 @@ import { Toggle } from '@/components/ui/toggle';
 import { StatusBadge, FeaturedBadge } from '@/components/ui/badge';
 import { useCrud } from '@/hooks/useCrud';
 import { schoolsApi, School, PricingConfig, PricingCourseOption, PricingRoomOption, PricingFacilityItem, PromoRule } from '@/lib/api';
-import { Plus, Pencil, Trash2, Star, Calculator, ChevronDown, ChevronUp, Save, X, Image, Building2, Upload, FileText, Printer, Video, Youtube, Link2, Loader2, CheckCircle2, AlertCircle, Globe, Download, Sparkles, RefreshCw } from 'lucide-react';
+import { Plus, Pencil, Trash2, Star, Calculator, ChevronDown, ChevronUp, Save, X, Image, Building2, Upload, FileText, Printer, Video, Youtube, Link2, Loader2, CheckCircle2, AlertCircle, Globe, Download, Sparkles, RefreshCw, MapPin, ShieldCheck, Home, Coffee, Wifi } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import cebuImg    from '@assets/city-photos/cebu.jpg';
+import baguioImg  from '@assets/city-photos/baguio.jpg';
+import clarkImg   from '@assets/city-photos/clark.jpg';
+import manilaImg  from '@assets/city-photos/manila.jpg';
+import iloiloImg  from '@assets/city-photos/iloilo.jpg';
+
+const CITY_PHOTO: Record<string, string> = {
+  'Cebu City': cebuImg, Cebu: cebuImg, 
+  'Baguio City': baguioImg, Baguio: baguioImg, 
+  'Clark': clarkImg, Mabalacat: clarkImg, Angeles: clarkImg,
+  'Manila': manilaImg,
+  'Iloilo': iloiloImg,
+};
 
 /* ─── Basic school form ─────────────────────────────────────────── */
 const schema = z.object({
@@ -141,7 +154,7 @@ function SchoolForm({ defaultValues, onSave, onCancel, isLoading, schoolId }: {
   };
 
   const handleFormSave = (data: FormData) => {
-    const { highlightsTxt, tagsTxt, featured, ...rest } = data;
+    const { highlightsTxt, tagsTxt, featured, nameEn, ...rest } = data;
     // Normalize youtubeId: accept full URL (https://youtu.be/xxx, watch?v=xxx, shorts/xxx) or bare 11-char ID
     let youtubeId = rest.youtubeId?.trim() ?? '';
     if (youtubeId) {
@@ -151,6 +164,7 @@ function SchoolForm({ defaultValues, onSave, onCancel, isLoading, schoolId }: {
     }
     onSave({
       ...rest,
+      name: nameEn,
       youtubeId: youtubeId || null,
       isFeatured: featured,
       highlights: highlightsTxt ? highlightsTxt.split('\n').map(s => s.trim()).filter(Boolean) : [],
@@ -1557,10 +1571,53 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
   );
 }
 
+/* ─── Inline Uploaders for Table ───────────────────────────────────── */
+function InlineLogoUpload({ school }: { school: School }) {
+  const qc = useQueryClient();
+  const updateMutation = useMutation({
+    mutationFn: (newUrl: string) => schoolsApi.update(school.id, { logoUrl: newUrl } as any),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['schools'] }),
+  });
+
+  return (
+    <div className="w-48">
+      <ImageUpload
+        value={school.logoUrl || ''}
+        onChange={(url) => { if (url !== school.logoUrl) updateMutation.mutate(url); }}
+      />
+    </div>
+  );
+}
+
+function InlineCoverUpload({ school }: { school: School }) {
+  const qc = useQueryClient();
+  const updateMutation = useMutation({
+    mutationFn: (newUrl: string) => {
+      const currentPhotos = (school as any).photos || [];
+      // Replace the first photo or add as first photo
+      const newPhotos = currentPhotos.length > 0 ? [newUrl, ...currentPhotos.slice(1)] : [newUrl];
+      return schoolsApi.update(school.id, { photos: newPhotos } as any);
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['schools'] }),
+  });
+  
+  const currentUrl = ((school as any).photos && (school as any).photos.length > 0) ? (school as any).photos[0] : '';
+
+  return (
+    <div className="w-48">
+      <ImageUpload
+        value={currentUrl}
+        onChange={(url) => { if (url !== currentUrl) updateMutation.mutate(url); }}
+      />
+    </div>
+  );
+}
+
 /* ─── Main Page ─────────────────────────────────────────────────── */
 export function SchoolsPage() {
   const crud = useCrud<School>({ api: schoolsApi, queryKey: 'schools' });
   const [pricingSchool, setPricingSchool] = useState<School | null>(null);
+  const [coverSchool, setCoverSchool] = useState<School | null>(null);
   const BASE = ((import.meta as any).env.BASE_URL ?? '').replace(/\/$/, '');
   const qc = useQueryClient();
 
@@ -1594,65 +1651,7 @@ export function SchoolsPage() {
     if (fresh) setPricingSchool(fresh);
   }, [crud.data]);
 
-  const columns = [
-    {
-      key: 'logo', header: 'โลโก้',
-      cell: (row: School) =>
-        row.logoUrl ? (
-          <img src={row.logoUrl} alt={row.nameEn} className="h-8 w-8 object-contain rounded" />
-        ) : (
-          <div className="h-8 w-8 bg-blue-100 rounded flex items-center justify-center text-xs text-blue-600 font-bold">
-            {row.nameEn?.charAt(0)}
-          </div>
-        ),
-    },
-    {
-      key: 'name', header: 'ชื่อโรงเรียน',
-      cell: (row: School) => (
-        <div>
-          <p className="font-medium text-gray-900 text-sm">{row.nameEn}</p>
-          <p className="text-xs text-gray-500">{row.nameTh}</p>
-        </div>
-      ),
-    },
-    { key: 'city', header: 'เมือง', cell: (row: School) => <span className="text-sm">{row.city}</span> },
-    {
-      key: 'rating', header: 'Rating',
-      cell: (row: School) => (
-        <div className="flex items-center gap-1 text-sm">
-          <Star className="h-3 w-3 text-yellow-500 fill-yellow-500" />
-          {row.rating}
-        </div>
-      ),
-    },
-    { key: 'featured', header: 'แนะนำ', cell: (row: School) => <FeaturedBadge featured={row.featured} /> },
-    { key: 'status', header: 'สถานะ', cell: (row: School) => <StatusBadge active={row.isActive} /> },
-    {
-      key: 'pricing', header: 'Pricing',
-      cell: (row: School) => (
-        <button
-          onClick={() => setPricingSchool(row)}
-          className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg font-medium transition-colors ${
-            row.pricingConfig
-              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-              : 'bg-gray-100 text-gray-500 hover:bg-blue-50 hover:text-blue-600'
-          }`}
-        >
-          <Calculator className="w-3 h-3" />
-          {row.pricingConfig ? 'แก้ไข' : 'ตั้งค่า'}
-        </button>
-      ),
-    },
-    {
-      key: 'actions', header: '',
-      cell: (row: School) => (
-        <div className="flex gap-1 justify-end">
-          <Button size="sm" variant="ghost" icon={<Pencil className="h-3.5 w-3.5" />} onClick={() => crud.openEdit(row)}>แก้ไข</Button>
-          <Button size="sm" variant="ghost" icon={<Trash2 className="h-3.5 w-3.5" />} onClick={() => crud.handleDelete(row.id)} className="text-red-500 hover:text-red-700">ลบ</Button>
-        </div>
-      ),
-    },
-  ];
+  // (columns were removed in favor of a Card grid)
 
   return (
     <AdminLayout
@@ -1690,16 +1689,100 @@ export function SchoolsPage() {
         <div className="p-4 border-b border-gray-200">
           <SearchBar value={crud.search} onChange={crud.setSearch} placeholder="ค้นหาโรงเรียน..." className="w-72" />
         </div>
-        <div className="p-4">
-          <Table
-            data={crud.data}
-            columns={columns}
-            isLoading={crud.isLoading}
-            page={crud.page}
-            total={crud.total}
-            pageSize={20}
-            onPageChange={crud.setPage}
-          />
+        <div className="p-4 bg-gray-50">
+          {crud.isLoading ? (
+            <div className="flex justify-center items-center py-20"><Loader2 className="w-8 h-8 animate-spin text-blue-500" /></div>
+          ) : (
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {crud.data.map(school => {
+                const isPartner = school.featured;
+                const isValidPhoto = (url: string | undefined | null) => 
+                  url && !url.includes('/school/city-photos/') && !url.includes('/school/generated/');
+                
+                let validPhoto = null;
+                if ((school as any).photos && (school as any).photos.length > 0) {
+                  validPhoto = (school as any).photos.find(isValidPhoto);
+                }
+                if (!validPhoto && isValidPhoto((school as any).heroImageUrl)) {
+                  validPhoto = (school as any).heroImageUrl;
+                }
+
+                const photoUrl = validPhoto || CITY_PHOTO[school.city] || cebuImg;
+                
+                return (
+                  <div key={school.id} className={`bg-white dark:bg-gray-800 rounded-3xl overflow-hidden shadow-sm border flex flex-col transition-all duration-300 group hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] hover:-translate-y-1.5 ${
+                    isPartner ? 'border-primary/20 dark:border-primary/30' : 'border-gray-100 dark:border-gray-700'
+                  }`}>
+                    {/* Image Area with Inline Upload Overlay */}
+                    <div className="relative h-48 overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
+                      <img src={photoUrl} alt={school.nameEn} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      
+                      {/* Upload Overlay */}
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-sm z-10">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setCoverSchool(school); }}
+                          className="bg-white px-4 py-2 rounded-xl shadow-lg scale-90 group-hover:scale-100 transition-transform font-bold text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                        >
+                          <Image className="w-4 h-4" /> เปลี่ยนรูปหน้าปก
+                        </button>
+                      </div>
+
+                      <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-sm z-0">
+                        <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" /> {school.rating}
+                      </div>
+                      {isPartner && (
+                        <div className="absolute top-3 right-3 bg-primary text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm z-0">
+                          <ShieldCheck className="w-3 h-3" /> Partner
+                        </div>
+                      )}
+                      <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md text-white px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-sm z-0">
+                        <MapPin className="w-3.5 h-3.5" /> {school.city}
+                      </div>
+                    </div>
+
+                    {/* Card Content */}
+                    <div className="p-5 relative flex flex-col flex-1">
+                      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1.5 leading-snug">{school.nameEn || (school as any).name}</h2>
+                      
+                      <div className="flex flex-wrap gap-1.5 mb-4">
+                        {(school as any).tags?.map((tag: string, i: number) => (
+                          <span key={i} className="bg-primary/5 text-primary dark:bg-primary/10 dark:text-primary/90 border border-primary/10 text-[10px] px-2.5 py-1 rounded-md font-bold uppercase tracking-wider">{tag}</span>
+                        ))}
+                      </div>
+
+                      <div className="mt-auto">
+                        {/* Facility icons */}
+                        <div className="grid grid-cols-3 gap-2 border-t border-b border-gray-100 dark:border-gray-700 py-3 mb-4 text-center text-gray-500 dark:text-gray-400 text-xs font-medium bg-gray-50/50 dark:bg-gray-800/50 rounded-xl">
+                          <div className="flex flex-col items-center gap-1"><Home className="w-4 h-4 text-gray-400" />หอพัก</div>
+                          <div className="flex flex-col items-center gap-1"><Coffee className="w-4 h-4 text-gray-400" />3 มื้อ</div>
+                          <div className="flex flex-col items-center gap-1"><Wifi className="w-4 h-4 text-gray-400" />Wi-Fi</div>
+                        </div>
+
+                        {/* Admin Actions */}
+                        <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => crud.openEdit(school)}
+                          className="flex flex-col items-center justify-center gap-1 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl text-xs font-semibold hover:bg-blue-100 transition-all"
+                        >
+                          <Pencil className="w-4 h-4" />
+                          แก้ไข
+                        </button>
+                        <button
+                          onClick={() => crud.handleDelete(school.id)}
+                          className="flex flex-col items-center justify-center gap-1 py-2 bg-red-50 text-red-600 border border-red-100 rounded-xl text-xs font-semibold hover:bg-red-100 transition-all"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                          ลบ
+                        </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 
@@ -1728,6 +1811,24 @@ export function SchoolsPage() {
       >
         {pricingSchool && (
           <PricingEditor school={pricingSchool} onClose={() => setPricingSchool(null)} />
+        )}
+      </Modal>
+
+      {/* Cover image editor modal */}
+      <Modal
+        open={!!coverSchool}
+        onClose={() => setCoverSchool(null)}
+        title={`เปลี่ยนรูปหน้าปก — ${coverSchool?.nameEn ?? ''}`}
+      >
+        {coverSchool && (
+          <div className="p-4 flex flex-col items-center justify-center">
+             <InlineCoverUpload school={coverSchool} />
+             <p className="text-xs text-gray-500 mt-6 text-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+               <AlertCircle className="w-4 h-4 inline-block mr-1 text-amber-500" />
+               <strong>หมายเหตุ:</strong> ระบบหน้าเว็บหลัก (/schools) ตอนนี้ยังดึงรายชื่อและรูปภาพแบบคงที่ (Hardcoded) 
+               หากต้องการให้รูปภาพและข้อมูลจากระบบ Admin อัปเดตไปยังหน้าเว็บหลักแบบ Realtime จะต้องทำการเชื่อมต่อ API ก่อนครับ
+             </p>
+          </div>
         )}
       </Modal>
     </AdminLayout>

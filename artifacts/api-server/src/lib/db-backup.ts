@@ -100,7 +100,7 @@ async function pruneOldBackups(bucketId: string): Promise<number> {
     // skip folders
     if (!file.id) continue;
 
-    const created = new Date(file.created_at).getTime();
+    const created = file.created_at ? new Date(file.created_at).getTime() : 0;
     if (created > 0 && created < cutoff) {
       filesToDelete.push(`${BACKUP_PREFIX}${file.name}`);
       logger.info({ name: file.name }, 'db-backup: pruning old backup');

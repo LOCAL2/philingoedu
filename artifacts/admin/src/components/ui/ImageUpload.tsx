@@ -1,5 +1,5 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
-import { Upload, Link, X, ImageIcon, Loader2, CheckCircle2 } from 'lucide-react';
+import { Upload, Link, X, ImageIcon, Loader2, CheckCircle2, ClipboardPaste } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
 interface ImageUploadProps {
@@ -16,9 +16,14 @@ function getToken(): string {
   return localStorage.getItem('philingo_admin_token') ?? '';
 }
 
-/** objectPath from server (/objects/uploads/xxx) → serve URL (/api/storage/objects/uploads/xxx) */
+/** objectPath → serve URL via our storage proxy */
 function serveUrl(objectPath: string): string {
-  return '/api/storage' + objectPath;
+  if (objectPath.startsWith('http')) return objectPath;
+  // Handle Supabase signed upload URL path: /storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
+  const match = objectPath.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+?)(?:\?|$)/);
+  if (match) return `/api/storage/objects/${match[1]}`;
+  const clean = objectPath.replace(/^\//, '');
+  return `/api/storage/objects/${clean}`;
 }
 
 export function ImageUpload({
@@ -49,20 +54,16 @@ export function ImageUpload({
     };
   }, [localPreview]);
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Show local preview immediately — no waiting for compression or server
+  // ─── Shared upload logic ────────────────────────────────────────────────────
+  const uploadFile = useCallback(async (file: File) => {
     const blobUrl = URL.createObjectURL(file);
-    setLocalPreview(blobUrl); // replaces old blob → useEffect revokes the old one
+    setLocalPreview(blobUrl);
     setUploading(true);
     onUploadingChange?.(true);
     setDone(false);
     setError('');
 
-    // Compress before upload — max 500 KB, 1920px wide, convert to WebP for smaller files
-    let uploadFile: File = file;
+    let toUpload: File = file;
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 0.5,
@@ -70,42 +71,23 @@ export function ImageUpload({
         useWebWorker: true,
         fileType: 'image/webp',
       });
-      // Rename to .webp so the stored object has the correct extension
       const baseName = file.name.replace(/\.[^.]+$/, '');
-      uploadFile = new File([compressed], `${baseName}.webp`, { type: 'image/webp' });
-    } catch { /* fallback to original file if compression fails */ }
+      toUpload = new File([compressed], `${baseName}.webp`, { type: 'image/webp' });
+    } catch { /* fallback to original */ }
 
     try {
-      // Step 1: request presigned URL from Object Storage
       const metaRes = await fetch('/api/storage/uploads/request-url', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${getToken()}`,
-        },
-        body: JSON.stringify({
-          name: uploadFile.name,
-          size: uploadFile.size,
-          contentType: uploadFile.type,
-          category: 'other',
-        }),
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${getToken()}` },
+        body: JSON.stringify({ name: toUpload.name, size: toUpload.size, contentType: toUpload.type, category: 'other' }),
       });
-
       if (!metaRes.ok) {
         const body = await metaRes.json().catch(() => ({}));
         throw new Error(body.error || `Request failed: ${metaRes.status}`);
       }
-
       const { uploadURL, objectPath } = await metaRes.json();
-
-      // Step 2: upload compressed file directly to GCS
-      const uploadRes = await fetch(uploadURL, {
-        method: 'PUT',
-        headers: { 'Content-Type': uploadFile.type },
-        body: uploadFile,
-      });
-      if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status}`);
-
+      const putRes = await fetch(uploadURL, { method: 'PUT', headers: { 'Content-Type': toUpload.type }, body: toUpload });
+      if (!putRes.ok) throw new Error(`Upload failed: ${putRes.status}`);
       const url = serveUrl(objectPath);
       onChange(url);
       setUrlDraft(url);
@@ -113,15 +95,26 @@ export function ImageUpload({
       setTimeout(() => setDone(false), 3000);
     } catch (err: any) {
       setError(err.message || 'อัปโหลดล้มเหลว กรุณาลองใหม่');
-      setLocalPreview(''); // error: clear blob → useEffect revokes it → แสดง value เดิมหรือว่าง
+      setLocalPreview('');
     } finally {
       setUploading(false);
       onUploadingChange?.(false);
-      // ไม่ revoke blobUrl ที่นี่ — useEffect จัดการเมื่อ localPreview เปลี่ยนหรือ unmount
-      // ไม่ clear localPreview เมื่อสำเร็จ — ให้ blob แสดงต่อขณะ GCS โหลด (GCS ใช้เวลา 3-4s)
       if (inputRef.current) inputRef.current.value = '';
     }
-  }, [onChange]);
+  }, [onChange, onUploadingChange]);
+
+  // ─── Global paste listener (Ctrl+V anywhere on the page) ───────────────────
+  useEffect(() => {
+    const onPaste = (e: ClipboardEvent) => {
+      const items = Array.from(e.clipboardData?.items ?? []);
+      const imgItem = items.find(i => i.type.startsWith('image/'));
+      if (!imgItem) return;
+      const file = imgItem.getAsFile();
+      if (file) { e.preventDefault(); uploadFile(file); }
+    };
+    window.addEventListener('paste', onPaste);
+    return () => window.removeEventListener('paste', onPaste);
+  }, [uploadFile]);
 
   const handleUrlSave = () => {
     onChange(urlDraft);
@@ -135,6 +128,21 @@ export function ImageUpload({
     setShowUrlInput(false);
     setError('');
   };
+
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) uploadFile(file);
+  }, [uploadFile]);
+
+  // ─── Drag-and-drop ────────────────────────────────────────────────────────
+  const [dragOver, setDragOver] = useState(false);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) uploadFile(file);
+  }, [uploadFile]);
 
   const displaySrc = localPreview || value;
   const previewClass = rounded
@@ -152,9 +160,17 @@ export function ImageUpload({
 
       <div className="flex items-start gap-3">
         {/* Preview */}
-        <div className={`relative flex items-center justify-center bg-gray-50 border border-dashed border-gray-300 shrink-0 ${
+      <div
+        className={`relative flex items-center justify-center bg-gray-50 border-2 border-dashed shrink-0 transition-colors cursor-pointer ${
+          dragOver ? 'border-blue-400 bg-blue-50' : 'border-gray-300'
+        } ${
           rounded ? 'h-16 w-16 rounded-full' : 'h-20 w-32 rounded-lg'
-        }`}>
+        }`}
+        onDragOver={e => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={handleDrop}
+        title="วาง (Ctrl+V) หรือลากรูปมาวางที่นี่"
+      >
           {displaySrc ? (
             <>
               <img
@@ -170,7 +186,10 @@ export function ImageUpload({
               )}
             </>
           ) : (
-            <ImageIcon className="h-7 w-7 text-gray-300" />
+            <div className="flex flex-col items-center gap-1">
+              <ImageIcon className="h-6 w-6 text-gray-300" />
+              {!rounded && <span className="text-[9px] text-gray-300 text-center leading-tight">Ctrl+V<br/>หรือลากมาวาง</span>}
+            </div>
           )}
         </div>
 
@@ -208,6 +227,30 @@ export function ImageUpload({
             >
               <Link className="h-3.5 w-3.5" />
               ใช้ URL
+            </button>
+
+            {/* Paste button */}
+            <button
+              type="button"
+              onClick={async () => {
+                try {
+                  const items = await navigator.clipboard.read();
+                  for (const item of items) {
+                    const imgType = item.types.find(t => t.startsWith('image/'));
+                    if (imgType) {
+                      const blob = await item.getType(imgType);
+                      const file = new File([blob], `paste.${imgType.split('/')[1] || 'png'}`, { type: imgType });
+                      uploadFile(file);
+                      return;
+                    }
+                  }
+                } catch { /* user denied or no image */ }
+              }}
+              className="flex items-center gap-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 text-xs font-medium px-3 py-1.5 rounded-lg transition-colors border border-purple-200"
+              title="วางรูปจาก Clipboard (Ctrl+V)"
+            >
+              <ClipboardPaste className="h-3.5 w-3.5" />
+              วาง
             </button>
 
             {/* Clear */}

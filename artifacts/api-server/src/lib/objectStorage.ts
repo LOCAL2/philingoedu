@@ -1,71 +1,74 @@
-import { randomUUID } from 'crypto';
 import { createClient } from '@supabase/supabase-js';
 
-const getEnv = (key: string): string => {
-  const val = process.env[key];
-  if (!val) throw new Error(`${key} env var is required`);
-  return val;
-};
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+  console.warn('WARNING: Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+}
 
 export const supabaseAdmin = createClient(
-  getEnv('SUPABASE_URL'),
-  getEnv('SUPABASE_SERVICE_ROLE_KEY'),
-  {
-    auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-  }
+  SUPABASE_URL || '',
+  SUPABASE_SERVICE_ROLE_KEY || ''
 );
 
-export function getStorageBucket(): string {
+export function getStorageBucket() {
   return process.env.SUPABASE_STORAGE_BUCKET || 'uploads';
 }
 
 export class ObjectNotFoundError extends Error {
-  constructor() {
-    super('Object not found');
+  constructor(message: string) {
+    super(message);
     this.name = 'ObjectNotFoundError';
-    Object.setPrototypeOf(this, ObjectNotFoundError.prototype);
   }
 }
 
 export class ObjectStorageService {
-  private getBucketName(): string {
-    return getStorageBucket();
+  async getObjectEntityUploadURL(ttlSec: number = 3600): Promise<string> {
+    const bucket = getStorageBucket();
+    const filePath = `tmp/${Date.now()}-${Math.random().toString(36).substring(7)}.bin`;
+    const { data, error } = await supabaseAdmin.storage
+      .from(bucket)
+      .createSignedUploadUrl(filePath);
+    
+    if (error) throw error;
+    return data.signedUrl; // Return the signed upload URL
   }
 
-  async getObjectEntityReadURL(objectPath: string, _ttlSec = 86400): Promise<string> {
-    const bucketName = this.getBucketName();
-    const { data } = supabaseAdmin.storage.from(bucketName).getPublicUrl(objectPath);
+  normalizeObjectEntityPath(url: string): string {
+    try {
+      const urlObj = new URL(url);
+      // Supabase signed upload URL format:
+      // https://<project>.supabase.co/storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
+      // We want to extract just the <filePath> part (relative to bucket root)
+      const match = urlObj.pathname.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+)$/);
+      if (match) return match[1]; // e.g. "tmp/1786888546785-xojmy4.bin"
+      // Fallback: return pathname without leading slash
+      return urlObj.pathname.replace(/^\//, '');
+    } catch {
+      return url;
+    }
+  }
+
+  /** Returns the public-facing serve URL for a stored object */
+  getPublicUrl(filePath: string): string {
+    const bucket = getStorageBucket();
+    const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(filePath);
     return data.publicUrl;
   }
 
-  async getObjectEntityUploadURL(_ttlSec: number = 900): Promise<string> {
-    const bucketName = this.getBucketName();
-    const objectId = randomUUID();
-    const objectPath = `uploads/${objectId}`;
-
-    const { data, error } = await supabaseAdmin.storage.from(bucketName).createSignedUploadUrl(objectPath);
+  async getObjectEntityReadURL(filePath: string, ttlSec: number = 3600): Promise<string> {
+    const bucket = getStorageBucket();
     
-    if (error) {
-      throw new Error(`Failed to create signed upload URL: ${error.message}`);
-    }
+    // If it's already a full URL, return it
+    if (filePath.startsWith('http')) return filePath;
 
-    if (!data || !data.signedUrl) {
-      throw new Error('Failed to create signed upload URL: No URL returned');
-    }
-
+    const { data, error } = await supabaseAdmin.storage
+      .from(bucket)
+      .createSignedUrl(filePath, ttlSec);
+      
+    if (error) throw error;
     return data.signedUrl;
   }
-
-  normalizeObjectEntityPath(uploadURLOrPath: string): string {
-    try {
-      const urlObj = new URL(uploadURLOrPath);
-      const match = urlObj.pathname.match(new RegExp(`/storage/v1/object/(?:upload/)?sign/${this.getBucketName()}/(.+)`));
-      if (match) {
-        return `/objects/${match[1]}`;
-      }
-      return uploadURLOrPath;
-    } catch {
-      return uploadURLOrPath;
-    }
-  }
 }
+

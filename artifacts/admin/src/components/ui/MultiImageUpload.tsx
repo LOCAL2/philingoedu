@@ -22,7 +22,12 @@ interface MultiImageUploadProps {
 }
 
 function serveUrl(objectPath: string): string {
-  return '/api/storage' + objectPath;
+  if (objectPath.startsWith('http')) return objectPath;
+  // Handle Supabase signed upload URL path: /storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
+  const match = objectPath.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+?)(?:\?|$)/);
+  if (match) return `/api/storage/objects/${match[1]}`;
+  const clean = objectPath.replace(/^\//, '');
+  return `/api/storage/objects/${clean}`;
 }
 
 function getToken(): string {

@@ -39,7 +39,11 @@ async function uploadImageFile(file: File): Promise<string | null> {
       method: 'PUT', headers: { 'Content-Type': uploadFile.type }, body: uploadFile,
     });
     if (!putRes.ok) return null;
-    return '/api/storage' + objectPath;
+    // Handle Supabase signed upload URL path: /storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
+    const match = objectPath.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+?)(?:\?|$)/);
+    if (match) return `/api/storage/objects/${match[1]}`;
+    const clean = objectPath.replace(/^\//, '');
+    return `/api/storage/objects/${clean}`;
   } catch {
     return null;
   }

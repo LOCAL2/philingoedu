@@ -23,13 +23,13 @@ interface BlogPost {
 }
 
 const CATEGORY_TH: Record<string, string> = {
-  life:            'ชีวิตในฟิลิปปินส์',
-  tips:            'คำแนะนำ',
-  review:          'รีวิว',
+  life: 'ชีวิตในฟิลิปปินส์',
+  tips: 'คำแนะนำ',
+  review: 'รีวิว',
   'Visa & Travel': 'วีซ่า & เดินทาง',
   'Tips & Guides': 'Tips & Guides',
-  Destinations:    'จุดหมายปลายทาง',
-  'Exam Prep':     'เตรียมสอบ',
+  Destinations: 'จุดหมายปลายทาง',
+  'Exam Prep': 'เตรียมสอบ',
 };
 
 const catLabel = (c: string) => CATEGORY_TH[c] ?? c;
@@ -44,11 +44,11 @@ const fmtDate = (p: BlogPost) =>
   });
 
 export default function Blog() {
-  const [activeCat, setActiveCat]   = useState('ทั้งหมด');
-  const [posts, setPosts]           = useState<BlogPost[]>([]);
-  const [cats, setCats]             = useState<string[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [error, setError]           = useState(false);
+  const [activeCat, setActiveCat] = useState('ทั้งหมด');
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [cats, setCats] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useSeoMeta(
     'บทความน่ารู้เรื่องเรียนต่อฟิลิปปินส์ | Philingo',
@@ -102,11 +102,10 @@ export default function Blog() {
                 <button
                   key={cat}
                   onClick={() => setActiveCat(cat)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${
-                    activeCat === cat
+                  className={`px-5 py-2.5 rounded-full text-sm font-medium transition-colors border ${activeCat === cat
                       ? 'bg-primary text-white border-primary shadow-md'
                       : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border-gray-200 dark:border-gray-700'
-                  }`}
+                    }`}
                 >
                   {cat === 'ทั้งหมด' ? 'ทั้งหมด' : catLabel(cat)}
                 </button>
@@ -146,20 +145,20 @@ export default function Blog() {
           {!loading && !error && featured && (
             <Link href={`/posts/${featured.slug}`} className="group block mb-10">
               <article className="relative rounded-3xl overflow-hidden shadow-md border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-all bg-white dark:bg-gray-800">
-                <div className="md:grid md:grid-cols-2">
-                  <div className="relative aspect-[16/9] md:aspect-auto md:h-full overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center">
+                <div className="md:grid md:grid-cols-5 md:h-72">
+                  <div className="md:col-span-2 relative aspect-[16/9] md:aspect-auto md:h-full overflow-hidden bg-gray-100 dark:bg-gray-700 flex items-center">
                     <img
                       src={getCover(featured)}
                       alt={getTitle(featured)}
                       loading="lazy"
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
                       {featured.category === 'review' ? '⭐ รีวิว' : catLabel(featured.category)}
                     </div>
                   </div>
-                  <div className="p-8 flex flex-col justify-center">
-                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-3">
+                  <div className="md:col-span-3 p-6 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400 mb-2">
                       <span className="flex items-center gap-1">
                         <User className="w-3.5 h-3.5" /> {getAuthor(featured)}
                       </span>
@@ -167,13 +166,13 @@ export default function Blog() {
                         <Clock className="w-3.5 h-3.5" /> {fmtDate(featured)}
                       </span>
                     </div>
-                    <h2 className="text-2xl font-bold text-primary dark:text-blue-400 leading-snug mb-3 line-clamp-3 group-hover:underline">
+                    <h2 className="text-xl md:text-2xl font-bold text-primary dark:text-blue-400 leading-snug mb-2 line-clamp-2 group-hover:underline">
                       {getTitle(featured)}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-6 line-clamp-3">
+                    <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4 line-clamp-2">
                       {getExcerpt(featured)}
                     </p>
-                    <span className="inline-flex items-center gap-2 text-primary font-bold text-sm">
+                    <span className="inline-flex items-center gap-2 text-primary font-bold text-sm mt-auto md:mt-0">
                       อ่านต่อ <ArrowRight className="w-4 h-4" />
                     </span>
                   </div>

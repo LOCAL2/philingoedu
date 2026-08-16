@@ -5,6 +5,7 @@ import rateLimit from "express-rate-limit";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import path from "path";
+import fs from "fs";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
 
@@ -113,14 +114,22 @@ app.use("/api", router);
 
 // ── Serve Static Frontends ────────────────────────────────────────────────────
 // Admin panel at /admin (built to artifacts/admin/dist/public)
-const adminDist = path.resolve(process.cwd(), "../../artifacts/admin/dist/public");
+const getDistPath = (pkgName: string) => {
+  const p1 = path.resolve(process.cwd(), `artifacts/${pkgName}/dist/public`);
+  if (fs.existsSync(p1)) return p1;
+  const p2 = path.resolve(process.cwd(), `../../artifacts/${pkgName}/dist/public`);
+  if (fs.existsSync(p2)) return p2;
+  return p1; // fallback
+};
+
+const adminDist = getDistPath("admin");
 app.use("/admin", express.static(adminDist));
 app.get("/admin/*path", (_req, res) => {
   res.sendFile(path.join(adminDist, "index.html"));
 });
 
 // Main frontend (built to artifacts/philingo/dist/public)
-const philingoDist = path.resolve(process.cwd(), "../../artifacts/philingo/dist/public");
+const philingoDist = getDistPath("philingo");
 app.use(express.static(philingoDist));
 app.get("*path", (_req, res) => {
   res.sendFile(path.join(philingoDist, "index.html"));

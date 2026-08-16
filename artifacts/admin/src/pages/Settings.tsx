@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { settingsApi, api } from '@/lib/api';
 import { useToast } from '@/hooks/useToast';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
+import { MultiImageUpload } from '@/components/ui/MultiImageUpload';
 import { KeyRound, Eye, EyeOff, ShieldOff, Shield } from 'lucide-react';
 
 // Sessions for Education Fair meet-link inputs
@@ -55,6 +56,7 @@ interface SettingsForm {
   event_reply_body: string;
   // Site protection
   image_protection: string;
+  hero_student_avatars: string;
 }
 
 function SectionTitle({ title }: { title: string }) {
@@ -103,6 +105,7 @@ export function SettingsPage() {
           event_reply_subject: settings.event_reply_subject ?? '',
           event_reply_body: settings.event_reply_body ?? '',
           image_protection: settings.image_protection ?? 'off',
+          hero_student_avatars: settings.hero_student_avatars ?? '[]',
         }
       : undefined,
   });
@@ -129,6 +132,19 @@ export function SettingsPage() {
               <Input label="เบอร์โทรศัพท์" {...register('phone')} />
             </div>
             <Textarea label="ที่อยู่" rows={2} {...register('address')} />
+            <div>
+              <MultiImageUpload
+                label="รูปนักเรียนในหน้าแรก (Hero Section)"
+                category="settings"
+                existingUrls={(() => {
+                  try { return JSON.parse(watch('hero_student_avatars')); } catch { return []; }
+                })()}
+                onUrlsChange={urls => setValue('hero_student_avatars', JSON.stringify(urls), { shouldDirty: true })}
+                maxFiles={4}
+                hint="อัปโหลดได้สูงสุด 4 รูป (แสดงผลทับซ้อนกันในหน้าแรก)"
+              />
+              <input type="hidden" {...register('hero_student_avatars')} />
+            </div>
           </div>
         </div>
 

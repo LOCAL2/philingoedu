@@ -160,6 +160,16 @@ export default function Home() {
   const [activeReview, setActiveReview] = React.useState(0);
   const reviewsPerPage = 3;
 
+  let heroAvatars = HERO_AVATARS;
+  try {
+    if (settings.hero_student_avatars) {
+      const parsed = JSON.parse(settings.hero_student_avatars);
+      if (Array.isArray(parsed) && parsed.length > 0) heroAvatars = parsed;
+    }
+  } catch (e) {
+    // fallback to default
+  }
+
   const { data: livePromos = [] } = useQuery<ApiPromo[]>({
     queryKey: ['home-promos'],
     queryFn: () =>
@@ -288,7 +298,7 @@ export default function Home() {
               
               <div className="flex items-center gap-4 pt-4 lg:pt-6">
                 <div className="flex -space-x-3">
-                  {HERO_AVATARS.map((src, i) => (
+                  {heroAvatars.map((src, i) => (
                     <img key={i} src={src} className="w-10 h-10 lg:w-11 lg:h-11 rounded-full border-2 border-white object-cover" alt="Student" />
                   ))}
                 </div>

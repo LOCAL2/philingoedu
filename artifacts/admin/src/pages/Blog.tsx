@@ -635,15 +635,7 @@ export function BlogPage() {
     { key: 'author', header: 'ผู้เขียน', cell: (r: BlogPost) => <span className="text-sm">{r.author ?? '-'}</span> },
     { key: 'publishedAt', header: 'เผยแพร่', cell: (r: BlogPost) => <span className="text-sm">{r.isPublished ? formatDate(r.publishedAt) : '-'}</span> },
     { key: 'views', header: 'ยอดชม', cell: (r: BlogPost) => <span className="text-sm">{r.views.toLocaleString()}</span> },
-    {
-      key: 'status',
-      header: 'สถานะ',
-      cell: (r: BlogPost) => r.isPublished ? (
-        <span className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold bg-green-100 text-green-800 border-green-200">เผยแพร่แล้ว</span>
-      ) : (
-        <span className="inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold bg-gray-100 text-gray-600 border-gray-200">ฉบับร่าง</span>
-      )
-    },
+
     {
       key: 'actions', header: '',
       cell: (r: BlogPost) => (

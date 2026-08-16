@@ -151,7 +151,7 @@ export function SettingsPage() {
             <div>
               <MultiImageUpload
                 label="รูปนักเรียนในหน้าแรก (Hero Section)"
-                category="settings"
+                category="other"
                 existingUrls={(() => {
                   try { return JSON.parse(watch('hero_student_avatars')); } catch { return []; }
                 })()}
@@ -164,7 +164,7 @@ export function SettingsPage() {
             <div className="pt-2 border-t border-gray-100">
               <MultiImageUpload
                 label="รูปโปรไฟล์นักเรียนในส่วน รีวิวหน้าแรก"
-                category="settings"
+                category="other"
                 existingUrls={(() => {
                   try { return JSON.parse(watch('home_testimonial_avatars')); } catch { return []; }
                 })()}

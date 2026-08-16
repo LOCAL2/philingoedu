@@ -40,8 +40,6 @@ export function MultiImageUpload({
   const [uploads, setUploads] = useState<UploadEntry[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const replaceInputRef = useRef<HTMLInputElement>(null);
-  const replaceTargetRef = useRef<string | null>(null);
 
   // Stable refs — prevent stale closures inside async uploadFile
   const existingUrlsRef = useRef<string[]>(existingUrls);
@@ -158,15 +156,6 @@ export function MultiImageUpload({
       .forEach(f => { if (allowed.includes(f.type)) uploadFile(f); });
   };
 
-  const handleReplaceFile = (files: FileList | null) => {
-    if (!files || !replaceTargetRef.current) return;
-    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
-    const file = Array.from(files)[0];
-    if (file && allowed.includes(file.type)) {
-      uploadFile(file, replaceTargetRef.current);
-    }
-  };
-
   const removeExisting = (url: string) => {
     onUrlsChangeRef.current(existingUrlsRef.current.filter(u => u !== url));
   };
@@ -221,13 +210,6 @@ export function MultiImageUpload({
           className="hidden"
           onChange={e => { handleFiles(e.target.files); e.target.value = ''; }}
         />
-        <input
-          ref={replaceInputRef}
-          type="file"
-          accept=".jpg,.jpeg,.png,.webp,.gif,.avif"
-          className="hidden"
-          onChange={e => { handleReplaceFile(e.target.files); e.target.value = ''; }}
-        />
       </div>
 
       {/* Thumbnail grid */}
@@ -255,18 +237,28 @@ export function MultiImageUpload({
                   onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }}
                 />
                 <div className="absolute top-1 right-1 hidden group-hover:flex items-center gap-1 z-10">
-                  <button
-                    type="button"
+                  <label
                     title="เปลี่ยนรูป"
-                    onClick={e => {
-                      e.stopPropagation();
-                      replaceTargetRef.current = url;
-                      replaceInputRef.current?.click();
-                    }}
-                    className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center shadow hover:bg-blue-600"
+                    onClick={e => e.stopPropagation()}
+                    className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center shadow hover:bg-blue-600 cursor-pointer"
                   >
                     <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
-                  </button>
+                    <input
+                      type="file"
+                      accept=".jpg,.jpeg,.png,.webp,.gif,.avif"
+                      className="hidden"
+                      onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+                          if (allowed.includes(file.type)) {
+                            uploadFile(file, url);
+                          }
+                        }
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
                   <button
                     type="button"
                     title="ลบรูป"

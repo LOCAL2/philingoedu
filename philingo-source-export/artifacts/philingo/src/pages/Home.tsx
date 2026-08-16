@@ -81,7 +81,7 @@ import blog1 from '@assets/generated_images/blog-1.jpg';
 import blog2 from '@assets/generated_images/blog-2.jpg';
 import blog3 from '@assets/generated_images/blog-3.jpg';
 import marketing1 from '@assets/ee6abb87-5291-4391-a40c-0b39c0c6777e_1785171375148.png';
-import seminarBanner from '@/assets/fair-banner.png';
+import seminarBanner from '@assets/ChatGPT_Image_Aug_5,_2026,_01_22_01_PM_1786027729183.png';
 import tiecaLogo from '@assets/image_1785227701433.png';
 import tsabLogo from '@assets/image_1785230017503.png';
 

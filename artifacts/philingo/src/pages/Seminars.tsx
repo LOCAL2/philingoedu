@@ -14,7 +14,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 const FIRST_EVENT = new Date('2026-08-29T10:00:00+07:00').toISOString();
 const EVENT_END   = new Date('2026-09-12T12:00:00+07:00').toISOString();
 
-import seminarBannerFallback from '@/assets/fair-banner.png';
+import seminarBannerFallback from '@assets/ChatGPT_Image_Aug_5,_2026,_01_22_01_PM_1786027729183.png';
 import { AdminEditSection } from '@/components/AdminOverlay';
 import { useQuery } from '@tanstack/react-query';
 

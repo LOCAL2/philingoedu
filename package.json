@@ -9,7 +9,7 @@
     "dev:admin": "bun run --filter @workspace/admin dev",
     "build": "bun run build:prod",
     "build:prod": "bun run --filter @workspace/philingo build && bun run --filter @workspace/admin build && bun run --filter @workspace/api-server build",
-    "start": "node --env-file=artifacts/api-server/.env --enable-source-maps artifacts/api-server/dist/index.mjs",
+    "start": "node --env-file-if-exists=artifacts/api-server/.env --enable-source-maps artifacts/api-server/dist/index.mjs",
     "typecheck:libs": "tsc --build",
     "typecheck": "bun run typecheck:libs && bun run --filter @workspace/api-server --if-present typecheck && bun run --filter @workspace/admin --if-present typecheck && bun run --filter @workspace/philingo --if-present typecheck"
   },

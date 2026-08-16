@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "bun run --filter \"@workspace/api-server\" --filter \"@workspace/philingo\" --filter \"@workspace/admin\" dev",
+    "dev": "concurrently -k \"bun run dev:api\" \"bun run dev:web\" \"bun run dev:admin\"",
     "dev:api": "bun run --filter @workspace/api-server dev",
     "dev:web": "bun run --filter @workspace/philingo dev",
     "dev:admin": "bun run --filter @workspace/admin dev",
@@ -16,6 +16,7 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
+    "concurrently": "^10.0.5",
     "playwright": "^1.62.1",
     "prettier": "^3.9.5",
     "typescript": "~5.9.3"

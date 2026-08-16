@@ -1760,13 +1760,20 @@ export function SchoolsPage() {
                         </div>
 
                         {/* Admin Actions */}
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-2">
                         <button
                           onClick={() => crud.openEdit(school)}
                           className="flex flex-col items-center justify-center gap-1 py-2 bg-blue-50 text-blue-700 border border-blue-200 rounded-xl text-xs font-semibold hover:bg-blue-100 transition-all"
                         >
                           <Pencil className="w-4 h-4" />
                           แก้ไข
+                        </button>
+                        <button
+                          onClick={() => setPricingSchool(school)}
+                          className="flex flex-col items-center justify-center gap-1 py-2 bg-green-50 text-green-700 border border-green-200 rounded-xl text-xs font-semibold hover:bg-green-100 transition-all"
+                        >
+                          <Calculator className="w-4 h-4" />
+                          ตั้งราคา
                         </button>
                         <button
                           onClick={() => crud.handleDelete(school.id)}

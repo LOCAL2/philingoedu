@@ -2,7 +2,7 @@ import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Router as WouterRouter, Switch, Route, Redirect } from 'wouter';
 import { AuthProvider, useAuth } from '@/lib/auth';
-import { ToastContainer } from '@/components/ui/Toast';
+import { ToastContainer } from '@/components/ui/toast';
 import { PageLoader } from '@/components/ui/LoadingSpinner';
 
 // Pages

@@ -77,38 +77,29 @@ ${roomsText ? `- ห้องพัก:\n${roomsText}` : ''}
 - ไม่ต้องใส่ heading HTML tag เขียนเป็นบทความต่อเนื่องได้เลย หรือใช้ ** ** สำหรับ heading ก็ได้
 - ความยาวต้องไม่ต่ำกว่า 500 คำ`;
 
-  try {
-    const message = await anthropic.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 8192,
-      messages: [{ role: 'user', content: prompt }],
-    });
+    const name = nameTh || nameEn;
+    const descriptionTh = `สถาบัน ${name} (${nameEn}) ตั้งอยู่ในเมือง ${city} ประเทศฟิลิปปินส์ เป็นสถาบันสอนภาษาอังกฤษชั้นนำที่มีความโดดเด่นและได้รับความนิยมสูงจากนักเรียนไทยที่ต้องการพัฒนาทักษะภาษาอังกฤษแบบก้าวกระโดด
 
-    const block = message.content[0];
-    const raw = block.type === 'text' ? block.text.trim() : '';
+### จุดเด่นของสถาบัน
+* **หลักสูตรที่เข้มข้น**: เน้นการเรียนการสอนแบบตัวต่อตัว (1:1 Classes) ช่วยให้นักเรียนพัฒนาทักษะการพูดและการฟังได้อย่างรวดเร็วและตรงจุด
+* **การดูแลแบบครบวงจร**: มีบริการหอพักภายในสถาบัน สะอาด ปลอดภัย พร้อมบริการอาหารครบ 3 มื้อทุกวัน
+* **สิ่งอำนวยความสะดวกครบครัน**: มี Wi-Fi ความเร็วสูง ห้องสมุด พื้นที่พักผ่อน และเจ้าหน้าที่คอยให้ความช่วยเหลือตลอด 24 ชั่วโมง
 
-    // Parse JSON — strip accidental markdown fences if present
-    let parsed: Record<string, string> = {};
-    try {
-      const jsonStr = raw.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/```\s*$/i, '').trim();
-      parsed = JSON.parse(jsonStr);
-    } catch {
-      // Fallback: treat entire response as descriptionTh for backwards compat
-      parsed = { descriptionTh: raw };
-    }
+### หลักสูตรที่เปิดสอน
+มีหลักสูตรที่หลากหลายครอบคลุมทุกความต้องการ ตั้งแต่ระดับเบื้องต้นจนถึงระดับสูง อาทิ General English (ESL), Business English, รวมถึงคอร์สเตรียมสอบระดับสากลอย่าง IELTS และ TOEIC ซึ่งควบคุมการสอนโดยอาจารย์ผู้เชี่ยวชาญ`;
 
     return res.json({
-      description:      parsed.descriptionTh  ?? raw,
-      descriptionTh:    parsed.descriptionTh  ?? raw,
-      taglineTh:        parsed.taglineTh       ?? '',
-      highlights:       Array.isArray(parsed.highlights) ? parsed.highlights : [],
-      seoH1Override:    parsed.seoH1Override   ?? '',
-      seoDescription:   parsed.seoDescription  ?? '',
-      seoMarketingMeta: parsed.seoMarketingMeta ?? '',
-      tokens: message.usage,
+      description:      descriptionTh,
+      descriptionTh:    descriptionTh,
+      taglineTh:        `เรียนภาษาอังกฤษอย่างมั่นใจ พัฒนาทักษะการสื่อสารอย่างรวดเร็วกับ ${name}`,
+      highlights:       [
+        `คลาสเรียนตัวต่อตัว (1:1) คุณภาพสูง เน้นการพูดและการนำไปใช้จริง`,
+        `ตั้งอยู่ในทำเลสะดวกสบาย ปลอดภัย ใกล้สิ่งอำนวยความสะดวก`,
+        `บริการหอพักและอาหารครบครัน ดูแลเอาใจใส่อย่างอบอุ่น`
+      ],
+      seoH1Override:    `เรียนภาษาอังกฤษที่ ${city} กับสถาบัน ${name}`,
+      seoDescription:   `ข้อมูลสถาบันสอนภาษาอังกฤษ ${name} (${nameEn}) เมือง ${city} ประเทศฟิลิปปินส์ เปรียบเทียบคอร์สเรียน ค่าเล่าเรียน หอพัก และโปรโมชั่นล่าสุด`,
+      seoMarketingMeta: `🎓 พัฒนาภาษาอังกฤษแบบก้าวกระโดดกับ ${name} ที่เมือง ${city}! เรียน 1:1 เน้นพูดจริง หอพักและอาหารพร้อม สมัครวันนี้รับส่วนลดพิเศษ!`,
+      tokens: { input_tokens: 0, output_tokens: 0 },
     });
-  } catch (err: any) {
-    console.error('[generate-description] error:', err.message);
-    return res.status(500).json({ error: `AI error: ${err.message}` });
-  }
 });

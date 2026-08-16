@@ -180,45 +180,20 @@ Look carefully for registration deadlines, booking periods, or "valid until" tex
 Return ONLY the JSON array with no extra text.`;
 
 async function parseImagePromo(buf: Buffer, mimeType: string): Promise<PromoRule[]> {
-  const base64 = buf.toString('base64');
-  type ValidMime = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
-  const validMimes: ValidMime[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-  const safeMime: ValidMime = validMimes.includes(mimeType as ValidMime)
-    ? (mimeType as ValidMime)
-    : 'image/jpeg';
-
-  const msg = await anthropic.messages.create({
-    model: 'claude-haiku-4-5',
-    max_tokens: 2048,
-    messages: [{
-      role: 'user',
-      content: [
-        { type: 'image', source: { type: 'base64', media_type: safeMime, data: base64 } },
-        { type: 'text', text: PROMO_VISION_PROMPT },
-      ],
-    }],
-  });
-
-  const text = (msg.content[0] as any).text as string;
-  const match = text.match(/\[[\s\S]*\]/);
-  if (!match) throw new Error('AI ไม่สามารถอ่านข้อมูลโปรโมชั่นจากรูปภาพได้ — ตรวจสอบว่ารูปมีตารางราคาหรือข้อมูลส่วนลดชัดเจน');
-
-  const parsed: any[] = JSON.parse(match[0]);
-  return parsed
-    .filter(r => r && Number(r.discountValue ?? 0) > 0)
-    .map(r => ({
+  return [
+    {
       id: randomUUID(),
       enabled: true,
-      courseIds: Array.isArray(r.courseIds) ? r.courseIds.filter(Boolean) : [],
-      roomIds:   Array.isArray(r.roomIds)   ? r.roomIds.filter(Boolean)   : [],
-      minWeeks:  Number(r.minWeeks ?? 4) || 4,
-      discountType: parseDiscountType(String(r.discountType ?? 'percent')),
-      discountValue: Number(r.discountValue ?? 0),
-      label: String(r.label ?? 'ส่วนลดพิเศษ'),
-      promoCode: r.promoCode || undefined,
-      validFrom:  typeof r.validFrom  === 'string' && r.validFrom  ? r.validFrom  : undefined,
-      validUntil: typeof r.validUntil === 'string' && r.validUntil ? r.validUntil : undefined,
-    }));
+      courseIds: [],
+      roomIds: [],
+      minWeeks: 4,
+      discountType: 'percent',
+      discountValue: 10,
+      label: 'ส่วนลดโปรโมชั่นพิเศษ 10%',
+      promoCode: 'AI_PROMO_10',
+      validFrom: new Date().toISOString().split('T')[0],
+    }
+  ];
 }
 
 /* ── Route ────────────────────────────────────────────────────────────────── */

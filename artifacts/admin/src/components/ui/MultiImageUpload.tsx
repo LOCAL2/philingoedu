@@ -9,6 +9,7 @@ interface UploadEntry {
   name: string;
   status: 'uploading' | 'done' | 'error';
   error?: string;
+  replaceTargetUrl?: string;
 }
 
 interface MultiImageUploadProps {
@@ -87,6 +88,7 @@ export function MultiImageUpload({
       previewUrl: blobUrl,
       name: compressed.name,
       status: 'uploading',
+      replaceTargetUrl,
     }]);
 
     try {
@@ -182,12 +184,8 @@ export function MultiImageUpload({
   };
 
   // existingUrls that are NOT already shown in the uploads section (to avoid duplicates)
-  const managedGcsUrls = new Set(
-    uploads
-      .filter(u => u.status === 'done' && u.objectPath)
-      .map(u => serveUrl(u.objectPath))
-  );
-  const displayedExistingUrls = existingUrls.filter(url => !managedGcsUrls.has(url));
+  // Now we just map existingUrls. If an upload is replacing it, or has finished and matches it, we render the upload instead.
+  // Additive uploads (no replaceTargetUrl) that are NOT done yet are rendered at the end.
 
   const totalCount = existingUrls.length;
 
@@ -233,84 +231,98 @@ export function MultiImageUpload({
       </div>
 
       {/* Thumbnail grid */}
-      {(displayedExistingUrls.length > 0 || uploads.length > 0) && (
+      {(existingUrls.length > 0 || uploads.length > 0) && (
         <div className="grid grid-cols-4 gap-2">
 
-          {/* Already-saved GCS images (not currently being uploaded) */}
-          {displayedExistingUrls.map((url, i) => (
-            <div key={url} className="relative group aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-              <img
-                src={url}
-                alt={`รูป ${i + 1}`}
-                className="w-full h-full object-cover"
-                onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }}
-              />
-              <div className="absolute top-1 right-1 hidden group-hover:flex items-center gap-1 z-10">
-                <button
-                  type="button"
-                  title="เปลี่ยนรูป"
-                  onClick={e => {
-                    e.stopPropagation();
-                    replaceTargetRef.current = url;
-                    replaceInputRef.current?.click();
-                  }}
-                  className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center shadow hover:bg-blue-600"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
-                </button>
-                <button
-                  type="button"
-                  title="ลบรูป"
-                  onClick={e => { e.stopPropagation(); removeExisting(url); }}
-                  className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow hover:bg-red-600"
-                >
-                  <X className="w-3 h-3" />
-                </button>
+          {/* Render all existing slots (either the original image or its replacing upload) */}
+          {existingUrls.map((url, i) => {
+            // Check if there is an active upload replacing this URL, OR a finished upload that now IS this URL
+            const activeUpload = uploads.find(u => 
+              (u.replaceTargetUrl === url && u.status !== 'done') || 
+              (u.status === 'done' && serveUrl(u.objectPath) === url)
+            );
+
+            if (activeUpload) {
+              return renderUploadEntry(activeUpload);
+            }
+
+            return (
+              <div key={url} className="relative group aspect-video rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                <img
+                  src={url}
+                  alt={`รูป ${i + 1}`}
+                  className="w-full h-full object-cover"
+                  onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }}
+                />
+                <div className="absolute top-1 right-1 hidden group-hover:flex items-center gap-1 z-10">
+                  <button
+                    type="button"
+                    title="เปลี่ยนรูป"
+                    onClick={e => {
+                      e.stopPropagation();
+                      replaceTargetRef.current = url;
+                      replaceInputRef.current?.click();
+                    }}
+                    className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center shadow hover:bg-blue-600"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+                  </button>
+                  <button
+                    type="button"
+                    title="ลบรูป"
+                    onClick={e => { e.stopPropagation(); removeExisting(url); }}
+                    className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow hover:bg-red-600"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+                <span className="absolute bottom-1 left-1 bg-black/50 text-white text-[9px] px-1 rounded">{i + 1}</span>
               </div>
-              <span className="absolute bottom-1 left-1 bg-black/50 text-white text-[9px] px-1 rounded">{i + 1}</span>
-            </div>
-          ))}
+            );
+          })}
 
-          {/* In-progress uploads — show blob preview at all statuses */}
-          {uploads.map(u => (
-            <div key={u.tempId} className={`relative group aspect-video rounded-lg overflow-hidden border bg-gray-50 ${
-              u.status === 'error' ? 'border-red-300' : 'border-gray-200'
-            }`}>
-              {/* Blob thumbnail — shows immediately, no GCS latency */}
-              <img src={u.previewUrl} alt={u.name} className="w-full h-full object-cover" />
-
-              {/* Status overlay */}
-              {u.status === 'uploading' && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                  <Loader2 className="w-5 h-5 text-white animate-spin" />
-                </div>
-              )}
-              {u.status === 'done' && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-green-400 drop-shadow" />
-                </div>
-              )}
-              {u.status === 'error' && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-red-500/60">
-                  <AlertCircle className="w-5 h-5 text-white" />
-                  <span className="text-white text-[9px] px-1 text-center leading-tight">{u.error?.slice(0, 40)}</span>
-                </div>
-              )}
-
-              {/* Remove button — visible on hover for done/error */}
-              {u.status !== 'uploading' && (
-                <button
-                  type="button"
-                  onClick={e => { e.stopPropagation(); removeUpload(u); }}
-                  className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full hidden group-hover:flex items-center justify-center z-10"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
-            </div>
-          ))}
+          {/* Render additive uploads that are not replacing anything and are not done yet */}
+          {uploads
+            .filter(u => !u.replaceTargetUrl && u.status !== 'done')
+            .map(u => renderUploadEntry(u))}
         </div>
       )}
     </div>
   );
+
+  function renderUploadEntry(u: UploadEntry) {
+    return (
+      <div key={u.tempId} className={`relative group aspect-video rounded-lg overflow-hidden border bg-gray-50 ${
+        u.status === 'error' ? 'border-red-300' : 'border-gray-200'
+      }`}>
+        <img src={u.previewUrl} alt={u.name} className="w-full h-full object-cover" />
+        
+        {u.status === 'uploading' && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40">
+            <Loader2 className="w-5 h-5 text-white animate-spin" />
+          </div>
+        )}
+        {u.status === 'done' && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <CheckCircle2 className="w-6 h-6 text-green-400 drop-shadow" />
+          </div>
+        )}
+        {u.status === 'error' && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-red-500/60">
+            <AlertCircle className="w-5 h-5 text-white" />
+            <span className="text-white text-[9px] px-1 text-center leading-tight">{u.error?.slice(0, 40)}</span>
+          </div>
+        )}
+        {u.status !== 'uploading' && (
+          <button
+            type="button"
+            onClick={e => { e.stopPropagation(); removeUpload(u); }}
+            className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full hidden group-hover:flex items-center justify-center z-10"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
+      </div>
+    );
+  }
 }

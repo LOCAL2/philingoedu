@@ -39,6 +39,8 @@ export function MultiImageUpload({
   const [uploads, setUploads] = useState<UploadEntry[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const replaceInputRef = useRef<HTMLInputElement>(null);
+  const replaceTargetRef = useRef<string | null>(null);
 
   // Stable refs — prevent stale closures inside async uploadFile
   const existingUrlsRef = useRef<string[]>(existingUrls);
@@ -57,7 +59,7 @@ export function MultiImageUpload({
     };
   }, []);
 
-  const uploadFile = useCallback(async (file: File) => {
+  const uploadFile = useCallback(async (file: File, replaceTargetUrl?: string) => {
     const tempId = `${Date.now()}-${Math.random()}`;
 
     // Compress before upload — max 500 KB, 1920px wide, convert to WebP for smaller files
@@ -123,9 +125,14 @@ export function MultiImageUpload({
       //   so parent slot gets the new URL, not the old one that happened to be urls[0]).
       // maxFiles>1: additive mode — append to existing list (de-duplicated).
       const current = existingUrlsRef.current;
-      const merged = maxFilesRef.current === 1
-        ? [gcsUrl]
-        : [...current, ...(!current.includes(gcsUrl) ? [gcsUrl] : [])];
+      let merged;
+      if (maxFilesRef.current === 1) {
+        merged = [gcsUrl];
+      } else if (replaceTargetUrl) {
+        merged = current.map(u => u === replaceTargetUrl ? gcsUrl : u);
+      } else {
+        merged = [...current, ...(!current.includes(gcsUrl) ? [gcsUrl] : [])];
+      }
       onUrlsChangeRef.current(merged);
 
     } catch (err: any) {
@@ -147,6 +154,15 @@ export function MultiImageUpload({
     Array.from(files)
       .slice(0, remaining)
       .forEach(f => { if (allowed.includes(f.type)) uploadFile(f); });
+  };
+
+  const handleReplaceFile = (files: FileList | null) => {
+    if (!files || !replaceTargetRef.current) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif'];
+    const file = Array.from(files)[0];
+    if (file && allowed.includes(file.type)) {
+      uploadFile(file, replaceTargetRef.current);
+    }
   };
 
   const removeExisting = (url: string) => {
@@ -207,6 +223,13 @@ export function MultiImageUpload({
           className="hidden"
           onChange={e => { handleFiles(e.target.files); e.target.value = ''; }}
         />
+        <input
+          ref={replaceInputRef}
+          type="file"
+          accept=".jpg,.jpeg,.png,.webp,.gif,.avif"
+          className="hidden"
+          onChange={e => { handleReplaceFile(e.target.files); e.target.value = ''; }}
+        />
       </div>
 
       {/* Thumbnail grid */}
@@ -222,13 +245,28 @@ export function MultiImageUpload({
                 className="w-full h-full object-cover"
                 onError={e => { (e.target as HTMLImageElement).style.opacity = '0.3'; }}
               />
-              <button
-                type="button"
-                onClick={e => { e.stopPropagation(); removeExisting(url); }}
-                className="absolute top-1 right-1 w-5 h-5 bg-red-500 text-white rounded-full hidden group-hover:flex items-center justify-center z-10"
-              >
-                <X className="w-3 h-3" />
-              </button>
+              <div className="absolute top-1 right-1 hidden group-hover:flex items-center gap-1 z-10">
+                <button
+                  type="button"
+                  title="เปลี่ยนรูป"
+                  onClick={e => {
+                    e.stopPropagation();
+                    replaceTargetRef.current = url;
+                    replaceInputRef.current?.click();
+                  }}
+                  className="w-5 h-5 bg-blue-500 text-white rounded-full flex items-center justify-center shadow hover:bg-blue-600"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 2v6h-6"></path><path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path><path d="M3 22v-6h6"></path><path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path></svg>
+                </button>
+                <button
+                  type="button"
+                  title="ลบรูป"
+                  onClick={e => { e.stopPropagation(); removeExisting(url); }}
+                  className="w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center shadow hover:bg-red-600"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
               <span className="absolute bottom-1 left-1 bg-black/50 text-white text-[9px] px-1 rounded">{i + 1}</span>
             </div>
           ))}

@@ -29,6 +29,15 @@ const DEFAULT_HERO_AVATARS = [
   'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&h=120&fit=crop&crop=faces',
 ];
 
+const DEFAULT_TESTIMONIAL_AVATARS = [
+  'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=120&h=120&fit=crop&crop=faces'
+];
+
 interface SettingsForm {
   site_name: string;
   site_description: string;
@@ -62,6 +71,7 @@ interface SettingsForm {
   // Site protection
   image_protection: string;
   hero_student_avatars: string;
+  home_testimonial_avatars: string;
 }
 
 function SectionTitle({ title }: { title: string }) {
@@ -111,6 +121,7 @@ export function SettingsPage() {
           event_reply_body: settings.event_reply_body ?? '',
           image_protection: settings.image_protection ?? 'off',
           hero_student_avatars: settings.hero_student_avatars && settings.hero_student_avatars !== '[]' ? settings.hero_student_avatars : JSON.stringify(DEFAULT_HERO_AVATARS),
+          home_testimonial_avatars: settings.home_testimonial_avatars && settings.home_testimonial_avatars !== '[]' ? settings.home_testimonial_avatars : JSON.stringify(DEFAULT_TESTIMONIAL_AVATARS),
         }
       : undefined,
   });
@@ -149,6 +160,19 @@ export function SettingsPage() {
                 hint="อัปโหลดได้สูงสุด 4 รูป (แสดงผลทับซ้อนกันในหน้าแรก)"
               />
               <input type="hidden" {...register('hero_student_avatars')} />
+            </div>
+            <div className="pt-2 border-t border-gray-100">
+              <MultiImageUpload
+                label="รูปโปรไฟล์นักเรียนในส่วน รีวิวหน้าแรก"
+                category="settings"
+                existingUrls={(() => {
+                  try { return JSON.parse(watch('home_testimonial_avatars')); } catch { return []; }
+                })()}
+                onUrlsChange={urls => setValue('home_testimonial_avatars', JSON.stringify(urls), { shouldDirty: true })}
+                maxFiles={6}
+                hint="อัปโหลดเรียงตามลำดับรีวิวในหน้าแรก (สูงสุด 6 รูป)"
+              />
+              <input type="hidden" {...register('home_testimonial_avatars')} />
             </div>
           </div>
         </div>

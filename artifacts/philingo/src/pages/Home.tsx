@@ -161,14 +161,24 @@ export default function Home() {
   const reviewsPerPage = 3;
 
   let heroAvatars = HERO_AVATARS;
+  let testimonialAvatars = reviews.map(r => r.photo);
   try {
     if (settings.hero_student_avatars) {
       const parsed = JSON.parse(settings.hero_student_avatars);
       if (Array.isArray(parsed) && parsed.length > 0) heroAvatars = parsed;
     }
+    if (settings.home_testimonial_avatars) {
+      const parsed = JSON.parse(settings.home_testimonial_avatars);
+      if (Array.isArray(parsed) && parsed.length > 0) testimonialAvatars = parsed;
+    }
   } catch (e) {
     // fallback to default
   }
+
+  const displayReviews = reviews.map((r, i) => ({
+    ...r,
+    photo: testimonialAvatars[i] || r.photo
+  }));
 
   const { data: livePromos = [] } = useQuery<ApiPromo[]>({
     queryKey: ['home-promos'],
@@ -633,7 +643,7 @@ export default function Home() {
           {/* Carousel */}
           <div className="relative">
             <div className="grid md:grid-cols-3 gap-6">
-              {reviews.slice(activeReview, activeReview + reviewsPerPage).map((r) => (
+              {displayReviews.slice(activeReview, activeReview + reviewsPerPage).map((r) => (
                 <motion.div
                   key={r.id}
                   initial={{ opacity: 0, y: 20 }}
@@ -672,7 +682,7 @@ export default function Home() {
                 ←
               </button>
               <div className="flex gap-2">
-                {Array.from({ length: Math.ceil(reviews.length / reviewsPerPage) }).map((_, i) => (
+                {Array.from({ length: Math.ceil(displayReviews.length / reviewsPerPage) }).map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveReview(i * reviewsPerPage)}
@@ -685,8 +695,8 @@ export default function Home() {
                 ))}
               </div>
               <button
-                onClick={() => setActiveReview(Math.min(reviews.length - reviewsPerPage, activeReview + reviewsPerPage))}
-                disabled={activeReview + reviewsPerPage >= reviews.length}
+                onClick={() => setActiveReview(Math.min(displayReviews.length - reviewsPerPage, activeReview + reviewsPerPage))}
+                disabled={activeReview + reviewsPerPage >= displayReviews.length}
                 className="w-10 h-10 rounded-full bg-white/70 border-2 border-primary text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors disabled:opacity-30 shadow-sm"
               >
                 →

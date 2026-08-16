@@ -22,7 +22,12 @@ const SEMINAR_SESSIONS = [
   { key: 'meet_2026-09-12-special' as const, date: 'เสาร์ 12 ก.ย. 2569 ✨',  school: 'CIA (รอบพิเศษ)',   time: '10:30 น. เป็นต้นไป', emoji: '⭐' },
 ] as const;
 
-type SessionKey = typeof SEMINAR_SESSIONS[number]['key'];
+const DEFAULT_HERO_AVATARS = [
+  'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1552058544-f2b08422138a?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=120&h=120&fit=crop&crop=faces',
+  'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=120&h=120&fit=crop&crop=faces',
+];
 
 interface SettingsForm {
   site_name: string;
@@ -105,7 +110,7 @@ export function SettingsPage() {
           event_reply_subject: settings.event_reply_subject ?? '',
           event_reply_body: settings.event_reply_body ?? '',
           image_protection: settings.image_protection ?? 'off',
-          hero_student_avatars: settings.hero_student_avatars ?? '[]',
+          hero_student_avatars: settings.hero_student_avatars && settings.hero_student_avatars !== '[]' ? settings.hero_student_avatars : JSON.stringify(DEFAULT_HERO_AVATARS),
         }
       : undefined,
   });

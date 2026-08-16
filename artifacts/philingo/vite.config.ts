@@ -50,7 +50,7 @@ export default defineConfig({
     host: '0.0.0.0',
     allowedHosts: true,
     fs: {
-      strict: true,
+      strict: false,
     },
     proxy: {
       // Proxy /admin/* to admin dev server on port 3001

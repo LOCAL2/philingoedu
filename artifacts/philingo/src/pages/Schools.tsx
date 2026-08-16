@@ -61,7 +61,18 @@ export default function Schools() {
       rating: parseFloat(s.rating || '0') || 4.5,
       type: (s.programs && s.programs.length > 0) ? s.programs.map((p: any) => typeof p === 'string' ? p : (p.name || p.title || '')).filter(Boolean).join(', ') : 'ESL',
       partner: s.isFeatured,
-      photo: (s.photos && s.photos.length > 0) ? s.photos[0] : (s.heroImageUrl || null),
+      photo: (() => {
+        const isValidPhoto = (url: string | undefined | null) => 
+          url && !url.includes('/school/city-photos/') && !url.includes('/school/generated/');
+        let validPhoto = null;
+        if (s.photos && s.photos.length > 0) {
+          validPhoto = s.photos.find(isValidPhoto);
+        }
+        if (!validPhoto && isValidPhoto(s.heroImageUrl)) {
+          validPhoto = s.heroImageUrl;
+        }
+        return validPhoto || null;
+      })(),
     }));
   }, [schoolsData]);
   const [cityFilter, setCityFilter] = useState('All');

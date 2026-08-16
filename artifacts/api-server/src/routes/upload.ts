@@ -2,9 +2,9 @@ import { Router } from "express";
 import multer from "multer";
 import path from "path";
 import { requireAuth } from "../middlewares/auth.js";
-import { uploadImageToGcs } from "../lib/gcsImages.js";
+import { uploadImageToSupabase } from "../lib/supabaseImages.js";
 
-// Use memory storage — file is uploaded to GCS, not written to local disk
+// Use memory storage — file is uploaded to storage, not written to local disk
 const upload = multer({
   storage: multer.memoryStorage(),
   fileFilter: (_req, file, cb) => {
@@ -26,7 +26,7 @@ router.post("/", requireAuth, upload.single("file"), async (req, res) => {
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
 
   try {
-    await uploadImageToGcs("uploads", filename, req.file.buffer, req.file.mimetype);
+    await uploadImageToSupabase("uploads", filename, req.file.buffer, req.file.mimetype);
     const url = `/api/uploads/${filename}`;
     res.json({ url, filename });
   } catch (err) {

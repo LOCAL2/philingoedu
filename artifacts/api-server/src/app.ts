@@ -8,6 +8,7 @@ import path from "path";
 import fs from "fs";
 import router from "./routes/index.js";
 import { logger } from "./lib/logger.js";
+import { supabaseAdmin, getStorageBucket } from "./lib/objectStorage.js";
 
 const app: Express = express();
 
@@ -75,7 +76,7 @@ app.get("/robots.txt", (_req, res) => {
   res.send(`User-agent: *\nAllow: /\n${siteUrl ? `Sitemap: ${siteUrl}/sitemap.xml` : ""}`);
 });
 
-// Serve uploaded images from GCS (permanent storage — survives redeployments)
+// Serve uploaded images from Supabase
 app.get("/api/uploads/:filename", async (req, res, _next) => {
   const filename = req.params.filename;
   if (!filename || filename.includes('/') || filename.includes('..')) {
@@ -83,16 +84,9 @@ app.get("/api/uploads/:filename", async (req, res, _next) => {
     return;
   }
   try {
-    const { getImageFromGcs } = await import('./lib/gcsImages.js');
-    const result = await getImageFromGcs('uploads', filename);
-    if (!result) {
-      res.status(404).json({ error: 'Image not found' });
-      return;
-    }
-    res.set('Cache-Control', 'public, max-age=604800, immutable'); // 7 days
-    res.set('Content-Type', result.contentType);
-    if (result.size) res.set('Content-Length', String(result.size));
-    result.stream.pipe(res);
+    const bucket = getStorageBucket();
+    const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(`uploads/${filename}`);
+    res.redirect(301, data.publicUrl);
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve image', message: String(err) });
   }

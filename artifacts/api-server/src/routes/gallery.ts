@@ -3,7 +3,8 @@ import { eq, and, asc, count, or, ilike } from 'drizzle-orm';
 import { db } from '../lib/db.js';
 import { requireAuth } from '../middlewares/auth.js';
 import { galleryItemsTable } from '@workspace/db';
-import { uploadImageToGcs, getImageFromGcs } from '../lib/gcsImages.js';
+import { uploadImageToSupabase } from '../lib/supabaseImages.js';
+import { supabaseAdmin, getStorageBucket } from '../lib/objectStorage.js';
 
 const router = Router();
 
@@ -29,17 +30,9 @@ router.get('/image/:filename', async (req, res) => {
   }
 
   try {
-    const result = await getImageFromGcs('gallery', filename);
-    if (!result) {
-      res.status(404).json({ error: 'Image not found' });
-      return;
-    }
-
-    // Override the global no-cache middleware — gallery images are immutable
-    res.set('Cache-Control', 'public, max-age=31536000, immutable');
-    res.set('Content-Type', result.contentType);
-    if (result.size) res.set('Content-Length', String(result.size));
-    result.stream.pipe(res);
+    const bucket = getStorageBucket();
+    const { data } = supabaseAdmin.storage.from(bucket).getPublicUrl(`gallery/${filename}`);
+    res.redirect(301, data.publicUrl);
   } catch (err) {
     res.status(500).json({ error: 'Failed to retrieve image', message: String(err) });
   }
@@ -121,8 +114,8 @@ router.post('/fetch-url', requireAuth, async (req, res) => {
     const ext = MIME_TO_EXT[mime] ?? '.jpg';
     const filename = `fetched-${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`;
 
-    // Upload to GCS (permanent storage — survives redeployments)
-    await uploadImageToGcs('gallery', filename, buffer, mime);
+    // Upload to Supabase (permanent storage — survives redeployments)
+    await uploadImageToSupabase('gallery', filename, buffer, mime);
 
     const imageUrl = `/api/gallery/image/${filename}`;
 

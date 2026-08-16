@@ -61,6 +61,20 @@ export function MultiImageUpload({
   const uploadFile = useCallback(async (file: File, replaceTargetUrl?: string) => {
     const tempId = `${Date.now()}-${Math.random()}`;
 
+    // Create blob URL immediately BEFORE compression — stays alive (not revoked) until component unmounts
+    const blobUrl = URL.createObjectURL(file);
+    blobUrlsRef.current.add(blobUrl);
+
+    // Add uploading entry — blob shows immediately as thumbnail
+    setUploads(prev => [...prev, {
+      tempId,
+      objectPath: '',
+      previewUrl: blobUrl,
+      name: file.name,
+      status: 'uploading',
+      replaceTargetUrl,
+    }]);
+
     // Compress before upload — max 500 KB, 1920px wide, convert to WebP for smaller files
     let compressed: File = file;
     try {
@@ -74,20 +88,6 @@ export function MultiImageUpload({
       const baseName = file.name.replace(/\.[^.]+$/, '');
       compressed = new File([result], `${baseName}.webp`, { type: 'image/webp' });
     } catch { /* fallback to original */ }
-
-    // Create blob URL immediately — stays alive (not revoked) until component unmounts
-    const blobUrl = URL.createObjectURL(compressed);
-    blobUrlsRef.current.add(blobUrl);
-
-    // Add uploading entry — blob shows immediately as thumbnail
-    setUploads(prev => [...prev, {
-      tempId,
-      objectPath: '',
-      previewUrl: blobUrl,
-      name: compressed.name,
-      status: 'uploading',
-      replaceTargetUrl,
-    }]);
 
     try {
       // Step 1: get presigned URL from API

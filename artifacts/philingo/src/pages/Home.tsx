@@ -309,7 +309,7 @@ export default function Home() {
               <div className="flex items-center gap-4 pt-4 lg:pt-6">
                 <div className="flex -space-x-3">
                   {heroAvatars.map((src, i) => (
-                    <img key={i} src={src} className="w-10 h-10 lg:w-11 lg:h-11 rounded-full border-2 border-white object-cover" alt="Student" />
+                    <img key={i} src={src} className="w-10 h-10 lg:w-11 lg:h-11 rounded-full border-2 border-white object-cover object-center" alt="Student" />
                   ))}
                 </div>
                 <div className="text-xs lg:text-sm">
@@ -659,7 +659,7 @@ export default function Home() {
                       src={r.photo}
                       alt={r.name}
                       loading="lazy"
-                      className="w-14 h-14 rounded-full object-cover shrink-0 border-3 border-primary shadow-md"
+                      className="w-14 h-14 rounded-full object-cover object-center shrink-0 border-3 border-primary shadow-md"
                       style={{ border: '3px solid #1B4FD8' }}
                     />
                     <div>

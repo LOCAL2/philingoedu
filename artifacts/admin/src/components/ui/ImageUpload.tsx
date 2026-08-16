@@ -53,6 +53,14 @@ export function ImageUpload({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Show local preview immediately — no waiting for compression or server
+    const blobUrl = URL.createObjectURL(file);
+    setLocalPreview(blobUrl); // replaces old blob → useEffect revokes the old one
+    setUploading(true);
+    onUploadingChange?.(true);
+    setDone(false);
+    setError('');
+
     // Compress before upload — max 500 KB, 1920px wide, convert to WebP for smaller files
     let uploadFile: File = file;
     try {
@@ -66,14 +74,6 @@ export function ImageUpload({
       const baseName = file.name.replace(/\.[^.]+$/, '');
       uploadFile = new File([compressed], `${baseName}.webp`, { type: 'image/webp' });
     } catch { /* fallback to original file if compression fails */ }
-
-    // Show local preview immediately — no waiting for server
-    const blobUrl = URL.createObjectURL(uploadFile);
-    setLocalPreview(blobUrl); // replaces old blob → useEffect revokes the old one
-    setUploading(true);
-    onUploadingChange?.(true);
-    setDone(false);
-    setError('');
 
     try {
       // Step 1: request presigned URL from Object Storage

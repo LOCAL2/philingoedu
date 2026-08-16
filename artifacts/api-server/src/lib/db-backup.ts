@@ -1,7 +1,7 @@
 /**
  * db-backup.ts
  * Automated daily PostgreSQL backup — uploads compressed SQL dump to
- * Replit Object Storage (GCS-backed). Retains last 7 days automatically.
+ * Supabase Storage. Retains last 7 days automatically.
  *
  * Safe: read-only on the live DB, never touches app tables.
  */
@@ -10,21 +10,16 @@ import { execFile } from 'child_process';
 import { createGzip } from 'zlib';
 import { Readable } from 'stream';
 import { promisify } from 'util';
-import { objectStorageClient } from './objectStorage.js';
+import { supabaseAdmin, getStorageBucket } from './objectStorage.js';
 import { logger } from './logger.js';
 
 const execFileAsync = promisify(execFile);
 
-// pg_dump bundled with the Nix PostgreSQL 16 package
-const PG_DUMP_PATH = '/nix/store/bgwr5i8jf8jpg75rr53rz3fqv5k8yrwp-postgresql-16.10/bin/pg_dump';
+// pg_dump bundled with the Nix PostgreSQL 16 package (only available in Replit/Nix environments)
+// For local Windows environments, pg_dump must be in PATH or configured.
+const PG_DUMP_PATH = process.env.PG_DUMP_PATH || 'pg_dump';
 const BACKUP_PREFIX = 'db-backups/';
 const RETAIN_DAYS = 7;
-
-function getBucketId(): string {
-  const id = process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID;
-  if (!id) throw new Error('DEFAULT_OBJECT_STORAGE_BUCKET_ID env var is not set');
-  return id;
-}
 
 function nowLabel(): string {
   // Format: YYYY-MM-DD_HH-MM-SS UTC
@@ -67,36 +62,54 @@ function gzipBuffer(input: Buffer): Promise<Buffer> {
 }
 
 /**
- * Upload a Buffer to GCS bucket at the given object name.
+ * Upload a Buffer to Supabase bucket at the given object name.
  */
-async function uploadToGcs(bucketId: string, objectName: string, data: Buffer, contentType: string): Promise<void> {
-  const bucket = objectStorageClient.bucket(bucketId);
-  const file = bucket.file(objectName);
-  await file.save(data, {
-    contentType,
-    metadata: { cacheControl: 'no-cache' },
-  });
+async function uploadToSupabase(bucketId: string, objectName: string, data: Buffer, contentType: string): Promise<void> {
+  const { error } = await supabaseAdmin.storage
+    .from(bucketId)
+    .upload(objectName, data, {
+      contentType,
+      cacheControl: '0',
+      upsert: true
+    });
+    
+  if (error) {
+    throw new Error(`Upload failed: ${error.message}`);
+  }
 }
 
 /**
- * Delete backup files in GCS older than RETAIN_DAYS.
+ * Delete backup files in Supabase older than RETAIN_DAYS.
  */
 async function pruneOldBackups(bucketId: string): Promise<number> {
-  const bucket = objectStorageClient.bucket(bucketId);
-  const [files] = await bucket.getFiles({ prefix: BACKUP_PREFIX });
+  const { data: files, error } = await supabaseAdmin.storage
+    .from(bucketId)
+    .list(BACKUP_PREFIX);
+
+  if (error || !files) {
+    logger.error({ err: error }, 'db-backup: failed to list backups for pruning');
+    return 0;
+  }
 
   const cutoff = Date.now() - RETAIN_DAYS * 24 * 60 * 60 * 1000;
   let deleted = 0;
+  
+  const filesToDelete = [];
 
   for (const file of files) {
-    const created = file.metadata.timeCreated
-      ? new Date(file.metadata.timeCreated as string).getTime()
-      : 0;
+    // skip folders
+    if (!file.id) continue;
+
+    const created = new Date(file.created_at).getTime();
     if (created > 0 && created < cutoff) {
-      await file.delete();
-      logger.info({ name: file.name }, 'db-backup: pruned old backup');
+      filesToDelete.push(`${BACKUP_PREFIX}${file.name}`);
+      logger.info({ name: file.name }, 'db-backup: pruning old backup');
       deleted++;
     }
+  }
+
+  if (filesToDelete.length > 0) {
+    await supabaseAdmin.storage.from(bucketId).remove(filesToDelete);
   }
 
   return deleted;
@@ -116,7 +129,7 @@ export async function runDbBackup(): Promise<{
   logger.info('db-backup: starting pg_dump…');
 
   try {
-    const bucketId = getBucketId();
+    const bucketId = getStorageBucket();
     const label = nowLabel();
     const objectName = `${BACKUP_PREFIX}backup_${label}.sql.gz`;
 
@@ -129,8 +142,8 @@ export async function runDbBackup(): Promise<{
     logger.info({ gzBytes: gzBuf.byteLength }, 'db-backup: gzip complete');
 
     // 3. Upload
-    await uploadToGcs(bucketId, objectName, gzBuf, 'application/gzip');
-    logger.info({ objectName, bucket: bucketId }, 'db-backup: uploaded to GCS ✅');
+    await uploadToSupabase(bucketId, objectName, gzBuf, 'application/gzip');
+    logger.info({ objectName, bucket: bucketId }, 'db-backup: uploaded to Supabase ✅');
 
     // 4. Prune old backups
     const pruned = await pruneOldBackups(bucketId);

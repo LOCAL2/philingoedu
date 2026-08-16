@@ -54,7 +54,7 @@ async function getContactSettings(preferredDate?: string): Promise<{
   const keysToFetch = ['line_id', 'phone', 'seminar_meet_link', 'line_url',
     ...(sessionKey ? [sessionKey] : [])];
   const fallback = {
-    lineId: '@philingo', phone: '061-656-4159', meetLink: '', lineUrl: 'https://lin.ee/zmlkhOn0',
+    lineId: '@philingo', phone: '061-656-4159', meetLink: '', lineUrl: 'https://lin.ee/nBR4rsN',
     sessionLabel: '29 ส.ค. – 12 ก.ย. 2569', sessionSchool: '', sessionTime: '10:00–11:00 น.',
   };
   try {

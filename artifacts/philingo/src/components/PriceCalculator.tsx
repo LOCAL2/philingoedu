@@ -45,7 +45,7 @@ export interface PricingConfig {
 
 interface Props { config: PricingConfig; schoolName: string; lineUrl?: string; }
 
-const LINE_URL = 'https://lin.ee/zmlkhOn0';
+const LINE_URL = 'https://lin.ee/nBR4rsN';
 const DEFAULT_USD_THB = 33.50;
 const DEFAULT_PHP_THB = 0.50;
 

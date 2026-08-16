@@ -156,7 +156,7 @@ export default function Home() {
     settings.seo_title  || 'Philingo — เรียนภาษาอังกฤษที่ฟิลิปปินส์ ที่ปรึกษาอันดับ 1 ของไทย',
     settings.seo_description || 'Philingo บริการที่ปรึกษาเรียนต่อฟิลิปปินส์สำหรับคนไทย ครบวงจรตั้งแต่เลือกโรงเรียน จองที่พัก รับโปรโมชั่น และดูแลตลอดการเรียน'
   );
-  const lineUrl = settings.line_url || (settings.line_id ? `https://line.me/R/ti/p/${encodeURIComponent(settings.line_id)}` : 'https://lin.ee/zmlkhOn0');
+  const lineUrl = settings.line_url || (settings.line_id ? `https://line.me/R/ti/p/${encodeURIComponent(settings.line_id)}` : 'https://lin.ee/nBR4rsN');
   const [activeReview, setActiveReview] = React.useState(0);
   const reviewsPerPage = 3;
 

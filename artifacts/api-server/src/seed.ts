@@ -28,7 +28,7 @@ async function seed() {
     { key: "line_id", value: "@philingo", group: "social", label: "LINE ID" },
     { key: "facebook_url", value: "https://www.facebook.com/philingo.th", group: "social", label: "Facebook URL" },
     { key: "tiktok_url", value: "https://www.tiktok.com/@philingo", group: "social", label: "TikTok URL" },
-    { key: "line_url", value: "https://lin.ee/zmlkhOn0", group: "social", label: "LINE URL" },
+    { key: "line_url", value: "https://lin.ee/nBR4rsN", group: "social", label: "LINE URL" },
     { key: "ga4_id", value: "", group: "analytics", label: "Google Analytics 4 ID" },
     { key: "fb_pixel_id", value: "", group: "analytics", label: "Facebook Pixel ID" },
     { key: "gtm_id", value: "", group: "analytics", label: "Google Tag Manager ID" },

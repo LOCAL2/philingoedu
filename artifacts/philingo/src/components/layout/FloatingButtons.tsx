@@ -4,7 +4,7 @@ import { Phone, ArrowUp } from 'lucide-react';
 import { SiLine, SiTiktok, SiMessenger } from 'react-icons/si';
 import { useSettings } from '../../hooks/use-settings';
 
-const LINE_URL_DEFAULT = 'https://lin.ee/zmlkhOn0';
+const LINE_URL_DEFAULT = 'https://lin.ee/nBR4rsN';
 const MESSENGER_URL_DEFAULT = 'https://m.me/philingo.th';
 const TIKTOK_URL = 'https://www.tiktok.com/@philingo?is_from_webapp=1&sender_device=pc';
 

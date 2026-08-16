@@ -49,7 +49,7 @@ export default function Reviews() {
     'อ่านรีวิวจากนักเรียนไทยที่เรียนภาษาอังกฤษที่ฟิลิปปินส์จริง รีวิวโรงเรียน ค่าใช้จ่าย และประสบการณ์'
   );
   const settings = useSettings();
-  const LINE_URL = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const LINE_URL = settings.line_url || 'https://lin.ee/nBR4rsN';
 
   const { data: reviews = [], isLoading } = useQuery<ReviewPost[]>({
     queryKey: ['public-reviews'],

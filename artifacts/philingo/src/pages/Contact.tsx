@@ -20,7 +20,7 @@ export default function Contact() {
     fetch(`${BASE}/api/settings`, { cache: 'no-store' }).then(r => r.ok ? r.json() : {}).then(setSettings).catch(() => {});
   }, []);
 
-  const lineAddUrl = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const lineAddUrl = settings.line_url || 'https://lin.ee/nBR4rsN';
   const lineId     = settings.line_id  || '@philingo';
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -229,7 +229,7 @@ export default function Seminars() {
   const heroBannerUrl = eventData?.imageUrl || bannersData?.data?.[0]?.imageUrl || seminarBannerFallback;
 
   // Settings (line, phone, meet link)
-  const [lineAddUrl,   setLineAddUrl]   = useState('https://lin.ee/zmlkhOn0');
+  const [lineAddUrl,   setLineAddUrl]   = useState('https://lin.ee/nBR4rsN');
   const [messengerUrl, setMessengerUrl] = useState('https://m.me/philingo.th');
   const [sitePhone,    setSitePhone]    = useState('061-656-4159');
   const [meetLink,     setMeetLink]     = useState('');

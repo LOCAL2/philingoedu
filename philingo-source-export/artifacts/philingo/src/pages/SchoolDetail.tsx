@@ -1297,7 +1297,7 @@ const SCHOOL_KEYWORDS: Record<string, string[]> = {
 // ─── Component ────────────────────────────────────────────────────
 export default function SchoolDetail() {
   const siteSettings = useSettings();
-  const LINE_URL = siteSettings.line_url || 'https://lin.ee/zmlkhOn0';
+  const LINE_URL = siteSettings.line_url || 'https://lin.ee/nBR4rsN';
   const params = useParams<{ slug: string }>();
   const slug = params?.slug ?? '';
   const baseSchool = schoolsData[slug];

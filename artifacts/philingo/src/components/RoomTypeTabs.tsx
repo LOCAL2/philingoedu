@@ -30,7 +30,7 @@ const AMENITY_ICON: Record<string, React.ComponentType<any>> = {
 
 export function RoomTypeTabs({ rooms, schoolName }: { rooms: RoomTypeDetail[]; schoolName: string }) {
   const settings = useSettings();
-  const LINE_URL = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const LINE_URL = settings.line_url || 'https://lin.ee/nBR4rsN';
   const [active, setActive] = useState(0);
   const [photo, setPhoto] = useState(0);
   const room = rooms[active];

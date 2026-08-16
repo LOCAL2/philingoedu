@@ -330,7 +330,7 @@ function RelatedPosts({ currentId, category }: { currentId: number; category: st
 /* ── Main component ─────────────────────────────────────── */
 export default function PostDetail() {
   const settings  = useSettings();
-  const LINE_URL  = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const LINE_URL  = settings.line_url || 'https://lin.ee/nBR4rsN';
   const params    = useParams<{ id: string }>();
   const slug      = params?.id ?? '';
 

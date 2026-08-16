@@ -111,7 +111,7 @@ function RegisterModal({ event, onClose }: { event: ApiEvent; onClose: () => voi
               {/* LINE CTA */}
               <div className="bg-[#00B900]/10 border border-[#00B900]/30 rounded-xl p-3 mb-3">
                 <p className="text-xs text-gray-600 dark:text-gray-300 mb-2 font-medium">🎁 รับใบเสนอราคาและโปรโมชั่นพิเศษผ่าน LINE</p>
-                <a href="https://lin.ee/zmlkhOn0" target="_blank" rel="noreferrer"
+                <a href="https://lin.ee/nBR4rsN" target="_blank" rel="noreferrer"
                   className="flex items-center justify-center gap-2 bg-[#00B900] hover:bg-[#00A000] text-white font-bold px-4 py-2.5 rounded-xl transition-all w-full text-sm">
                   แอด LINE Official รับใบเสนอราคาโปรโมชั่น (@philingo)
                 </a>
@@ -198,7 +198,7 @@ function FairRegistrationForm() {
     }
   };
 
-  const LINE_URL = `https://lin.ee/zmlkhOn0`;
+  const LINE_URL = `https://lin.ee/nBR4rsN`;
   const LINE_ID  = '@philingo';
 
   if (done) return (

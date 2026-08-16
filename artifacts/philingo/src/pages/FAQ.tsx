@@ -25,7 +25,7 @@ export default function FAQ() {
     'รวมคำถาม-คำตอบเกี่ยวกับการเรียนภาษาอังกฤษที่ฟิลิปปินส์ ค่าใช้จ่าย วีซ่า และการเตรียมตัวก่อนเดินทาง'
   );
   const settings = useSettings();
-  const lineUrl = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const lineUrl = settings.line_url || 'https://lin.ee/nBR4rsN';
 
   const toggleItem = (i: number) => {
     setOpenItems(prev => ({ ...prev, [i]: !prev[i] }));

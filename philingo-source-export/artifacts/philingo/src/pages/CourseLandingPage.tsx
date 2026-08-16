@@ -48,7 +48,7 @@ export default function CourseLandingPage() {
   const settings = useSettings();
   const BASE = (import.meta.env.BASE_URL ?? '').replace(/\/$/, '');
 
-  const lineUrl = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const lineUrl = settings.line_url || 'https://lin.ee/nBR4rsN';
 
   const { data: course, isLoading, isError } = useQuery<Course>({
     queryKey: ['course-landing', schoolSlug, courseSlug],

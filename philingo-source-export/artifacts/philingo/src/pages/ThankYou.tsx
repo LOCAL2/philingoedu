@@ -55,7 +55,7 @@ const Confetti = () => {
 };
 
 export default function ThankYou() {
-  const [lineUrl, setLineUrl] = useState('https://lin.ee/zmlkhOn0');
+  const [lineUrl, setLineUrl] = useState('https://lin.ee/nBR4rsN');
 
   useEffect(() => {
     settingsApi.getAll().then(s => {

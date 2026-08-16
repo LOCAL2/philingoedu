@@ -67,7 +67,7 @@ const steps = [
 
 export default function Services() {
   const settings = useSettings();
-  const lineUrl = settings.line_url || 'https://lin.ee/zmlkhOn0';
+  const lineUrl = settings.line_url || 'https://lin.ee/nBR4rsN';
   useSeoMeta(
     'บริการเรียนต่อฟิลิปปินส์ครบวงจร | Philingo',
     'Philingo ให้บริการครบวงจรสำหรับการเรียนต่อฟิลิปปินส์ ทั้งการเลือกโรงเรียน จองที่พัก ขอวีซ่า และดูแลตลอดการเรียน ฟรีไม่มีค่าใช้จ่าย'

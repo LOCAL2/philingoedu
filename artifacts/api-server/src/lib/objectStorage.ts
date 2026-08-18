@@ -24,15 +24,23 @@ export class ObjectNotFoundError extends Error {
 }
 
 export class ObjectStorageService {
-  async getObjectEntityUploadURL(ttlSec: number = 3600): Promise<string> {
+  async getObjectEntityUploadURL(ttlSec: number = 3600, category?: string, originalName?: string): Promise<{ signedUrl: string; filePath: string }> {
     const bucket = getStorageBucket();
-    const filePath = `tmp/${Date.now()}-${Math.random().toString(36).substring(7)}.bin`;
+    // Use category-based prefix if provided, otherwise fallback to 'uploads'
+    const prefix = category && ['banner', 'facilities', 'rooms', 'logo', 'video', 'other'].includes(category)
+      ? category
+      : 'uploads';
+    // Preserve extension from original filename if available
+    const ext = originalName ? originalName.replace(/.*(\.[^.]+)$/, '$1').toLowerCase() : '.bin';
+    const safeName = `${Date.now()}-${Math.random().toString(36).substring(7)}${ext}`;
+    const filePath = `${prefix}/${safeName}`;
+
     const { data, error } = await supabaseAdmin.storage
       .from(bucket)
       .createSignedUploadUrl(filePath);
     
     if (error) throw error;
-    return data.signedUrl; // Return the signed upload URL
+    return { signedUrl: data.signedUrl, filePath };
   }
 
   normalizeObjectEntityPath(url: string): string {
@@ -42,7 +50,7 @@ export class ObjectStorageService {
       // https://<project>.supabase.co/storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
       // We want to extract just the <filePath> part (relative to bucket root)
       const match = urlObj.pathname.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+)$/);
-      if (match) return match[1]; // e.g. "tmp/1786888546785-xojmy4.bin"
+      if (match) return match[1]; // e.g. "banner/1786888546785-xojmy4.webp"
       // Fallback: return pathname without leading slash
       return urlObj.pathname.replace(/^\//, '');
     } catch {

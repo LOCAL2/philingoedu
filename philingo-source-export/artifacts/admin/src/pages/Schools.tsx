@@ -341,6 +341,7 @@ function PricingEditor({ school, onClose }: { school: School; onClose: () => voi
   const [activeTab, setActiveTab] = useState<'pricing' | 'photos' | 'timetable' | 'quotation' | 'video'>('pricing');
   const [parseStatus, setParseStatus] = useState('');
   const [promoUploadStatus, setPromoUploadStatus] = useState('');
+  const [timetableUploadStatus, setTimetableUploadStatus] = useState('');
   const [qStudentName, setQStudentName] = useState('');
   const [qWeeks, setQWeeks]             = useState(4);
   const [qCourse, setQCourse]           = useState(cfg.courses[0]?.id ?? '');
@@ -585,6 +586,11 @@ function PricingEditor({ school, onClose }: { school: School; onClose: () => voi
               <label className="flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
                 <Upload className="w-3.5 h-3.5" /> 📄 PDF Price List
                 <input type="file" accept=".pdf" className="hidden" onChange={handlePriceFileUpload} />
+              </label>
+              {/* Image button */}
+              <label className="flex items-center gap-2 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                <Upload className="w-3.5 h-3.5" /> 🖼️ รูปภาพราคา (JPEG / PNG)
+                <input type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={handlePriceFileUpload} />
               </label>
               {parseStatus && <span className="text-xs text-blue-700">{parseStatus}</span>}
             </div>
@@ -1415,100 +1421,146 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
         {activeTab === 'timetable' && (
           <section className="space-y-4">
             <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-700">
-              <strong>วิธีใช้:</strong> เพิ่มคอร์สก่อน แล้วเพิ่มช่วงเวลาแต่ละคาบ · กำหนดประเภท (1:1 / กลุ่ม / อาหาร / ติวเอง / เวลาว่าง) · บันทึกเพื่อให้แสดงบนหน้าโรงเรียน
+              <strong>วิธีใช้:</strong> เลือกรูปแบบการแสดงผลตารางเรียนเป็น "แบบรูปภาพโดยตรง" เพื่อแนบรูปตารางเรียน หรือ "แบบกรอกตารางย่อย"
             </div>
 
-            {/* Course tabs */}
-            <div className="flex gap-2 flex-wrap items-center">
-              {timetable.schedules.map((s, i) => (
-                <div key={i} className="flex items-center gap-1">
-                  <button
-                    onClick={() => setActiveCourseIdx(i)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${activeCourseIdx === i ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                  >
-                    {s.courseNameTh || s.courseName || `คอร์ส ${i + 1}`}
-                  </button>
-                  <button onClick={() => { removeCourseTab(i); setActiveCourseIdx(Math.max(0, i - 1)); }}
-                    className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+            <div className="flex items-center gap-6 bg-gray-50 border border-gray-200 rounded-xl p-3.5">
+              <span className="text-xs font-bold text-gray-700">รูปแบบตารางเรียน:</span>
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer font-semibold text-gray-700">
+                <input
+                  type="radio"
+                  name="timetableFormat"
+                  checked={!timetable.imageUrl}
+                  onChange={() => setTimetable(t => ({ ...t, imageUrl: undefined }))}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                กรอกข้อมูลคาบเรียนย่อย (Text)
+              </label>
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer font-semibold text-gray-700">
+                <input
+                  type="radio"
+                  name="timetableFormat"
+                  checked={!!timetable.imageUrl}
+                  onChange={() => setTimetable(t => ({ ...t, imageUrl: t.imageUrl || '' }))}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                แสดงรูปภาพตารางเรียนโดยตรง (Image File)
+              </label>
+            </div>
+
+            {timetable.imageUrl !== undefined ? (
+              /* ── Option: Image upload directly ── */
+              <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-base">📅</span>
+                  <h3 className="font-bold text-gray-800 text-sm">รูปภาพตารางเรียน</h3>
                 </div>
-              ))}
-              <button onClick={() => { addCourseTab(); setActiveCourseIdx(timetable.schedules.length); }}
-                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 px-2 py-1.5 border border-blue-200 rounded-lg">
-                <Plus className="w-3 h-3" /> เพิ่มคอร์ส
-              </button>
-            </div>
-
-            {timetable.schedules.length === 0 && (
-              <div className="text-center py-8 text-gray-400 text-xs">ยังไม่มีคอร์ส · กด "+ เพิ่มคอร์ส" ด้านบน</div>
-            )}
-
-            {timetable.schedules[activeCourseIdx] && (() => {
-              const ci = activeCourseIdx;
-              const sc = timetable.schedules[ci];
-              return (
-                <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
-                  {/* Course meta */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (TH)</label>
-                      <input value={sc.courseNameTh} onChange={e => updateCourseField(ci, 'courseNameTh', e.target.value)}
-                        placeholder="ESL ปกติ" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (EN)</label>
-                      <input value={sc.courseName} onChange={e => updateCourseField(ci, 'courseName', e.target.value)}
-                        placeholder="ESL Regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Course ID (ไม่ซ้ำ)</label>
-                      <input value={sc.courseId} onChange={e => updateCourseField(ci, 'courseId', e.target.value)}
-                        placeholder="esl_regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Badge (เช่น 1:1×4 | กลุ่ม×4)</label>
-                      <input value={sc.tag} onChange={e => updateCourseField(ci, 'tag', e.target.value)}
-                        placeholder="1:1×4 | กลุ่ม×4" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                  </div>
-
-                  {/* Time slots */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-gray-700">ช่วงเวลา ({sc.slots.length} คาบ)</span>
-                      <button onClick={() => addSlot(ci)}
-                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                        <Plus className="w-3 h-3" /> เพิ่มคาบ
+                <p className="text-xs text-gray-400">อัปโหลดไฟล์รูปภาพตารางเรียน (JPEG / PNG / WEBP) เพื่อนำไปแสดงบนหน้าเว็บแทนตารางย่อย</p>
+                <MultiImageUpload
+                  label="รูปภาพตารางเรียน"
+                  category="other"
+                  existingUrls={timetable.imageUrl ? [timetable.imageUrl] : []}
+                  onUrlsChange={urls => setTimetable(t => ({ ...t, imageUrl: urls[0] ?? '' }))}
+                  maxFiles={1}
+                  hint="อัปโหลดได้ 1 รูปภาพ (แนะนำไฟล์รูปที่ชัดเจน อ่านง่าย)"
+                />
+              </div>
+            ) : (
+              /* ── Option: Normal slots ── */
+              <>
+                {/* Course tabs */}
+                <div className="flex gap-2 flex-wrap items-center">
+                  {timetable.schedules.map((s, i) => (
+                    <div key={i} className="flex items-center gap-1">
+                      <button
+                        onClick={() => setActiveCourseIdx(i)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${activeCourseIdx === i ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                      >
+                        {s.courseNameTh || s.courseName || `คอร์ส ${i + 1}`}
                       </button>
+                      <button onClick={() => { removeCourseTab(i); setActiveCourseIdx(Math.max(0, i - 1)); }}
+                        className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
                     </div>
-                    <div className="space-y-1.5">
-                      {sc.slots.map((slot, si) => (
-                        <div key={si} className="grid grid-cols-12 gap-1.5 items-center">
-                          <input value={slot.time} onChange={e => updateSlot(ci, si, 'time', e.target.value)}
-                            placeholder="08:00 – 08:50"
-                            className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
-                          <input value={slot.activity} onChange={e => updateSlot(ci, si, 'activity', e.target.value)}
-                            placeholder="เรียน 1 ต่อ 1 ชั่วโมงที่ 1"
-                            className="col-span-5 border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                          <select value={slot.type} onChange={e => updateSlot(ci, si, 'type', e.target.value)}
-                            className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs bg-white">
-                            {SLOT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                          </select>
-                          <button onClick={() => removeSlot(ci, si)}
-                            className="col-span-1 text-red-400 hover:text-red-600 flex items-center justify-center">
-                            <X className="w-3 h-3" />
+                  ))}
+                  <button onClick={() => { addCourseTab(); setActiveCourseIdx(timetable.schedules.length); }}
+                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 px-2 py-1.5 border border-blue-200 rounded-lg">
+                    <Plus className="w-3 h-3" /> เพิ่มคอร์ส
+                  </button>
+                </div>
+
+                {timetable.schedules.length === 0 && (
+                  <div className="text-center py-8 text-gray-400 text-xs">ยังไม่มีคอร์ส · กด "+ เพิ่มคอร์ส" ด้านบน</div>
+                )}
+
+                {timetable.schedules[activeCourseIdx] && (() => {
+                  const ci = activeCourseIdx;
+                  const sc = timetable.schedules[ci];
+                  return (
+                    <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
+                      {/* Course meta */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (TH)</label>
+                          <input value={sc.courseNameTh} onChange={e => updateCourseField(ci, 'courseNameTh', e.target.value)}
+                            placeholder="ESL ปกติ" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (EN)</label>
+                          <input value={sc.courseName} onChange={e => updateCourseField(ci, 'courseName', e.target.value)}
+                            placeholder="ESL Regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Course ID (ไม่ซ้ำ)</label>
+                          <input value={sc.courseId} onChange={e => updateCourseField(ci, 'courseId', e.target.value)}
+                            placeholder="esl_regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Badge (เช่น 1:1×4 | กลุ่ม×4)</label>
+                          <input value={sc.tag} onChange={e => updateCourseField(ci, 'tag', e.target.value)}
+                            placeholder="1:1×4 | กลุ่ม×4" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                      </div>
+
+                      {/* Time slots */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-gray-700">ช่วงเวลา ({sc.slots.length} คาบ)</span>
+                          <button onClick={() => addSlot(ci)}
+                            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <Plus className="w-3 h-3" /> เพิ่มคาบ
                           </button>
                         </div>
-                      ))}
-                      {sc.slots.length === 0 && (
-                        <div className="text-xs text-gray-400 text-center py-3 border border-dashed border-gray-200 rounded-lg">
-                          ยังไม่มีคาบเรียน · กด "+ เพิ่มคาบ"
+                        <div className="space-y-1.5">
+                          {sc.slots.map((slot, si) => (
+                            <div key={si} className="grid grid-cols-12 gap-1.5 items-center">
+                              <input value={slot.time} onChange={e => updateSlot(ci, si, 'time', e.target.value)}
+                                placeholder="08:00 – 08:50"
+                                className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
+                              <input value={slot.activity} onChange={e => updateSlot(ci, si, 'activity', e.target.value)}
+                                placeholder="เรียน 1 ต่อ 1 ชั่วโมงที่ 1"
+                                className="col-span-5 border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                              <select value={slot.type} onChange={e => updateSlot(ci, si, 'type', e.target.value)}
+                                className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs bg-white">
+                                {SLOT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                              </select>
+                              <button onClick={() => removeSlot(ci, si)}
+                                className="col-span-1 text-red-400 hover:text-red-600 flex items-center justify-center">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                          {sc.slots.length === 0 && (
+                            <div className="text-xs text-gray-400 text-center py-3 border border-dashed border-gray-200 rounded-lg">
+                              ยังไม่มีคาบเรียน · กด "+ เพิ่มคาบ"
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })()}
+                  );
+                })()}
+              </>
+            )}
 
             {/* Rules & note */}
             <div className="grid grid-cols-2 gap-4">

@@ -13,7 +13,7 @@ import { supabaseAdmin, getStorageBucket } from './objectStorage.js';
  * Sets Cache-Control on the object metadata so CDNs can cache it.
  */
 export async function uploadImageToSupabase(
-  prefix: 'gallery' | 'uploads',
+  prefix: string,
   filename: string,
   buffer: Buffer,
   contentType: string,

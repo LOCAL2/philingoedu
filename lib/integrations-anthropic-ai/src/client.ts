@@ -97,6 +97,52 @@ function getMockMessagesCreate() {
             validUntil: null
           }
         ], null, 2);
+      } else if (userText.includes('Extract all course pricing') || userText.includes('PRICE_VISION_PROMPT')) {
+        responseText = JSON.stringify({
+          courses: [
+            { name: "ESL Regular", pricePerFourWeeks: 950 },
+            { name: "IELTS Intensive", pricePerFourWeeks: 1100 }
+          ],
+          rooms: [
+            { name: "Twin Room", pricePerFourWeeks: 850 },
+            { name: "Triple Room", pricePerFourWeeks: 750 }
+          ],
+          localFeesByWeek: {
+            "4": 25200,
+            "8": 37330,
+            "12": 55240,
+            "16": 66780,
+            "20": 78320,
+            "24": 89860
+          },
+          enrollmentFee: 100
+        }, null, 2);
+      } else if (userText.includes('Extract all timetable') || userText.includes('TIMETABLE_VISION_PROMPT')) {
+        responseText = JSON.stringify({
+          schedules: [
+            {
+              courseId: "esl_regular",
+              courseName: "ESL Regular",
+              courseNameTh: "ESL ปกติ",
+              tag: "1:1 x 4 | Group x 4",
+              slots: [
+                { time: "08:00 - 08:50", activity: "1:1 Class (Speaking)", type: "one-on-one" },
+                { time: "09:00 - 09:50", activity: "1:1 Class (Writing)", type: "one-on-one" },
+                { time: "10:00 - 10:50", activity: "Group Class (Grammar)", type: "group" },
+                { time: "12:00 - 13:00", activity: "Lunch", type: "meal" },
+                { time: "13:00 - 13:50", activity: "1:1 Class (Listening)", type: "one-on-one" },
+                { time: "14:00 - 14:50", activity: "1:1 Class (Reading)", type: "one-on-one" },
+                { time: "15:00 - 15:50", activity: "Group Class (Discussion)", type: "group" },
+                { time: "19:00 - 20:50", activity: "Self Study", type: "self-study" }
+              ]
+            }
+          ],
+          rules: [
+            "ห้ามใช้ภาษาไทยในห้องเรียน (English Only Policy)",
+            "เคอร์ฟิว จันทร์-พฤหัสบดี 22:00 น. / ศุกร์-อาทิตย์ 24:00 น."
+          ],
+          note: "ตารางเรียนอาจปรับเปลี่ยนตามระดับภาษาของนักเรียนแต่ละคน"
+        }, null, 2);
       } else {
         const titleMatch = userText.match(/หัวข้อบทความ:\s*"([^"]+)"/) || userText.match(/เขียนบทความเรื่อง:\s*"([^"]+)"/) || userText.match(/หัวข้อ:\s*"([^"]+)"/);
         const title = titleMatch?.[1]?.trim() || 'เคล็ดลับการเรียนภาษาอังกฤษที่ฟิลิปปินส์';

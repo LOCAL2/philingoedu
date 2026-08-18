@@ -20,6 +20,7 @@ export interface TimetableConfig {
   schedules: CourseSchedule[];
   rules?: string[];
   note?: string;
+  imageUrl?: string;
 }
 
 const TYPE_COLOR: Record<string, string> = {
@@ -47,9 +48,46 @@ const TYPE_BG: Record<string, string> = {
 };
 
 export function CourseTimetable({ config }: { config: TimetableConfig }) {
+  if (config.imageUrl) {
+    return (
+      <div className="space-y-4">
+        <div className="flex justify-center bg-white/80 dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4">
+          <img src={config.imageUrl} alt="School Timetable" className="max-w-full h-auto rounded-xl shadow-md" />
+        </div>
+
+        {/* Legend + rules — horizontal row on sm+, stacked on mobile */}
+        <div className="flex flex-col sm:flex-row gap-4 mt-4">
+          {/* School rules */}
+          {config.rules && config.rules.length > 0 && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-2xl border border-yellow-200 dark:border-yellow-800 p-4 flex-1">
+              <h4 className="font-bold text-yellow-800 dark:text-yellow-300 text-sm mb-2 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" /> กฎของโรงเรียน
+              </h4>
+              <ul className="space-y-1.5">
+                {config.rules.map((r, i) => (
+                  <li key={i} className="text-xs text-yellow-700 dark:text-yellow-400 flex items-start gap-1.5">
+                    <span className="mt-0.5 shrink-0">•</span>{r}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+
+        {config.note && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">{config.note}</p>
+        )}
+      </div>
+    );
+  }
+
   const [active, setActive] = useState(0);
   const [showLegend, setShowLegend] = useState(false);
-  const schedule = config.schedules[active];
+  const schedule = config.schedules?.[active];
+
+  if (!schedule) {
+    return <div className="text-sm text-gray-400">ยังไม่มีข้อมูลตารางเรียน</div>;
+  }
 
   return (
     <div>

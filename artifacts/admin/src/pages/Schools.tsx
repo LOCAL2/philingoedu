@@ -355,6 +355,7 @@ function PricingEditor({ school, onClose }: { school: School; onClose: () => voi
   const [activeTab, setActiveTab] = useState<'pricing' | 'photos' | 'timetable' | 'quotation' | 'video'>('pricing');
   const [parseStatus, setParseStatus] = useState('');
   const [promoUploadStatus, setPromoUploadStatus] = useState('');
+  const [timetableUploadStatus, setTimetableUploadStatus] = useState('');
   const [qStudentName, setQStudentName] = useState('');
   const [qWeeks, setQWeeks]             = useState(4);
   const [qCourse, setQCourse]           = useState(cfg.courses[0]?.id ?? '');
@@ -370,58 +371,6 @@ function PricingEditor({ school, onClose }: { school: School; onClose: () => voi
   const [vidUploadStatus, setVidUploadStatus] = useState('');
   const [vidProgress, setVidProgress]         = useState(0);
   const vidInputRef = useRef<HTMLInputElement>(null);
-
-  // ── Scrape gallery state ──
-  const [scrapeOpen, setScrapeOpen]           = useState(false);
-  const [scrapeLoading, setScrapeLoading]     = useState(false);
-  const [scrapeError, setScrapeError]         = useState('');
-  const [scrapeImages, setScrapeImages]       = useState<string[]>([]);
-  const [scrapeSelected, setScrapeSelected]   = useState<Set<string>>(new Set());
-  const [scrapeTarget, setScrapeTarget]       = useState<'banner' | 'room' | null>(null);
-  const [scrapeRoomIdx, setScrapeRoomIdx]     = useState<number | null>(null);
-  const scrapeBaseUrl = ((import.meta as any).env.BASE_URL ?? '').replace(/\/$/, '');
-
-  const openScrape = (target: 'banner' | 'room', roomIdx?: number) => {
-    setScrapeOpen(true);
-    setScrapeError('');
-    setScrapeImages([]);
-    setScrapeSelected(new Set());
-    setScrapeTarget(target);
-    setScrapeRoomIdx(roomIdx ?? null);
-    setScrapeLoading(true);
-    fetch(`/api/schools/${school.id}/scrape-images`, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${localStorage.getItem('philingo_admin_token')}` },
-    })
-      .then(r => r.json())
-      .then(d => {
-        if (d.error) { setScrapeError(d.error); setScrapeLoading(false); return; }
-        setScrapeImages(d.images ?? []);
-        setScrapeLoading(false);
-      })
-      .catch(e => { setScrapeError(e.message); setScrapeLoading(false); });
-  };
-
-  const applyScrapeSelection = () => {
-    const chosen = Array.from(scrapeSelected);
-    if (scrapeTarget === 'banner') {
-      setBannerPhotos(prev => {
-        const combined = [...prev];
-        for (const u of chosen) if (!combined.includes(u)) combined.push(u);
-        return combined;
-      });
-    } else if (scrapeTarget === 'room' && scrapeRoomIdx !== null) {
-      setCfg(c => {
-        const rooms = [...c.rooms];
-        const existing = rooms[scrapeRoomIdx].photos ?? [];
-        const combined = [...existing];
-        for (const u of chosen) if (!combined.includes(u)) combined.push(u);
-        rooms[scrapeRoomIdx] = { ...rooms[scrapeRoomIdx], photos: combined };
-        return { ...c, rooms };
-      });
-    }
-    setScrapeOpen(false);
-  };
 
   // ── Banner photos state (saved to school.photos) ──
   const [bannerPhotos, setBannerPhotos] = useState<string[]>((school as any).photos ?? []);
@@ -599,6 +548,11 @@ function PricingEditor({ school, onClose }: { school: School; onClose: () => voi
               <label className="flex items-center gap-2 cursor-pointer bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
                 <Upload className="w-3.5 h-3.5" /> 📄 PDF Price List
                 <input type="file" accept=".pdf" className="hidden" onChange={handlePriceFileUpload} />
+              </label>
+              {/* Image button */}
+              <label className="flex items-center gap-2 cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition-colors">
+                <Upload className="w-3.5 h-3.5" /> 🖼️ รูปภาพราคา (JPEG / PNG)
+                <input type="file" accept=".jpg,.jpeg,.png,.webp" className="hidden" onChange={handlePriceFileUpload} />
               </label>
               {parseStatus && <span className="text-xs text-blue-700">{parseStatus}</span>}
             </div>
@@ -1204,7 +1158,7 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
                         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${v.type === 'youtube' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'}`}>
                           {v.type === 'youtube' ? '▶ YouTube' : '📁 Upload'}
                         </span>
-                        <p className="text-[10px] text-gray-400 font-mono truncate">{v.url.slice(0, 55)}</p>
+                        <p className="text-[10px] text-gray-400 font-mono truncate">{v.url?.slice(0, 55) ?? ''}</p>
                         <div className="grid grid-cols-2 gap-1.5">
                           <input value={v.titleTh ?? ''} onChange={e => { const vs = [...videos]; vs[i] = { ...vs[i], titleTh: e.target.value }; setVideos(vs); }}
                             placeholder="ชื่อ (TH)" className="border border-gray-200 rounded px-2 py-1 text-[11px] focus:ring-1 focus:ring-blue-300 outline-none" />
@@ -1231,100 +1185,12 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
         {/* ══ PHOTOS TAB ══ */}
         {activeTab === 'photos' && (
           <section className="space-y-8">
-            {/* ══ Scrape Gallery Modal ══ */}
-            {scrapeOpen && (
-              <div className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4" onClick={() => setScrapeOpen(false)}>
-                <div className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col" onClick={e => e.stopPropagation()}>
-                  <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                    <div>
-                      <h3 className="font-bold text-gray-800">🌐 รูปจากเว็บโรงเรียน</h3>
-                      <p className="text-xs text-gray-400 mt-0.5">คลิกรูปเพื่อเลือก — กดปุ่มเพิ่มเมื่อเลือกครบแล้ว</p>
-                    </div>
-                    <button onClick={() => setScrapeOpen(false)} className="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <div className="flex-1 overflow-y-auto p-4">
-                    {scrapeLoading && (
-                      <div className="flex flex-col items-center justify-center py-16 gap-3">
-                        <Loader2 className="w-8 h-8 text-blue-500 animate-spin" />
-                        <p className="text-sm text-gray-500">กำลังดึงรูปจากเว็บโรงเรียน...</p>
-                      </div>
-                    )}
-                    {scrapeError && !scrapeLoading && (
-                      <div className="flex flex-col items-center justify-center py-12 gap-2 text-center">
-                        <AlertCircle className="w-8 h-8 text-red-400" />
-                        <p className="text-sm text-red-600 font-medium">{scrapeError}</p>
-                        <p className="text-xs text-gray-400">ตรวจสอบว่าโรงเรียนมี URL เว็บไซต์และเว็บเปิดให้เข้าได้</p>
-                      </div>
-                    )}
-                    {!scrapeLoading && !scrapeError && scrapeImages.length === 0 && (
-                      <div className="text-center py-12 text-gray-400 text-sm">ไม่พบรูปในเว็บโรงเรียน</div>
-                    )}
-                    {!scrapeLoading && scrapeImages.length > 0 && (
-                      <>
-                        <p className="text-xs text-gray-400 mb-3">พบ {scrapeImages.length} รูป · เลือกแล้ว {scrapeSelected.size} รูป</p>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-                          {scrapeImages.map(url => {
-                            const sel = scrapeSelected.has(url);
-                            return (
-                              <button
-                                key={url}
-                                type="button"
-                                onClick={() => setScrapeSelected(prev => {
-                                  const s = new Set(prev);
-                                  sel ? s.delete(url) : s.add(url);
-                                  return s;
-                                })}
-                                className={`relative aspect-video rounded-lg overflow-hidden border-2 transition-all ${sel ? 'border-blue-500 ring-2 ring-blue-300' : 'border-transparent hover:border-blue-300'}`}
-                              >
-                                <img src={url} alt="" className="w-full h-full object-cover bg-gray-100"
-                                  onError={e => { (e.currentTarget.parentElement as HTMLElement).style.display = 'none'; }} />
-                                {sel && (
-                                  <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-                                    <CheckCircle2 className="w-6 h-6 text-blue-600 drop-shadow-lg" />
-                                  </div>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </>
-                    )}
-                  </div>
-
-                  <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 bg-gray-50 rounded-b-2xl">
-                    <button onClick={() => setScrapeOpen(false)} className="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">ยกเลิก</button>
-                    <button
-                      disabled={scrapeSelected.size === 0}
-                      onClick={applyScrapeSelection}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white text-sm font-semibold px-5 py-2 rounded-xl transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      เพิ่ม {scrapeSelected.size > 0 ? `${scrapeSelected.size} รูป` : 'ที่เลือก'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* 1. Banner slides */}
             <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
-              <div className="flex items-center justify-between mb-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-base">🖼️</span>
-                  <h3 className="font-bold text-gray-800 text-sm">Banner สไลด์หลัก</h3>
-                </div>
-                {(school as any).websiteUrl && (
-                  <button
-                    type="button"
-                    onClick={() => openScrape('banner')}
-                    className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors font-medium"
-                  >
-                    <Globe className="w-3.5 h-3.5" /> ดึงรูปจากเว็บ รร
-                  </button>
-                )}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-base">🖼️</span>
+                <h3 className="font-bold text-gray-800 text-sm">Banner สไลด์หลัก</h3>
               </div>
               <p className="text-xs text-gray-400 mb-4">รูปภาพที่แสดงในแกลเลอรีหลักบนหน้ารายละเอียดโรงเรียน</p>
               <MultiImageUpload
@@ -1347,17 +1213,11 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
               <div className="space-y-4">
                 {cfg.rooms.map((r, i) => (
                   <div key={r.id} className="bg-white rounded-lg border border-gray-100 p-3">
-                    <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center mb-3">
                       <p className="text-xs font-semibold text-gray-700">
                         {r.nameTh || r.name || `ห้อง ${i + 1}`}
                         <span className="ml-1 text-gray-400 font-normal">({r.id})</span>
                       </p>
-                      {(school as any).websiteUrl && (
-                        <button type="button" onClick={() => openScrape('room', i)}
-                          className="flex items-center gap-1 text-[11px] text-blue-600 hover:text-blue-800 border border-blue-200 hover:border-blue-400 bg-blue-50 hover:bg-blue-100 px-2 py-1 rounded-md transition-colors font-medium">
-                          <Globe className="w-3 h-3" /> ดึงจากเว็บ รร
-                        </button>
-                      )}
                     </div>
                     <MultiImageUpload
                       label={`รูป ${r.nameTh || r.name}`}
@@ -1429,100 +1289,146 @@ ${qNotes ? `<div style="background:#fffbeb;border:1px solid #fde68a;border-radiu
         {activeTab === 'timetable' && (
           <section className="space-y-4">
             <div className="p-3 bg-blue-50 rounded-xl border border-blue-200 text-xs text-blue-700">
-              <strong>วิธีใช้:</strong> เพิ่มคอร์สก่อน แล้วเพิ่มช่วงเวลาแต่ละคาบ · กำหนดประเภท (1:1 / กลุ่ม / อาหาร / ติวเอง / เวลาว่าง) · บันทึกเพื่อให้แสดงบนหน้าโรงเรียน
+              <strong>วิธีใช้:</strong> เลือกรูปแบบการแสดงผลตารางเรียนเป็น "แบบรูปภาพโดยตรง" เพื่อแนบรูปตารางเรียน หรือ "แบบกรอกตารางย่อย"
             </div>
 
-            {/* Course tabs */}
-            <div className="flex gap-2 flex-wrap items-center">
-              {timetable.schedules.map((s, i) => (
-                <div key={i} className="flex items-center gap-1">
-                  <button
-                    onClick={() => setActiveCourseIdx(i)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${activeCourseIdx === i ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
-                  >
-                    {s.courseNameTh || s.courseName || `คอร์ส ${i + 1}`}
-                  </button>
-                  <button onClick={() => { removeCourseTab(i); setActiveCourseIdx(Math.max(0, i - 1)); }}
-                    className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
+            <div className="flex items-center gap-6 bg-gray-50 border border-gray-200 rounded-xl p-3.5">
+              <span className="text-xs font-bold text-gray-700">รูปแบบตารางเรียน:</span>
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer font-semibold text-gray-700">
+                <input
+                  type="radio"
+                  name="timetableFormat"
+                  checked={!timetable.imageUrl}
+                  onChange={() => setTimetable(t => ({ ...t, imageUrl: undefined }))}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                กรอกข้อมูลคาบเรียนย่อย (Text)
+              </label>
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer font-semibold text-gray-700">
+                <input
+                  type="radio"
+                  name="timetableFormat"
+                  checked={!!timetable.imageUrl}
+                  onChange={() => setTimetable(t => ({ ...t, imageUrl: t.imageUrl || '' }))}
+                  className="w-4 h-4 accent-blue-600"
+                />
+                แสดงรูปภาพตารางเรียนโดยตรง (Image File)
+              </label>
+            </div>
+
+            {timetable.imageUrl !== undefined ? (
+              /* ── Option: Image upload directly ── */
+              <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-base">📅</span>
+                  <h3 className="font-bold text-gray-800 text-sm">รูปภาพตารางเรียน</h3>
                 </div>
-              ))}
-              <button onClick={() => { addCourseTab(); setActiveCourseIdx(timetable.schedules.length); }}
-                className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 px-2 py-1.5 border border-blue-200 rounded-lg">
-                <Plus className="w-3 h-3" /> เพิ่มคอร์ส
-              </button>
-            </div>
-
-            {timetable.schedules.length === 0 && (
-              <div className="text-center py-8 text-gray-400 text-xs">ยังไม่มีคอร์ส · กด "+ เพิ่มคอร์ส" ด้านบน</div>
-            )}
-
-            {timetable.schedules[activeCourseIdx] && (() => {
-              const ci = activeCourseIdx;
-              const sc = timetable.schedules[ci];
-              return (
-                <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
-                  {/* Course meta */}
-                  <div className="grid grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (TH)</label>
-                      <input value={sc.courseNameTh} onChange={e => updateCourseField(ci, 'courseNameTh', e.target.value)}
-                        placeholder="ESL ปกติ" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (EN)</label>
-                      <input value={sc.courseName} onChange={e => updateCourseField(ci, 'courseName', e.target.value)}
-                        placeholder="ESL Regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Course ID (ไม่ซ้ำ)</label>
-                      <input value={sc.courseId} onChange={e => updateCourseField(ci, 'courseId', e.target.value)}
-                        placeholder="esl_regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-gray-500 mb-1">Badge (เช่น 1:1×4 | กลุ่ม×4)</label>
-                      <input value={sc.tag} onChange={e => updateCourseField(ci, 'tag', e.target.value)}
-                        placeholder="1:1×4 | กลุ่ม×4" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                    </div>
-                  </div>
-
-                  {/* Time slots */}
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-gray-700">ช่วงเวลา ({sc.slots.length} คาบ)</span>
-                      <button onClick={() => addSlot(ci)}
-                        className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                        <Plus className="w-3 h-3" /> เพิ่มคาบ
+                <p className="text-xs text-gray-400">อัปโหลดไฟล์รูปภาพตารางเรียน (JPEG / PNG / WEBP) เพื่อนำไปแสดงบนหน้าเว็บแทนตารางย่อย</p>
+                <MultiImageUpload
+                  label="รูปภาพตารางเรียน"
+                  category="other"
+                  existingUrls={timetable.imageUrl ? [timetable.imageUrl] : []}
+                  onUrlsChange={urls => setTimetable(t => ({ ...t, imageUrl: urls[0] ?? '' }))}
+                  maxFiles={1}
+                  hint="อัปโหลดได้ 1 รูปภาพ (แนะนำไฟล์รูปที่ชัดเจน อ่านง่าย)"
+                />
+              </div>
+            ) : (
+              /* ── Option: Normal slots ── */
+              <>
+                {/* Course tabs */}
+                <div className="flex gap-2 flex-wrap items-center">
+                  {timetable.schedules.map((s, i) => (
+                    <div key={i} className="flex items-center gap-1">
+                      <button
+                        onClick={() => setActiveCourseIdx(i)}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${activeCourseIdx === i ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                      >
+                        {s.courseNameTh || s.courseName || `คอร์ส ${i + 1}`}
                       </button>
+                      <button onClick={() => { removeCourseTab(i); setActiveCourseIdx(Math.max(0, i - 1)); }}
+                        className="text-red-400 hover:text-red-600"><X className="w-3 h-3" /></button>
                     </div>
-                    <div className="space-y-1.5">
-                      {sc.slots.map((slot, si) => (
-                        <div key={si} className="grid grid-cols-12 gap-1.5 items-center">
-                          <input value={slot.time} onChange={e => updateSlot(ci, si, 'time', e.target.value)}
-                            placeholder="08:00 – 08:50"
-                            className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
-                          <input value={slot.activity} onChange={e => updateSlot(ci, si, 'activity', e.target.value)}
-                            placeholder="เรียน 1 ต่อ 1 ชั่วโมงที่ 1"
-                            className="col-span-5 border border-gray-200 rounded px-2 py-1.5 text-xs" />
-                          <select value={slot.type} onChange={e => updateSlot(ci, si, 'type', e.target.value)}
-                            className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs bg-white">
-                            {SLOT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
-                          </select>
-                          <button onClick={() => removeSlot(ci, si)}
-                            className="col-span-1 text-red-400 hover:text-red-600 flex items-center justify-center">
-                            <X className="w-3 h-3" />
+                  ))}
+                  <button onClick={() => { addCourseTab(); setActiveCourseIdx(timetable.schedules.length); }}
+                    className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 px-2 py-1.5 border border-blue-200 rounded-lg">
+                    <Plus className="w-3 h-3" /> เพิ่มคอร์ส
+                  </button>
+                </div>
+
+                {timetable.schedules.length === 0 && (
+                  <div className="text-center py-8 text-gray-400 text-xs">ยังไม่มีคอร์ส · กด "+ เพิ่มคอร์ส" ด้านบน</div>
+                )}
+
+                {timetable.schedules[activeCourseIdx] && (() => {
+                  const ci = activeCourseIdx;
+                  const sc = timetable.schedules[ci];
+                  return (
+                    <div className="border border-gray-200 rounded-xl p-4 bg-gray-50 space-y-4">
+                      {/* Course meta */}
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (TH)</label>
+                          <input value={sc.courseNameTh} onChange={e => updateCourseField(ci, 'courseNameTh', e.target.value)}
+                            placeholder="ESL ปกติ" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">ชื่อคอร์ส (EN)</label>
+                          <input value={sc.courseName} onChange={e => updateCourseField(ci, 'courseName', e.target.value)}
+                            placeholder="ESL Regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Course ID (ไม่ซ้ำ)</label>
+                          <input value={sc.courseId} onChange={e => updateCourseField(ci, 'courseId', e.target.value)}
+                            placeholder="esl_regular" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
+                        </div>
+                        <div>
+                          <label className="block text-xs text-gray-500 mb-1">Badge (เช่น 1:1×4 | กลุ่ม×4)</label>
+                          <input value={sc.tag} onChange={e => updateCourseField(ci, 'tag', e.target.value)}
+                            placeholder="1:1×4 | กลุ่ม×4" className="w-full border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                        </div>
+                      </div>
+
+                      {/* Time slots */}
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-xs font-semibold text-gray-700">ช่วงเวลา ({sc.slots.length} คาบ)</span>
+                          <button onClick={() => addSlot(ci)}
+                            className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
+                            <Plus className="w-3 h-3" /> เพิ่มคาบ
                           </button>
                         </div>
-                      ))}
-                      {sc.slots.length === 0 && (
-                        <div className="text-xs text-gray-400 text-center py-3 border border-dashed border-gray-200 rounded-lg">
-                          ยังไม่มีคาบเรียน · กด "+ เพิ่มคาบ"
+                        <div className="space-y-1.5">
+                          {sc.slots.map((slot, si) => (
+                            <div key={si} className="grid grid-cols-12 gap-1.5 items-center">
+                              <input value={slot.time} onChange={e => updateSlot(ci, si, 'time', e.target.value)}
+                                placeholder="08:00 – 08:50"
+                                className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs font-mono" />
+                              <input value={slot.activity} onChange={e => updateSlot(ci, si, 'activity', e.target.value)}
+                                placeholder="เรียน 1 ต่อ 1 ชั่วโมงที่ 1"
+                                className="col-span-5 border border-gray-200 rounded px-2 py-1.5 text-xs" />
+                              <select value={slot.type} onChange={e => updateSlot(ci, si, 'type', e.target.value)}
+                                className="col-span-3 border border-gray-200 rounded px-2 py-1.5 text-xs bg-white">
+                                {SLOT_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                              </select>
+                              <button onClick={() => removeSlot(ci, si)}
+                                className="col-span-1 text-red-400 hover:text-red-600 flex items-center justify-center">
+                                <X className="w-3 h-3" />
+                              </button>
+                            </div>
+                          ))}
+                          {sc.slots.length === 0 && (
+                            <div className="text-xs text-gray-400 text-center py-3 border border-dashed border-gray-200 rounded-lg">
+                              ยังไม่มีคาบเรียน · กด "+ เพิ่มคาบ"
+                            </div>
+                          )}
                         </div>
-                      )}
+                      </div>
                     </div>
-                  </div>
-                </div>
-              );
-            })()}
+                  );
+                })()}
+              </>
+            )}
 
             {/* Rules & note */}
             <div className="grid grid-cols-2 gap-4">

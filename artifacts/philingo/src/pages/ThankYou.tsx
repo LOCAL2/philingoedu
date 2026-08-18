@@ -92,22 +92,32 @@ export default function ThankYou() {
             </p>
 
             {/* LINE add-friend CTA */}
-            <div className="bg-[#00B900]/10 border border-[#00B900]/30 rounded-2xl p-6 mb-8">
-              <div className="flex items-center justify-center gap-2 mb-3">
-                <SiLine className="w-6 h-6 text-[#00B900]" />
-                <span className="font-bold text-gray-900 dark:text-white text-lg">เพิ่มเพื่อน LINE Official ทันที</span>
+            <div className="bg-[#00B900]/10 border-2 border-[#00B900] rounded-2xl p-8 mb-8 relative overflow-hidden shadow-lg shadow-[#00B900]/10">
+              <div className="absolute top-0 left-0 w-full h-2 bg-[#00B900]"></div>
+              
+              <div className="inline-flex items-center justify-center bg-[#00B900] text-white px-4 py-1 rounded-full text-sm font-bold mb-4 animate-pulse">
+                ⚠️ ขั้นตอนสุดท้าย
               </div>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                เพิ่มเพื่อนเพื่อรับการติดต่อกลับเร็วขึ้น รับโปรโมชั่นพิเศษ และอัปเดตข่าวสารก่อนใคร
+
+              <div className="flex flex-col items-center justify-center gap-3 mb-4">
+                <SiLine className="w-12 h-12 text-[#00B900]" />
+                <h2 className="font-extrabold text-gray-900 dark:text-white text-2xl">
+                  กรุณาเพิ่มเพื่อน LINE Official
+                </h2>
+              </div>
+              
+              <p className="text-gray-700 dark:text-gray-300 mb-6 text-lg max-w-md mx-auto leading-relaxed">
+                เพื่อให้เจ้าหน้าที่ยืนยันการสมัครและส่งข้อมูลรายละเอียดให้คุณได้อย่างรวดเร็ว <b>กรุณากดเพิ่มเพื่อนและทักแชทหาเราทันทีครับ</b>
               </p>
+              
               <a
                 href={lineUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex items-center justify-center gap-2 bg-[#00B900] hover:bg-[#00A000] text-white px-8 py-3 rounded-xl font-bold text-lg transition-all hover:scale-105 shadow-md"
+                className="inline-flex items-center justify-center gap-3 bg-[#00B900] hover:bg-[#00A000] text-white px-10 py-4 rounded-full font-bold text-xl transition-all hover:scale-105 shadow-xl hover:shadow-[#00B900]/40 w-full sm:w-auto"
               >
-                <SiLine className="w-5 h-5" />
-                เพิ่มเพื่อน LINE Official
+                <SiLine className="w-6 h-6" />
+                คลิกเพื่อเพิ่มเพื่อน LINE
               </a>
             </div>
 

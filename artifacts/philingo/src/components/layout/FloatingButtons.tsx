@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Phone, ArrowUp } from 'lucide-react';
-import { SiLine, SiTiktok, SiMessenger } from 'react-icons/si';
+import { SiLine, SiTiktok, SiMessenger, SiFacebook } from 'react-icons/si';
 import { useSettings } from '../../hooks/use-settings';
 
 const LINE_URL_DEFAULT = 'https://lin.ee/nBR4rsN';
@@ -12,6 +12,7 @@ const TIKTOK_URL = 'https://www.tiktok.com/@philingo?is_from_webapp=1&sender_dev
 function MobileFab({
   lineUrl,
   messengerUrl,
+  facebookUrl,
   phone,
   phoneClean,
   showTop,
@@ -19,6 +20,7 @@ function MobileFab({
 }: {
   lineUrl: string;
   messengerUrl: string;
+  facebookUrl: string;
   phone: string;
   phoneClean: string;
   showTop: boolean;
@@ -89,6 +91,22 @@ function MobileFab({
                 <SiMessenger className="w-3.5 h-3.5 text-white" />
               </span>
               Messenger
+            </a>
+          )}
+
+          {/* Facebook — only if admin has set facebook_url */}
+          {facebookUrl && (
+            <a
+              href={facebookUrl}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Facebook"
+              className="flex items-center gap-2 bg-white dark:bg-gray-800 rounded-full shadow-lg pr-4 pl-2 py-2 text-xs font-semibold text-gray-800 dark:text-white border border-gray-100 dark:border-gray-700 active:scale-95 transition-all"
+            >
+              <span className="w-7 h-7 bg-[#1877F2] rounded-full flex items-center justify-center shrink-0">
+                <SiFacebook className="w-3.5 h-3.5 text-white" />
+              </span>
+              Facebook
             </a>
           )}
 
@@ -163,6 +181,7 @@ export function FloatingButtons() {
   const settings = useSettings();
 
   const messengerUrl = settings.messenger_url ?? '';
+  const facebookUrl = settings.facebook_url ?? '';
   const lineUrl = settings.line_url || LINE_URL_DEFAULT;
   const phone = settings.phone || '061-656-4159';
   const phoneClean = phone.replace(/[^0-9]/g, '');
@@ -201,6 +220,14 @@ export function FloatingButtons() {
           </a>
         )}
 
+        {/* Facebook — only if admin has set facebook_url */}
+        {facebookUrl && (
+          <a href={facebookUrl} target="_blank" rel="noreferrer" title="Facebook" aria-label="ติดตามผ่าน Facebook"
+            className="w-12 h-12 flex items-center justify-center bg-[#1877F2] text-white rounded-full shadow-lg hover:scale-110 hover:shadow-xl transition-all">
+            <SiFacebook className="w-6 h-6" />
+          </a>
+        )}
+
         {/* TikTok */}
         <a href={TIKTOK_URL} target="_blank" rel="noreferrer" title="TikTok @philingo" aria-label="ติดตามผ่าน TikTok"
           className="w-12 h-12 flex items-center justify-center bg-black text-white rounded-full shadow-lg hover:scale-110 hover:shadow-xl transition-all">
@@ -234,6 +261,7 @@ export function FloatingButtons() {
       <MobileFab
         lineUrl={lineUrl}
         messengerUrl={messengerUrl}
+        facebookUrl={facebookUrl}
         phone={phone}
         phoneClean={phoneClean}
         showTop={showTop}

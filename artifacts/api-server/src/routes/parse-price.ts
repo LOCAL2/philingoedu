@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import multer from 'multer';
 import * as XLSX from 'xlsx';
+import { randomUUID } from 'crypto';
 // Import the core lib directly — the package's index.js reads a test PDF at load
 // time which fails in bundled/ESM environments; the lib module skips that.
 import pdfParse from 'pdf-parse/lib/pdf-parse.js';
 import { requireAuth } from '../middlewares/auth.js';
+import { anthropic } from '@workspace/integrations-anthropic-ai';
 
 const router = Router();
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
@@ -369,6 +371,129 @@ function parsePricePDF(text: string): PricingResult {
   return { courses, rooms, localFeesByWeek, enrollmentFee };
 }
 
+// ─── Image (JPG/PNG) via AI Vision ─────────────────────────────────────────
+const PRICE_VISION_PROMPT = `Extract all course pricing, room/dormitory pricing, registration/enrollment fees, and local fees (by week: e.g. 4, 8, 12, 16, 20, 24 weeks) from this school price list image.
+Identify:
+- courses: array of objects { name: string, pricePerFourWeeks: number } (Look for prices matching 4 weeks/1 block or calculate per 4 weeks. If there is a price per week, convert to 4 weeks. Usually courses have ESL, IELTS, TOEIC, etc.)
+- rooms: array of objects { name: string, pricePerFourWeeks: number } (Look for accommodation/dormitory: single, twin, triple, quad, etc.)
+- localFeesByWeek: object mapping week number to PHP local fee amount (e.g. { "4": 15000, "8": 25000 }). Look for local payment/local fees details like SSP, visa extension, maintenance, water/electricity, etc., and sum them up per week if they are detailed, or find the total local payment per week duration.
+- enrollmentFee: number (Look for registration fee or enrollment fee. Defaults to 100 if not found, or 0 if explicitly free).
+
+Return ONLY a JSON object in this format:
+{
+  "courses": [
+    { "name": "ESL Regular", "pricePerFourWeeks": 900 }
+  ],
+  "rooms": [
+    { "name": "Triple Room", "pricePerFourWeeks": 850 }
+  ],
+  "localFeesByWeek": {
+    "4": 25200
+  },
+  "enrollmentFee": 100
+}
+No conversation, markdown blocks (like \`\`\`json) are okay, but return valid JSON.`;
+
+async function parseImagePrice(buf: Buffer, mimeType: string): Promise<PricingResult> {
+  const base64 = buf.toString('base64');
+  type ValidMime = 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
+  const validMimes: ValidMime[] = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  const safeMime: ValidMime = validMimes.includes(mimeType as ValidMime)
+    ? (mimeType as ValidMime)
+    : 'image/jpeg';
+
+  const msg = await anthropic.messages.create({
+    model: 'claude-haiku-4-5',
+    max_tokens: 2048,
+    messages: [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: safeMime, data: base64 } },
+        { type: 'text', text: PRICE_VISION_PROMPT },
+      ],
+    }],
+  });
+
+  const text = (msg.content[0] as any).text as string;
+  const match = text.match(/\{[\s\S]*\}/);
+  if (!match) throw new Error('AI ไม่สามารถอ่านข้อมูลราคาจากรูปภาพได้ — ตรวจสอบว่ารูปมีตารางราคาชัดเจน');
+
+  const parsed = JSON.parse(match[0]);
+
+  const courseThMap: Record<string, string> = {
+    'power esl':          'ESL Power',
+    'intensive beginner': 'ESL Intensive Beginner',
+    'light esl':          'ESL Light',
+    'intensive speaking': 'ESL Intensive Speaking',
+    'ielts starter':      'IELTS Starter',
+    'ielts target':       'IELTS Target',
+    'toeic target':       'TOEIC Preparation (Target)',
+    'toeic':              'TOEIC Preparation',
+    'ielts':              'IELTS Preparation',
+    'junior esl':         'Junior ESL & YLE',
+    'general business':   'General Business & BEC',
+    'business':           'Business English',
+    'esl regular':        'ESL Regular',
+    'esl intensive':      'ESL Intensive',
+    'working holiday':    'Working Holiday',
+    'immersion':          'Immersion (IAU)',
+  };
+
+  const roomThMap: Record<string, string> = {
+    'single room':    'ห้องเดี่ยว',
+    'twin room':      'ห้องแฝด (Twin)',
+    'triple room':    'ห้อง 3 คน (Triple)',
+    'quad room':      'ห้อง 4 คน (Quad)',
+    'regular single': 'Regular Single',
+    'super single':   'Super Single',
+    'regular twin':   'Regular Twin',
+    'super twin':     'Super Twin',
+    'family unit':    'Family Unit',
+  };
+
+  function toId(name: string): string {
+    return name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+  }
+  function toThCourse(name: string): string {
+    const lname = name.toLowerCase();
+    return Object.entries(courseThMap).find(([k]) => lname.includes(k))?.[1] ?? name;
+  }
+  function toThRoom(name: string): string {
+    const lname = name.toLowerCase();
+    return Object.entries(roomThMap).find(([k]) => lname.includes(k))?.[1] ?? name;
+  }
+
+  const courses = (parsed.courses ?? []).map((c: any) => ({
+    id: toId(c.name),
+    name: String(c.name),
+    nameTh: toThCourse(c.name),
+    pricePerFourWeeks: Number(c.pricePerFourWeeks ?? 0)
+  })).filter((c: any) => c.pricePerFourWeeks > 0);
+
+  const rooms = (parsed.rooms ?? []).map((r: any) => ({
+    id: toId(r.name),
+    name: String(r.name),
+    nameTh: toThRoom(r.name),
+    pricePerFourWeeks: Number(r.pricePerFourWeeks ?? 0)
+  })).filter((r: any) => r.pricePerFourWeeks > 0);
+
+  const localFeesByWeek: Record<string, number> = {};
+  if (parsed.localFeesByWeek) {
+    for (const [k, v] of Object.entries(parsed.localFeesByWeek)) {
+      if (!isNaN(Number(k)) && !isNaN(Number(v))) {
+        localFeesByWeek[k] = Number(v);
+      }
+    }
+  }
+
+  return {
+    courses,
+    rooms,
+    localFeesByWeek,
+    enrollmentFee: Number(parsed.enrollmentFee ?? 100)
+  };
+}
+
 // ─── Route ───────────────────────────────────────────────────────────────────
 
 // POST /api/schools/:id/parse-price
@@ -377,6 +502,7 @@ router.post('/:id/parse-price', requireAuth, upload.single('file'), async (req, 
 
   try {
     const ext = (req.file.originalname.split('.').pop() ?? '').toLowerCase();
+    const mimeType = req.file.mimetype;
 
     let pricing: PricingResult;
 
@@ -390,8 +516,10 @@ router.post('/:id/parse-price', requireAuth, upload.single('file'), async (req, 
     } else if (['xlsx', 'xls'].includes(ext)) {
       const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
       pricing = parseCIAExcel(workbook);
+    } else if (['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext) || mimeType.startsWith('image/')) {
+      pricing = await parseImagePrice(req.file.buffer, mimeType);
     } else {
-      res.status(400).json({ error: 'รองรับเฉพาะไฟล์ Excel (.xlsx / .xls) หรือ PDF (.pdf)' });
+      res.status(400).json({ error: 'รองรับเฉพาะไฟล์ Excel (.xlsx / .xls), PDF (.pdf) หรือรูปภาพ (JPEG/PNG/WEBP)' });
       return;
     }
 

@@ -24,6 +24,7 @@ import storageRouter from "./storage.js";
 import analyticsRouter from "./analytics.js";
 import parsePriceRouter from "./parse-price.js";
 import { parsePromoRouter } from "./parse-promo.js";
+import { parseTimetableRouter } from "./parse-timetable.js";
 import { scrapeImagesRouter } from "./scrape-images.js";
 import { batchScrapeRouter } from "./batch-scrape.js";
 import { generateDescriptionRouter } from "./generate-description.js";
@@ -31,7 +32,7 @@ import { generateDescriptionRouter } from "./generate-description.js";
 const router: IRouter = Router();
 
 // Health
-router.use(healthRouter);
+healthRouter && router.use(healthRouter);
 
 // Auth
 router.use("/auth", authRouter);
@@ -40,6 +41,7 @@ router.use("/admin-users", adminUsersRouter);
 // Content (public read, auth write)
 router.use("/schools", parsePriceRouter);
 router.use("/schools", parsePromoRouter);
+router.use("/schools", parseTimetableRouter);
 router.use("/schools", scrapeImagesRouter);
 router.use("/schools", generateDescriptionRouter);
 router.use("/admin", batchScrapeRouter);

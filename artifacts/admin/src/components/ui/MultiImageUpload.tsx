@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Upload, X, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Upload, X, Loader2, CheckCircle2, AlertCircle, Link2, Plus } from 'lucide-react';
 import imageCompression from 'browser-image-compression';
 
 interface UploadEntry {
   tempId: string;
-  objectPath: string;   // filled after upload succeeds
+  objectPath: string;   // filePath in bucket (e.g. "banner/1234.webp")
+  publicUrl: string;    // permanent Supabase public URL — used to notify parent
   previewUrl: string;   // local blob URL — stays alive until unmount
   name: string;
   status: 'uploading' | 'done' | 'error';
@@ -21,13 +22,10 @@ interface MultiImageUploadProps {
   hint?: string;
 }
 
-function serveUrl(objectPath: string): string {
-  if (objectPath.startsWith('http')) return objectPath;
-  // Handle Supabase signed upload URL path: /storage/v1/object/upload/sign/<bucket>/<filePath>?token=...
-  const match = objectPath.match(/\/storage\/v1\/object\/upload\/sign\/[^/]+\/(.+?)(?:\?|$)/);
-  if (match) return `/api/storage/objects/${match[1]}`;
-  const clean = objectPath.replace(/^\//, '');
-  return `/api/storage/objects/${clean}`;
+/** Returns true if the URL is a legacy Replit object-store path that no longer resolves */
+function isLegacyUrl(url: string): boolean {
+  // Pattern: /api/storage/objects/uploads/<uuid-without-extension>
+  return /\/api\/storage\/objects\/uploads\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(url);
 }
 
 function getToken(): string {
@@ -45,6 +43,12 @@ export function MultiImageUpload({
   const [uploads, setUploads] = useState<UploadEntry[]>([]);
   const [dragging, setDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // URL input state
+  const [urlInputOpen, setUrlInputOpen] = useState(false);
+  const [urlInputValue, setUrlInputValue] = useState('');
+  const [urlInputError, setUrlInputError] = useState('');
+  const urlInputRef = useRef<HTMLInputElement>(null);
 
   // Stable refs — prevent stale closures inside async uploadFile
   const existingUrlsRef = useRef<string[]>(existingUrls);
@@ -74,6 +78,7 @@ export function MultiImageUpload({
     setUploads(prev => [...prev, {
       tempId,
       objectPath: '',
+      publicUrl: '',
       previewUrl: blobUrl,
       name: file.name,
       status: 'uploading',
@@ -108,9 +113,9 @@ export function MultiImageUpload({
         const body = await metaRes.json().catch(() => ({}));
         throw new Error(body.error || `Request failed: ${metaRes.status}`);
       }
-      const { uploadURL, objectPath } = await metaRes.json();
+      const { uploadURL, objectPath, publicUrl } = await metaRes.json();
 
-      // Step 2: upload compressed file to GCS via presigned URL
+      // Step 2: upload compressed file to Supabase via presigned URL
       const uploadRes = await fetch(uploadURL, {
         method: 'PUT',
         headers: { 'Content-Type': compressed.type },
@@ -118,25 +123,25 @@ export function MultiImageUpload({
       });
       if (!uploadRes.ok) throw new Error(`Upload failed: ${uploadRes.status}`);
 
-      const gcsUrl = serveUrl(objectPath);
+      // Permanent Supabase public URL
+      const finalUrl = publicUrl as string;
 
       // Mark done — blob URL is kept in previewUrl so thumbnail stays visible immediately
       setUploads(prev => prev.map(u =>
-        u.tempId === tempId ? { ...u, objectPath, status: 'done' } : u
+        u.tempId === tempId ? { ...u, objectPath, publicUrl: finalUrl, status: 'done' } : u
       ));
 
       // Notify parent with updated URL list.
-      // maxFiles=1: replacement mode — emit only the new URL (no merge with existingUrls,
-      //   so parent slot gets the new URL, not the old one that happened to be urls[0]).
+      // maxFiles=1: replacement mode — emit only the new URL.
       // maxFiles>1: additive mode — append to existing list (de-duplicated).
       const current = existingUrlsRef.current;
       let merged;
       if (maxFilesRef.current === 1) {
-        merged = [gcsUrl];
+        merged = [finalUrl];
       } else if (replaceTargetUrl) {
-        merged = current.map(u => u === replaceTargetUrl ? gcsUrl : u);
+        merged = current.map(u => u === replaceTargetUrl ? finalUrl : u);
       } else {
-        merged = [...current, ...(!current.includes(gcsUrl) ? [gcsUrl] : [])];
+        merged = [...current, ...(!current.includes(finalUrl) ? [finalUrl] : [])];
       }
       onUrlsChangeRef.current(merged);
 
@@ -146,6 +151,48 @@ export function MultiImageUpload({
       ));
     }
   }, [category]);
+
+  const [urlFetching, setUrlFetching] = useState(false);
+
+  const handleAddUrl = async () => {
+    const url = urlInputValue.trim();
+    if (!url) { setUrlInputError('กรุณาใส่ URL รูป'); return; }
+    try { new URL(url); } catch { setUrlInputError('URL ไม่ถูกต้อง — ต้องเริ่มด้วย http:// หรือ https://'); return; }
+    const current = existingUrlsRef.current;
+    if (current.includes(url)) { setUrlInputError('รูปนี้มีอยู่แล้ว'); return; }
+    if (maxFilesRef.current > 1 && current.length >= maxFilesRef.current) {
+      setUrlInputError(`ครบ ${maxFilesRef.current} รูปแล้ว`); return;
+    }
+
+    setUrlFetching(true);
+    setUrlInputError('');
+    try {
+      // Download the external URL server-side and store in Supabase
+      const r = await fetch('/api/storage/uploads/fetch-url', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getToken()}`,
+        },
+        body: JSON.stringify({ url, category }),
+      });
+      const data = await r.json();
+      if (!r.ok || data.error) {
+        setUrlInputError(data.error ?? `เกิดข้อผิดพลาด HTTP ${r.status}`);
+        return;
+      }
+      const finalUrl: string = data.imageUrl;
+      const merged = maxFilesRef.current === 1 ? [finalUrl] : [...current, finalUrl];
+      onUrlsChangeRef.current(merged);
+      setUrlInputValue('');
+      // Keep panel open for batch adds
+      setTimeout(() => urlInputRef.current?.focus(), 50);
+    } catch (err: any) {
+      setUrlInputError(err?.message ?? 'เชื่อมต่อ server ไม่ได้');
+    } finally {
+      setUrlFetching(false);
+    }
+  };
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
@@ -166,10 +213,9 @@ export function MultiImageUpload({
   };
 
   const removeUpload = (entry: UploadEntry) => {
-    if (entry.status === 'done') {
-      // Also remove GCS URL from parent
-      const gcsUrl = serveUrl(entry.objectPath);
-      onUrlsChangeRef.current(existingUrlsRef.current.filter(u => u !== gcsUrl));
+    if (entry.status === 'done' && entry.publicUrl) {
+      // Remove the Supabase public URL from parent
+      onUrlsChangeRef.current(existingUrlsRef.current.filter(u => u !== entry.publicUrl));
     }
     // Revoke blob immediately since we're explicitly removing it
     URL.revokeObjectURL(entry.previewUrl);
@@ -177,11 +223,11 @@ export function MultiImageUpload({
     setUploads(prev => prev.filter(u => u.tempId !== entry.tempId));
   };
 
-  // existingUrls that are NOT already shown in the uploads section (to avoid duplicates)
-  // Now we just map existingUrls. If an upload is replacing it, or has finished and matches it, we render the upload instead.
-  // Additive uploads (no replaceTargetUrl) that are NOT done yet are rendered at the end.
+  // Split valid vs legacy (Replit UUID) URLs
+  const validUrls = existingUrls.filter(u => !isLegacyUrl(u));
+  const legacyCount = existingUrls.length - validUrls.length;
 
-  const totalCount = existingUrls.length;
+  const totalCount = validUrls.length;
 
   return (
     <div className="space-y-3">
@@ -217,16 +263,56 @@ export function MultiImageUpload({
         />
       </div>
 
+      {/* URL input section */}
+      <div>
+        <button
+          type="button"
+          onClick={() => { setUrlInputOpen(o => !o); setUrlInputError(''); setTimeout(() => urlInputRef.current?.focus(), 80); }}
+          className="flex items-center gap-1.5 text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors"
+        >
+          <Link2 className="w-3.5 h-3.5" />
+          {urlInputOpen ? 'ซ่อนช่องใส่ URL' : '+ เพิ่มด้วย URL รูป'}
+        </button>
+        {urlInputOpen && (
+          <div className="mt-2 flex gap-2 items-start">
+            <div className="flex-1">
+              <input
+                ref={urlInputRef}
+                type="url"
+                value={urlInputValue}
+                onChange={e => { setUrlInputValue(e.target.value); setUrlInputError(''); }}
+                onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddUrl(); } }}
+                placeholder="https://example.com/image.jpg"
+                disabled={urlFetching}
+                className={`w-full border rounded-lg px-3 py-2 text-xs focus:ring-2 focus:ring-blue-300 outline-none transition-colors disabled:opacity-50 ${
+                  urlInputError ? 'border-red-300 bg-red-50' : 'border-gray-200'
+                }`}
+              />
+              {urlInputError && <p className="text-[11px] text-red-500 mt-1">{urlInputError}</p>}
+              {urlFetching && <p className="text-[11px] text-blue-500 mt-1 flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> กำลังดาวน์โหลดและบันทึกเข้า Supabase...</p>}
+            </div>
+            <button
+              type="button"
+              onClick={handleAddUrl}
+              disabled={urlFetching || !urlInputValue.trim()}
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-semibold px-3 py-2 rounded-lg transition-colors whitespace-nowrap"
+            >
+              {urlFetching ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Plus className="w-3.5 h-3.5" />}
+              {urlFetching ? 'กำลังโหลด...' : 'เพิ่ม'}
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Thumbnail grid */}
-      {(existingUrls.length > 0 || uploads.length > 0) && (
+      {(validUrls.length > 0 || uploads.length > 0) && (
         <div className="grid grid-cols-4 gap-2">
 
-          {/* Render all existing slots (either the original image or its replacing upload) */}
-          {existingUrls.map((url, i) => {
-            // Check if there is an active upload replacing this URL, OR a finished upload that now IS this URL
+          {/* Render all valid existing slots */}
+          {validUrls.map((url, i) => {
             const activeUpload = uploads.find(u => 
               (u.replaceTargetUrl === url && u.status !== 'done') || 
-              (u.status === 'done' && serveUrl(u.objectPath) === url)
+              (u.status === 'done' && u.publicUrl === url)
             );
 
             if (activeUpload) {

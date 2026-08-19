@@ -13,7 +13,7 @@ import { KeyRound, Eye, EyeOff, ShieldOff, Shield } from 'lucide-react';
 
 // Sessions for Education Fair meet-link inputs
 const SEMINAR_SESSIONS = [
-  { key: 'meet_2026-08-29-am'      as const, date: 'เสาร์ 29 ส.ค. 2569',    school: "B'Cebu",           time: '10:00–11:00 น.', emoji: '🇵🇭' },
+  { key: 'meet_2026-09-06-pm'      as const, date: 'อาทิตย์ 6 ก.ย. 2569',    school: "B'Cebu",           time: '14:00–15:00 น.', emoji: '🇵🇭' },
   { key: 'meet_2026-08-29-pm'      as const, date: 'เสาร์ 29 ส.ค. 2569',    school: 'Philinter Academy', time: '14:00–15:00 น.', emoji: '🌿' },
   { key: 'meet_2026-08-30-am'      as const, date: 'อาทิตย์ 30 ส.ค. 2569',  school: 'EV Academy',        time: '10:00–11:00 น.', emoji: '🎓' },
   { key: 'meet_2026-09-05-am'      as const, date: 'เสาร์ 5 ก.ย. 2569',     school: 'CPILS',             time: '10:00–11:00 น.', emoji: '🏫' },
@@ -61,12 +61,12 @@ interface SettingsForm {
   line_notify_token: string;
   // Education Fair — per-session Google Meet links
   seminar_meet_link: string; // fallback / "all sessions"
-  'meet_2026-08-29-am': string;
   'meet_2026-08-29-pm': string;
   'meet_2026-08-30-am': string;
   'meet_2026-09-05-am': string;
   'meet_2026-09-05-pm': string;
   'meet_2026-09-06-am': string;
+  'meet_2026-09-06-pm': string;
   'meet_2026-09-12-special': string;
   // Event auto-reply email
   event_reply_subject: string;
@@ -115,12 +115,12 @@ export function SettingsPage() {
           notification_email: settings.notification_email ?? '',
           line_notify_token: settings.line_notify_token ?? '',
           seminar_meet_link: settings.seminar_meet_link ?? '',
-          'meet_2026-08-29-am':      settings['meet_2026-08-29-am'] ?? '',
           'meet_2026-08-29-pm':      settings['meet_2026-08-29-pm'] ?? '',
           'meet_2026-08-30-am':      settings['meet_2026-08-30-am'] ?? '',
           'meet_2026-09-05-am':      settings['meet_2026-09-05-am'] ?? '',
           'meet_2026-09-05-pm':      settings['meet_2026-09-05-pm'] ?? '',
           'meet_2026-09-06-am':      settings['meet_2026-09-06-am'] ?? '',
+          'meet_2026-09-06-pm':      settings['meet_2026-09-06-pm'] ?? '',
           'meet_2026-09-12-special': settings['meet_2026-09-12-special'] ?? '',
           event_reply_subject: settings.event_reply_subject ?? '',
           event_reply_body: settings.event_reply_body ?? '',

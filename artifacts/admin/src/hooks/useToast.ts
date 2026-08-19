@@ -11,8 +11,12 @@ export interface Toast {
 let toastFn: ((message: string, type?: ToastType) => void) | null = null;
 
 // Global toast trigger usable outside React
-export function showToast(message: string, type: ToastType = 'info') {
-  toastFn?.(message, type);
+export function showToast(opts: string | { message: string; type?: ToastType }, type: ToastType = 'info') {
+  if (typeof opts === 'string') {
+    toastFn?.(opts, type);
+  } else {
+    toastFn?.(opts.message, opts.type || 'info');
+  }
 }
 
 export function useToastState() {
@@ -38,8 +42,8 @@ export function useToastState() {
 
 export function useToast() {
   return {
-    toast: (message: string, type: ToastType = 'success') => {
-      showToast(message, type);
+    toast: (opts: string | { message: string; type?: ToastType }, type: ToastType = 'success') => {
+      showToast(opts, type);
     },
   };
 }

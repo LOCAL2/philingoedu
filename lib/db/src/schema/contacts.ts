@@ -1,4 +1,4 @@
-import { pgTable, serial, text, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, serial, text, timestamp, pgEnum, integer } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -76,7 +76,7 @@ export const newsletterCampaignsTable = pgTable("newsletter_campaigns", {
   subject: text("subject").notNull(),
   body: text("body").notNull(),
   sentAt: timestamp("sent_at"),
-  recipientCount: serial("recipient_count"),
+  recipientCount: integer("recipient_count").notNull().default(0),
   status: text("status").notNull().default("draft"), // draft | sent | failed
   createdBy: text("created_by"),
   createdAt: timestamp("created_at").notNull().defaultNow(),

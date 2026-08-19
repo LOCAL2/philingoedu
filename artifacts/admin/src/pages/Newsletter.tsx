@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { Button } from '@/components/ui/button';
 import { Modal } from '@/components/ui/Modal';
-import { newsletterApi, NewsletterSubscriber } from '@/lib/api';
+import { newsletterApi, settingsApi, NewsletterSubscriber } from '@/lib/api';
 import { formatDateTime } from '@/lib/utils';
 import { useToast } from '@/hooks/useToast';
 import { Mail, Users, Send, Plus, Trash2, Download, CheckCircle, Clock, AlertCircle, MessageCircle, ExternalLink, Copy } from 'lucide-react';
@@ -43,6 +43,12 @@ export function NewsletterPage() {
     queryKey: ['newsletter-campaigns'],
     queryFn: () => newsletterApi.getCampaigns(),
   });
+
+  const { data: settings } = useQuery({
+    queryKey: ['settings'],
+    queryFn: () => settingsApi.get(),
+  });
+  const hasLineToken = !!settings?.['line_oa_token'];
 
   const sendMutation = useMutation({
     mutationFn: () => newsletterApi.send({ subject, body }),
@@ -201,8 +207,18 @@ export function NewsletterPage() {
                 <div>
                   <b>วิธีส่ง LINE:</b>
                   <ul className="mt-1 space-y-1 list-disc list-inside">
-                    <li>ถ้ามี <b>LINE OA Token</b> (ตั้งใน Settings → line_oa_token) — จะ Broadcast ถึงผู้ติดตาม LINE OA ทั้งหมด</li>
-                    <li>ระบบจะแสดง LINE ID ของผู้ลงทะเบียนให้ copy ไปส่งเองผ่าน LINE ได้</li>
+                    <li>
+                      ถ้ามี <b>LINE OA Token</b> (ตั้งใน Settings → line_oa_token) — จะ Broadcast ถึงผู้ติดตาม LINE OA ทั้งหมด
+                      {!hasLineToken && (
+                        <div className="mt-2 ml-5 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center justify-between">
+                          <span className="text-red-700 text-xs font-semibold">⚠️ ยังไม่ได้ตั้งค่า LINE OA Token ทำให้การ Broadcast จะไม่ทำงาน</span>
+                          <a href="/admin/settings" className="bg-white border border-red-200 text-red-700 hover:bg-red-50 px-3 py-1.5 rounded-md text-xs font-medium transition-colors">
+                            ไปตั้งค่า Token
+                          </a>
+                        </div>
+                      )}
+                    </li>
+                    <li className="pt-1">ระบบจะแสดง LINE ID ของผู้ลงทะเบียนให้ copy ไปส่งเองผ่าน LINE ได้</li>
                     <li>Admin จะได้รับแจ้งเตือนผ่าน LINE Notify ด้วย</li>
                   </ul>
                 </div>

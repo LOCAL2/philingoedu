@@ -380,7 +380,7 @@ export function NewsletterPage() {
       </div>
 
       {/* Confirm Send Email Modal */}
-      <Modal isOpen={confirmSend} onClose={() => setConfirmSend(false)} title="ยืนยันการส่ง Email">
+      <Modal open={confirmSend} onClose={() => setConfirmSend(false)} title="ยืนยันการส่ง Email">
         <div className="space-y-4">
           <div className="bg-blue-50 rounded-xl p-4 space-y-1">
             <p className="text-sm text-blue-800"><span className="font-bold">หัวข้อ:</span> {subject}</p>
@@ -398,7 +398,7 @@ export function NewsletterPage() {
       </Modal>
 
       {/* Add Subscriber Modal */}
-      <Modal isOpen={showAddModal} onClose={() => setShowAddModal(false)} title="เพิ่มผู้รับข่าวสาร">
+      <Modal open={showAddModal} onClose={() => setShowAddModal(false)} title="เพิ่มผู้รับข่าวสาร">
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
             <div>

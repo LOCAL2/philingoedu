@@ -59,6 +59,7 @@ interface SettingsForm {
   // Notification settings
   notification_email: string;
   line_notify_token: string;
+  line_oa_token: string;
   // Education Fair — per-session Google Meet links
   seminar_meet_link: string; // fallback / "all sessions"
   'meet_2026-08-29-pm': string;
@@ -114,6 +115,7 @@ export function SettingsPage() {
           google_tag_id: settings.google_tag_id ?? '',
           notification_email: settings.notification_email ?? '',
           line_notify_token: settings.line_notify_token ?? '',
+          line_oa_token: settings.line_oa_token ?? '',
           seminar_meet_link: settings.seminar_meet_link ?? '',
           'meet_2026-08-29-pm':      settings['meet_2026-08-29-pm'] ?? '',
           'meet_2026-08-30-am':      settings['meet_2026-08-30-am'] ?? '',
@@ -285,18 +287,35 @@ export function SettingsPage() {
             </div>
 
             {/* LINE Notify */}
-            <Input
-              label="LINE Notify Token (ทางเลือก)"
-              placeholder="วางโทเคนจาก notify-bot.line.me"
-              {...register('line_notify_token')}
-            />
-            <p className="text-xs text-gray-400 -mt-2">
-              รับ Token ฟรีที่{' '}
-              <a href="https://notify-bot.line.me/my/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
-                notify-bot.line.me
-              </a>{' '}
-              — แจ้งเตือนเข้า LINE ทันทีเมื่อมีฟอร์มใหม่
-            </p>
+            <div className="pt-4 border-t border-gray-100">
+              <h4 className="text-sm font-semibold text-gray-800 mb-3">การเชื่อมต่อกับ LINE</h4>
+              <div className="space-y-4">
+                <div>
+                  <Input
+                    label="LINE Notify Token (รับการแจ้งเตือนจากระบบ)"
+                    placeholder="วางโทเคนจาก notify-bot.line.me"
+                    {...register('line_notify_token')}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    รับ Token ฟรีที่{' '}
+                    <a href="https://notify-bot.line.me/my/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                      notify-bot.line.me
+                    </a>{' '}
+                    — แจ้งเตือนเข้า LINE ของคุณเมื่อมีฟอร์มใหม่
+                  </p>
+                </div>
+                <div>
+                  <Input
+                    label="LINE OA Token (สำหรับการส่ง Broadcast)"
+                    placeholder="วาง Channel access token (long-lived) จาก LINE Developers"
+                    {...register('line_oa_token')}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">
+                    ใช้สำหรับฟังก์ชัน <b>ส่ง LINE</b> ในเมนูระบบข่าวสาร เพื่อส่งข้อความหานักเรียนผ่าน LINE OA
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 

@@ -31,16 +31,6 @@ import evLogo       from '@assets/image_1785200695195.png';
 const sessions = [
   // ── เสาร์ 29 ส.ค. ──────────────────────────────────────────────────────
   {
-    date: 'อาทิตย์ 6 ก.ย. 2569',   dateShort: "6 ก.ย. (B'Cebu)", dateValue: '2026-09-06-pm',
-    time: '14:00–15:00 น.',        round: 'รอบบ่าย',  school: "B'Cebu",   location: 'Banilad, Cebu',
-    topic: 'หลักสูตรเข้มข้น แคมปัสใหม่ สิ่งอำนวยความสะดวกครบ',
-    logo: bcebuLogo,
-    bg: 'from-indigo-500 to-violet-600', textColor: 'text-indigo-600',
-    pillColor: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
-    programs: ['Intensive English', 'IELTS', 'TOEIC', 'ห้องพักใหม่ทันสมัย'],
-    presenter: "ผู้แทน B'Cebu",
-  },
-  {
     date: 'เสาร์ 29 ส.ค. 2569',   dateShort: '29 ส.ค. (Philinter)', dateValue: '2026-08-29-pm',
     time: '14:00–15:00 น.',        round: 'รอบบ่าย', school: 'Philinter Academy', location: 'Mactan, Cebu',
     topic: 'Business English และ Speaking สำหรับการทำงาน',
@@ -92,6 +82,16 @@ const sessions = [
     pillColor: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
     programs: ['Callan Method', 'General English', 'IELTS', 'Business English'],
     presenter: 'ผู้แทน QQ English',
+  },
+  {
+    date: 'อาทิตย์ 6 ก.ย. 2569',   dateShort: "6 ก.ย. (B'Cebu)", dateValue: '2026-09-06-pm',
+    time: '14:00–15:00 น.',        round: 'รอบบ่าย',  school: "B'Cebu",   location: 'Banilad, Cebu',
+    topic: 'หลักสูตรเข้มข้น แคมปัสใหม่ สิ่งอำนวยความสะดวกครบ',
+    logo: bcebuLogo,
+    bg: 'from-indigo-500 to-violet-600', textColor: 'text-indigo-600',
+    pillColor: 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400',
+    programs: ['Intensive English', 'IELTS', 'TOEIC', 'ห้องพักใหม่ทันสมัย'],
+    presenter: "ผู้แทน B'Cebu",
   },
   // ── รอบพิเศษ เสาร์ 12 ก.ย. ──────────────────────────────────────────────
   {

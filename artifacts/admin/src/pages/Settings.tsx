@@ -13,12 +13,12 @@ import { KeyRound, Eye, EyeOff, ShieldOff, Shield } from 'lucide-react';
 
 // Sessions for Education Fair meet-link inputs
 const SEMINAR_SESSIONS = [
-  { key: 'meet_2026-09-06-pm'      as const, date: 'อาทิตย์ 6 ก.ย. 2569',    school: "B'Cebu",           time: '14:00–15:00 น.', emoji: '🇵🇭' },
   { key: 'meet_2026-08-29-pm'      as const, date: 'เสาร์ 29 ส.ค. 2569',    school: 'Philinter Academy', time: '14:00–15:00 น.', emoji: '🌿' },
   { key: 'meet_2026-08-30-am'      as const, date: 'อาทิตย์ 30 ส.ค. 2569',  school: 'EV Academy',        time: '10:00–11:00 น.', emoji: '🎓' },
   { key: 'meet_2026-09-05-am'      as const, date: 'เสาร์ 5 ก.ย. 2569',     school: 'CPILS',             time: '10:00–11:00 น.', emoji: '🏫' },
   { key: 'meet_2026-09-05-pm'      as const, date: 'เสาร์ 5 ก.ย. 2569',     school: 'I.BREEZE',          time: '14:00–15:00 น.', emoji: '🌊' },
   { key: 'meet_2026-09-06-am'      as const, date: 'อาทิตย์ 6 ก.ย. 2569',   school: 'QQ English',        time: '10:00–11:00 น.', emoji: '📘' },
+  { key: 'meet_2026-09-06-pm'      as const, date: 'อาทิตย์ 6 ก.ย. 2569',    school: "B'Cebu",           time: '14:00–15:00 น.', emoji: '🇵🇭' },
   { key: 'meet_2026-09-12-special' as const, date: 'เสาร์ 12 ก.ย. 2569 ✨',  school: 'CIA (รอบพิเศษ)',   time: '10:30 น. เป็นต้นไป', emoji: '⭐' },
 ] as const;
 

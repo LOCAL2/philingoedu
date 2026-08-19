@@ -53,6 +53,9 @@ interface SettingsForm {
   youtube_url: string;
   seo_title: string;
   seo_description: string;
+  // Tracking & Ads
+  facebook_pixel_id: string;
+  google_tag_id: string;
   // Notification settings
   notification_email: string;
   line_notify_token: string;
@@ -107,6 +110,8 @@ export function SettingsPage() {
           youtube_url: settings.youtube_url ?? '',
           seo_title: settings.seo_title ?? '',
           seo_description: settings.seo_description ?? '',
+          facebook_pixel_id: settings.facebook_pixel_id ?? '',
+          google_tag_id: settings.google_tag_id ?? '',
           notification_email: settings.notification_email ?? '',
           line_notify_token: settings.line_notify_token ?? '',
           seminar_meet_link: settings.seminar_meet_link ?? '',
@@ -196,10 +201,27 @@ export function SettingsPage() {
         </div>
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <SectionTitle title="SEO" />
+          <SectionTitle title="SEO & Tracking" />
           <div className="space-y-4">
             <Input label="SEO Title" {...register('seo_title')} />
             <Textarea label="SEO Description" rows={3} {...register('seo_description')} />
+            
+            <div className="pt-4 border-t border-gray-100">
+              <h4 className="text-sm font-semibold text-gray-800 mb-3">โค้ดติดตาม (Tracking Tags)</h4>
+              <div className="space-y-3">
+                <Input 
+                  label="Facebook Pixel ID" 
+                  placeholder="ตัวเลข เช่น 1234567890" 
+                  {...register('facebook_pixel_id')} 
+                />
+                <Input 
+                  label="Google Ads / Tag ID" 
+                  placeholder="เช่น AW-123456789 หรือ G-XXXXXXX" 
+                  {...register('google_tag_id')} 
+                />
+                <p className="text-xs text-gray-400">เมื่อระบุ ID ระบบจะติดตั้งโค้ดบนหน้าเว็บไซต์ให้อัตโนมัติ</p>
+              </div>
+            </div>
           </div>
         </div>
 

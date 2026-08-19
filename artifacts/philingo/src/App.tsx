@@ -8,6 +8,7 @@ import { useSiteTracker } from '@/hooks/use-site-tracker';
 import { useEffect } from 'react';
 import { useSettings } from '@/hooks/use-settings';
 import { setSeoGlobalDefaults } from '@/hooks/use-seo-meta';
+import { TrackingScripts } from '@/components/TrackingScripts';
 
 import NotFound from '@/pages/not-found';
 import Home from '@/pages/Home';
@@ -82,6 +83,7 @@ function App() {
           <TooltipProvider>
             <SiteEffects />
             <SeoDefaultSync />
+            <TrackingScripts />
             {/* AdminModeToolbar hidden — ไม่แสดง admin bar บน public site */}
             {/* <AdminModeToolbar /> */}
             <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>

@@ -394,16 +394,16 @@ export default function Seminars() {
       <AdminEditSection href="/admin/banners" label="แก้ไขแบนเนอร์สัมมนา">
         <section className="bg-white dark:bg-gray-900 pt-0 pb-0">
           <div className="md:container md:max-w-7xl md:mx-auto md:px-4 md:pt-4">
-            <div className="relative overflow-hidden shadow-2xl md:rounded-3xl min-h-[450px] md:min-h-[520px]">
+            <div className="relative overflow-hidden shadow-2xl md:rounded-3xl bg-black">
               <img
                 src={heroBannerUrl}
                 alt="Philingo Cebu Online Education Fair 2026"
-                className="w-full h-full object-cover object-left-top md:object-top absolute inset-0 md:relative md:h-auto"
+                className="w-full h-auto object-contain object-top"
                 loading="eager"
                 fetchPriority="high"
               />
               {/* overlay bar — compact on mobile (<640px), normal on sm+ */}
-              <div className="absolute bottom-0 left-0 right-0 bg-black/80 backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4">
+              <div className="relative sm:absolute bottom-0 left-0 right-0 bg-black/30 backdrop-blur-md px-3 py-2 sm:px-4 sm:py-3 md:px-6 md:py-4">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-1.5 sm:gap-3">
                   {/* countdown */}
                   {!isExpired ? (

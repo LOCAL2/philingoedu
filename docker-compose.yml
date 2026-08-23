@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3001:8080"  # API Server (Internal 8080 -> Host 3001)
+      - "5174:3001"  # Admin (Internal 3001 -> Host 5174)
+      - "5175:5173"  # Philingo (Internal 5173 -> Host 5175)
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app
+      - /app/node_modules
+    restart: unless-stopped

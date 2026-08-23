@@ -44,7 +44,8 @@ const navItems: NavItem[] = [
   { label: 'แบบฟอร์ม', href: '/forms', icon: <ClipboardList className="h-5 w-5" /> },
   { label: 'กิจกรรม', href: '/events', icon: <CalendarDays className="h-5 w-5" /> },
   { label: 'Newsletter', href: '/newsletter', icon: <Send className="h-5 w-5" /> },
-  { label: 'ตั้งค่า', href: '/settings', icon: <Settings className="h-5 w-5" /> },
+  { label: 'ตั้งค่าระบบ', href: '/settings', icon: <Settings className="h-5 w-5" /> },
+  { label: 'SEO & ติดตาม', href: '/tracking', icon: <Settings className="h-5 w-5" /> },
 ];
 
 export function Sidebar() {

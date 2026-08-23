@@ -5,7 +5,7 @@ import { defineConfig } from 'vite';
 
 
 const rawPort = process.env.PORT;
-const port = rawPort ? Number(rawPort) : 5173;
+const port = rawPort ? Number(rawPort) : 5174;
 
 const basePath = process.env.BASE_PATH ?? '/';
 

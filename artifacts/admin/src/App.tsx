@@ -22,6 +22,7 @@ import { TeamPage } from '@/pages/Team';
 import { ContactsPage } from '@/pages/Contacts';
 import { FormsPage } from '@/pages/Forms';
 import { SettingsPage } from '@/pages/Settings';
+import { TrackingSettingsPage } from '@/pages/TrackingSettings';
 import { NewsletterPage } from '@/pages/Newsletter';
 import { EventsPage } from '@/pages/Events';
 
@@ -112,6 +113,9 @@ function AppRoutes() {
       </Route>
       <Route path="/settings">
         <ProtectedRoute component={SettingsPage} />
+      </Route>
+      <Route path="/tracking">
+        <ProtectedRoute component={TrackingSettingsPage} />
       </Route>
       <Route path="/newsletter">
         <ProtectedRoute component={NewsletterPage} />

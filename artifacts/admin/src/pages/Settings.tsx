@@ -202,30 +202,7 @@ export function SettingsPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <SectionTitle title="SEO & Tracking" />
-          <div className="space-y-4">
-            <Input label="SEO Title" {...register('seo_title')} />
-            <Textarea label="SEO Description" rows={3} {...register('seo_description')} />
-            
-            <div className="pt-4 border-t border-gray-100">
-              <h4 className="text-sm font-semibold text-gray-800 mb-3">โค้ดติดตาม (Tracking Tags)</h4>
-              <div className="space-y-3">
-                <Input 
-                  label="Facebook Pixel ID" 
-                  placeholder="ตัวเลข เช่น 1234567890" 
-                  {...register('facebook_pixel_id')} 
-                />
-                <Input 
-                  label="Google Ads / Tag ID" 
-                  placeholder="เช่น AW-123456789 หรือ G-XXXXXXX" 
-                  {...register('google_tag_id')} 
-                />
-                <p className="text-xs text-gray-400">เมื่อระบุ ID ระบบจะติดตั้งโค้ดบนหน้าเว็บไซต์ให้อัตโนมัติ</p>
-              </div>
-            </div>
-          </div>
-        </div>
+
 
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
           <SectionTitle title="🎓 Education Fair — Google Meet Links ตามสถาบัน" />

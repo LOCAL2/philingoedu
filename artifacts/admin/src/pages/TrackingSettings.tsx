@@ -14,6 +14,7 @@ interface TrackingSettingsForm {
   seo_description: string;
   facebook_pixel_id: string;
   google_tag_id: string;
+  tiktok_pixel_id: string;
 }
 
 function SectionTitle({ title }: { title: string }) {
@@ -39,6 +40,7 @@ export function TrackingSettingsPage() {
           seo_description: settings.seo_description ?? '',
           facebook_pixel_id: settings.facebook_pixel_id ?? '',
           google_tag_id: settings.google_tag_id ?? '',
+          tiktok_pixel_id: settings.tiktok_pixel_id ?? '',
         }
       : undefined,
   });
@@ -108,6 +110,20 @@ export function TrackingSettingsPage() {
                 />
                 <p className="text-xs text-gray-500 mt-1.5 ml-1">
                   * ใส่รหัสที่ขึ้นต้นด้วย AW- หรือ G- ได้เลย ระบบจะติดตั้ง gtag.js ให้อัตโนมัติ
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-sm font-bold text-gray-800 mb-1.5 flex items-center gap-2">
+                  <span className="text-black">⬛</span> TikTok Pixel ID
+                </label>
+                <Input 
+                  placeholder="เช่น CXXXXXXXXXXXXXXXXXX" 
+                  {...register('tiktok_pixel_id')} 
+                  className="border-gray-300 focus:border-black text-lg py-5"
+                />
+                <p className="text-xs text-gray-500 mt-1.5 ml-1">
+                  * ใส่รหัส TikTok Pixel ID ของคุณ ระบบจะติดตั้งโค้ดให้เอง
                 </p>
               </div>
             </div>

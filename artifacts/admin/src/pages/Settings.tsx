@@ -263,34 +263,48 @@ export function SettingsPage() {
               <p className="text-xs text-amber-600">✅ เมื่อตั้งค่าแล้ว ไม่ต้องทำซ้ำ — แค่เปลี่ยนอีเมลผู้รับข้างบนได้เลย</p>
             </div>
 
-            {/* LINE Notify */}
-            <div className="pt-4 border-t border-gray-100">
-              <h4 className="text-sm font-semibold text-gray-800 mb-3">การเชื่อมต่อกับ LINE</h4>
-              <div className="space-y-4">
-                <div>
+            {/* LINE Config */}
+            <div className="pt-5 border-t border-gray-200">
+              <h4 className="text-base font-bold text-green-700 mb-4 flex items-center gap-2">
+                <span className="text-xl">💬</span> การเชื่อมต่อกับ LINE (LINE Integrations)
+              </h4>
+              <div className="space-y-5">
+                
+                {/* LINE Notify */}
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-5">
+                  <div className="mb-3">
+                    <h5 className="font-bold text-gray-800 text-sm">1. LINE Notify Token (สำหรับแจ้งเตือนแอดมิน)</h5>
+                    <p className="text-xs text-gray-500 mt-1">ใช้สำหรับให้ระบบส่งข้อความ <span className="font-semibold text-green-600">"แจ้งเตือนเข้ามือถือแอดมิน"</span> เวลามีคนกรอกฟอร์มหรือลงทะเบียนใหม่</p>
+                  </div>
                   <Input
-                    label="LINE Notify Token (รับการแจ้งเตือนจากระบบ)"
-                    placeholder="วางโทเคนจาก notify-bot.line.me"
+                    placeholder="วาง Token ที่ได้จาก notify-bot.line.me"
                     {...register('line_notify_token')}
+                    className="bg-white"
                   />
-                  <p className="text-xs text-gray-400 mt-1">
-                    รับ Token ฟรีที่{' '}
+                  <p className="text-xs text-gray-400 mt-2">
+                    * รับ Token ฟรีได้ที่{' '}
                     <a href="https://notify-bot.line.me/my/" target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                       notify-bot.line.me
-                    </a>{' '}
-                    — แจ้งเตือนเข้า LINE ของคุณเมื่อมีฟอร์มใหม่
+                    </a>
                   </p>
                 </div>
-                <div>
+
+                {/* LINE OA */}
+                <div className="bg-green-50 border border-green-200 rounded-xl p-5">
+                  <div className="mb-3">
+                    <h5 className="font-bold text-green-800 text-sm">2. LINE OA Token (สำหรับบรอดแคสต์หานักเรียน)</h5>
+                    <p className="text-xs text-green-700 mt-1">ใช้สำหรับฟังก์ชัน <span className="font-semibold underline">"ส่งข่าวทาง LINE" (Broadcast)</span> ในเมนูระบบข่าวสาร เพื่อส่งข้อความหานักเรียนที่ติดตาม LINE OA</p>
+                  </div>
                   <Input
-                    label="LINE OA Token (สำหรับการส่ง Broadcast)"
-                    placeholder="วาง Channel access token (long-lived) จาก LINE Developers"
+                    placeholder="วาง Channel access token (long-lived) จากหน้า LINE Developers"
                     {...register('line_oa_token')}
+                    className="bg-white border-green-300 focus:border-green-500"
                   />
-                  <p className="text-xs text-gray-400 mt-1">
-                    ใช้สำหรับฟังก์ชัน <b>ส่ง LINE</b> ในเมนูระบบข่าวสาร เพื่อส่งข้อความหานักเรียนผ่าน LINE OA
+                  <p className="text-xs text-green-600 mt-2">
+                    * ต้องเป็น Long-lived Access Token จาก LINE Developers Console
                   </p>
                 </div>
+
               </div>
             </div>
           </div>

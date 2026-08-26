@@ -200,7 +200,7 @@ router.post('/submit', async (req, res) => {
       <p style="margin:0;font-weight:600;color:#1e40af">ติดต่อทีม Philingo</p>
       <p style="margin:4px 0 0;color:#374151;font-size:14px">📞 ${c.phone} &nbsp;|&nbsp; 💬 LINE: ${c.lineId}</p>
     </div>
-    <p style="margin:16px 0 0;font-size:12px;color:#9ca3af;text-align:center">Philingo — Thai Study Abroad Consultant · philingo.co.th</p>
+    <p style="margin:16px 0 0;font-size:12px;color:#9ca3af;text-align:center">Philingo — Thai Study Abroad Consultant · philingoedu.com</p>
   </div>
 </div>`;
       return sendEmail({ to: safeEmail, subject: `✅ Philingo ได้รับ${typeLabel[type] || 'แบบฟอร์ม'}ของคุณแล้ว`, html: userHtml });

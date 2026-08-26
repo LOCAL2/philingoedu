@@ -7,6 +7,7 @@ import pinoHttp from "pino-http";
 import path from "path";
 import fs from "fs";
 import router from "./routes/index.js";
+import { sitemapHandler } from "./routes/sitemap.js";
 import { logger } from "./lib/logger.js";
 import { supabaseAdmin, getStorageBucket } from "./lib/objectStorage.js";
 
@@ -72,9 +73,12 @@ app.use(cookieParser());
 // Robots.txt
 app.get("/robots.txt", (_req, res) => {
   res.type("text/plain");
-  const siteUrl = process.env.SITE_URL || "";
+  const siteUrl = process.env.SITE_URL || "https://philingoedu.com";
   res.send(`User-agent: *\nAllow: /\n${siteUrl ? `Sitemap: ${siteUrl}/sitemap.xml` : ""}`);
 });
+
+// Sitemap
+app.get("/sitemap.xml", sitemapHandler);
 
 // Serve uploaded images from Supabase
 app.get("/api/uploads/:filename", async (req, res, _next) => {

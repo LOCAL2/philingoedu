@@ -12,13 +12,15 @@ const staticPages = [
   '/contact',
   '/promotions',
   '/faq',
-  '/gallery',
-  '/team',
+  '/why-philippines',
+  '/seminars',
+  '/reviews',
+  '/services',
 ];
 
 export async function sitemapHandler(_req: Request, res: Response): Promise<void> {
   try {
-    const baseUrl = process.env.SITE_URL || 'https://philingo.com';
+    const baseUrl = process.env.SITE_URL || 'https://philingoedu.com';
 
     const [schools, blogPosts] = await Promise.all([
       db.select({ slug: schoolsTable.slug, updatedAt: schoolsTable.updatedAt })
